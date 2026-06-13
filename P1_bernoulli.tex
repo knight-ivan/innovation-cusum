@@ -160,7 +160,7 @@ recurrent architectures and change-point detection.
 The first result shows that, under a contraction condition on the recurrent
 weight matrix (Assumption~\ref{ass:spectral}), the hidden state splits at
 every step into a component fully determined by the past and a genuinely new
-component that carries only the fresh information in the current observation.
+component that is $L^2$-orthogonal to the entire past of the process.
 This new component stabilizes geometrically and has a non-degenerate variance
 structure (Theorem~\ref{thm:mds}); the stationary causal solution used as
 background is established in \citet{chang2026jrssb}.
@@ -553,9 +553,10 @@ setting of \citet{dahlhaus1997fitting}.
 
 We now give a rigorous in-control performance guarantee for the Innovation CUSUM, the
 change-point detector that applies a Page CUSUM to LSTM prediction innovations.
-By Proposition~\ref{prop:predresid}, exact Bayes residuals form an MDS;
-by Corollary~\ref{cor:fclt}, the LSTM-fitted residuals are approximate MDS
-whose partial sums satisfy a functional CLT.  The key consequence for the
+By Proposition~\ref{prop:predresid}, exact Bayes residuals form an MDS, and
+by Corollary~\ref{cor:fclt} the hidden-state innovations $M_t$ satisfy a
+functional CLT; fitted prediction residuals inherit the approximate MDS
+property (Proposition~\ref{prop:predresid}).  The key consequence for the
 alarm rate follows from a sub-Gaussian exponential supermartingale argument.
 
 \subsection{Setup and Assumptions}
@@ -1562,9 +1563,9 @@ at the geometric rate $\norm{M_t-M_t^*}_{L^2}\leq 2\rho^t\Delta_0$,
 and characterizes the stationary innovation covariance $\Sigma_M^*$.
 Corollary~\ref{cor:fclt} supplies the functional central limit theorem for
 accumulated innovations.
-To address the second gap, Theorem~\ref{thm:arl} gives the first rigorous
+To address the second gap, Theorem~\ref{thm:arl} gives a rigorous
 in-control average run length (ARL) lower bound for the Innovation CUSUM,
-and Corollary~\ref{cor:dim} formalises why this guarantee is dimension-stable
+and Corollary~\ref{cor:dim} formalizes why this guarantee is dimension-stable
 when LSTM approximation quality is bounded uniformly in $d$.
 Eight empirical studies --- spanning synthetic autoregressive and
 vector-autoregressive processes, the Nile River discharge series, and
@@ -1581,7 +1582,7 @@ ARL theorem converts that property into a usable false-alarm guarantee under
 bounded approximation error; and the dimension-stability corollary shows that
 the guarantee is robust to growing observation dimension in a way that
 classical CUSUM procedures, which accumulate autocorrelation bias with $d$,
-are provably not.
+can be shown to fail in the VAR setting of Corollary~\ref{cor:dim}.
 To our knowledge, no prior work links learned-architecture theory directly to
 a dimension-robust sequential monitoring guarantee of this kind.
 
