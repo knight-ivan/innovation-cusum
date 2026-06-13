@@ -1,0 +1,35 @@
+# LaTeX auxiliary files
+*.aux
+*.bbl
+*.blg
+*.log
+*.out
+*.synctex.gz
+*.toc
+*.nav
+*.snm
+*.fls
+*.fdb_latexmk
+*.bak
+
+# macOS
+.DS_Store
+
+# Old drafts and working files
+Old/
+JASA_revision_2026/
+Revision*
+
+STUDY_PLAN.md
+P1_final_double_check_notes.txt
+P1_forget_gate_note.tex
+P1_paper*.tex
+P1_paper*.pdf
+P1_slides.*
+P1_summary.*
+P1_supplement_2026_0606.*
+draft_thm1_thm2_2026_0606.*
+P1_main_xrefs.tex
+P1_supp_xrefs.tex
+P1_references_final_checked.bib
+P1_paper_final_double_checked_US*

@@ -1,0 +1,2 @@
+setting,phi_func,MSE_early_third,MSE_mid_third,MSE_late_third,rho_fg_It,rho_fg_pval,rho_const_It,n_test_seqs
+Locally stationary AR,"center=0.5, amp=0.4",1.65333,1.12756,1.092,-0.7291,0.0,,1000

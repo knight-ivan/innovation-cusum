@@ -1,0 +1,9 @@
+Estimator,DGP,NMSE_mean,NMSE_median,NMSE_std,NMSE_q25,NMSE_q75
+Naive constant,DGP A (LS-AR),1.0039,1.0039,0.0,1.0039,1.0039
+Naive constant,DGP B (CP-AR),3.0,3.0,0.0,3.0,3.0
+Forget gate (LSTM),DGP A (LS-AR),1.017,1.0162,0.0082,1.0107,1.0217
+Forget gate (LSTM),DGP B (CP-AR),3.0105,3.0101,0.0042,3.0077,3.0132
+Block bootstrap,DGP A (LS-AR),1.393,1.2339,0.5099,1.0581,1.5044
+Block bootstrap,DGP B (CP-AR),1.1894,1.1318,0.1858,1.0703,1.2468
+KLIEP-corrected (Pathway B),DGP A (LS-AR),0.9839,0.9766,0.2887,0.7556,1.1887
+KLIEP-corrected (Pathway B),DGP B (CP-AR),2.7566,2.7409,0.2658,2.5663,2.95

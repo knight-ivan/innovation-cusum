@@ -1,0 +1,4 @@
+method,alarm_t,delay
+raw,31,3
+whitened,31,3
+pathway_a,29,1

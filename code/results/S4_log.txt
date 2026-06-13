@@ -1,0 +1,45 @@
+Study S4: Multivariate/High-Dimensional VAR(1)
+Dims=[2, 5, 10]  rho_ops=[0.3, 0.7, 0.95]  T=200  N_train=500  N_test=300
+
+============================================================
+Study S4A: Multivariate MDS (Hosking) Test
+============================================================
+  d= 2  rho_op=0.30 | LSTM pass=0.953 (p=0.5213)  OLS  pass=0.953 (p=0.5227)  ||A_hat||_op=0.296
+  d= 2  rho_op=0.70 | LSTM pass=0.957 (p=0.5129)  OLS  pass=0.957 (p=0.5197)  ||A_hat||_op=0.703
+  d= 2  rho_op=0.95 | LSTM pass=0.940 (p=0.4981)  OLS  pass=0.957 (p=0.5203)  ||A_hat||_op=0.950
+  d= 5  rho_op=0.30 | LSTM pass=0.977 (p=0.5684)  OLS  pass=0.970 (p=0.5715)  ||A_hat||_op=0.295
+  d= 5  rho_op=0.70 | LSTM pass=0.963 (p=0.5907)  OLS  pass=0.970 (p=0.6072)  ||A_hat||_op=0.703
+  d= 5  rho_op=0.95 | LSTM pass=0.890 (p=0.4827)  OLS  pass=0.967 (p=0.5789)  ||A_hat||_op=0.951
+  d=10  rho_op=0.30 | LSTM pass=0.980 (p=0.6669)  OLS  pass=0.983 (p=0.6743)  ||A_hat||_op=0.304
+  d=10  rho_op=0.70 | LSTM pass=0.993 (p=0.6558)  OLS  pass=0.997 (p=0.6664)  ||A_hat||_op=0.702
+  d=10  rho_op=0.95 | LSTM pass=0.950 (p=0.6150)  OLS  pass=0.993 (p=0.6913)  ||A_hat||_op=0.951
+Saved: S4_mds.csv
+Saved: S4_mds_heatmap.png
+
+============================================================
+Study S4B: True ||Phi^t||_op vs LSTM forget gate
+============================================================
+  d= 2  rho_op=0.30 | Spearman(fg, ||Phi^t||_op) = 0.115  p=0.1039
+  d= 2  rho_op=0.70 | Spearman(fg, ||Phi^t||_op) = -0.062  p=0.3859
+  d= 2  rho_op=0.95 | Spearman(fg, ||Phi^t||_op) = -0.241  p=0.0006
+  d= 5  rho_op=0.30 | Spearman(fg, ||Phi^t||_op) = 0.125  p=0.0771
+  d= 5  rho_op=0.70 | Spearman(fg, ||Phi^t||_op) = -0.138  p=0.0509
+  d= 5  rho_op=0.95 | Spearman(fg, ||Phi^t||_op) = 0.193  p=0.0061
+  d=10  rho_op=0.30 | Spearman(fg, ||Phi^t||_op) = 0.047  p=0.5055
+  d=10  rho_op=0.70 | Spearman(fg, ||Phi^t||_op) = 0.003  p=0.9616
+  d=10  rho_op=0.95 | Spearman(fg, ||Phi^t||_op) = -0.009  p=0.8967
+Saved: S4_It_norm_trajectories.png
+Saved: S4_It_norm.csv
+
+============================================================
+Study S4C: Dimension scaling (fixed rho_op=0.70)
+============================================================
+  d= 1 | LSTM pass=0.950  OLS pass=0.960  MSE=0.9947
+  d= 2 | LSTM pass=0.957  OLS pass=0.957  MSE=0.9987
+  d= 5 | LSTM pass=0.963  OLS pass=0.970  MSE=1.0021
+  d=10 | LSTM pass=0.993  OLS pass=0.997  MSE=1.0031
+  d=20 | LSTM pass=1.000  OLS pass=1.000  MSE=1.0076
+Saved: S4_dim_scaling.png
+Saved: S4_dim.csv
+
+Study S4 complete in 121.6s

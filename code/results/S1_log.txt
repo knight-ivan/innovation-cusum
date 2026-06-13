@@ -1,0 +1,46 @@
+======================================================================
+Study S1 — Stationary case (Prop 3.2 and Prop 3.4 validation)
+======================================================================
+
+── Part A: MDS (Ljung-Box) pass rates ───────────────────────────
+MDS study:   0%|          | 0/5 [00:00<?, ?it/s]MDS study:  20%|██        | 1/5 [01:36<06:24, 96.17s/it]MDS study:  40%|████      | 2/5 [02:52<04:13, 84.42s/it]MDS study:  60%|██████    | 3/5 [04:19<02:51, 85.64s/it]MDS study:  80%|████████  | 4/5 [06:08<01:34, 94.70s/it]MDS study: 100%|██████████| 5/5 [07:26<00:00, 88.79s/it]MDS study: 100%|██████████| 5/5 [07:26<00:00, 89.27s/it]
+  AR(1) phi=0.3                   LSTM=0.948  OLS=0.969
+  AR(1) phi=0.7                   LSTM=0.905  OLS=0.974
+  AR(1) phi=0.95                  LSTM=0.386  OLS=0.953
+  HMM                             LSTM=0.953  OLS=0.561
+  RS-AR                           LSTM=0.814  OLS=0.947
+
+Saved → /Users/ycchang/Dropbox (Personal)/0 0 0 NSC 2026/MaMAB_RNN/P1_Theory/code/results/S1_mds.csv
+       process  LSTM_pass_rate  OLS_pass_rate  expected_pass  n_test_seqs  T_test
+ AR(1) phi=0.3           0.948          0.969           0.95         1000     200
+ AR(1) phi=0.7           0.905          0.974           0.95         1000     200
+AR(1) phi=0.95           0.386          0.953           0.95         1000     200
+           HMM           0.953          0.561           0.95         1000     200
+         RS-AR           0.814          0.947           0.95         1000     200
+
+── Part B: Forget-gate ratio test (Prop 3.4) ───────────────────
+Forget gate study:   0%|          | 0/3 [00:00<?, ?it/s]Forget gate study:  33%|███▎      | 1/3 [01:24<02:48, 84.24s/it]Forget gate study:  67%|██████▋   | 2/3 [02:33<01:15, 75.43s/it]Forget gate study: 100%|██████████| 3/3 [03:38<00:00, 70.73s/it]Forget gate study: 100%|██████████| 3/3 [03:38<00:00, 72.88s/it]
+  AR(1) phi=0.3         target=0.30  mean_fg=0.4978  MAE=0.1978  rho=0.049
+  AR(1) phi=0.7         target=0.70  mean_fg=0.5173  MAE=0.1827  rho=0.019
+  AR(1) phi=0.95        target=0.95  mean_fg=0.4604  MAE=0.4896  rho=0.007
+
+Saved → /Users/ycchang/Dropbox (Personal)/0 0 0 NSC 2026/MaMAB_RNN/P1_Theory/code/results/S1_forget_gate.csv
+       process  phi  target_fg  mean_fg  MAE_fg  spearman_rho  spearman_pval   CI_lo  CI_hi
+ AR(1) phi=0.3 0.30       0.30   0.4978  0.1978        0.0488         0.4937 -0.0841 0.1836
+ AR(1) phi=0.7 0.70       0.70   0.5173  0.1827        0.0188         0.7916 -0.1259 0.1655
+AR(1) phi=0.95 0.95       0.95   0.4604  0.4896        0.0073         0.9189 -0.1336 0.1456
+
+── Part C: SimpleMamba Delta_t vs I_t^cell (Conjecture 1) ──────
+Mamba study:   0%|          | 0/3 [00:00<?, ?it/s]Mamba study:  33%|███▎      | 1/3 [01:27<02:54, 87.41s/it]Mamba study:  67%|██████▋   | 2/3 [02:52<01:26, 86.26s/it]Mamba study: 100%|██████████| 3/3 [04:15<00:00, 84.54s/it]Mamba study: 100%|██████████| 3/3 [04:15<00:00, 85.12s/it]
+  AR(1) phi=0.3         Spearman(Delta_t, I_t^cell) = 0.047  [p=0.508]
+  AR(1) phi=0.7         Spearman(Delta_t, I_t^cell) = -0.141  [p=0.046]
+  AR(1) phi=0.95        Spearman(Delta_t, I_t^cell) = -0.177  [p=0.012]
+
+Saved → /Users/ycchang/Dropbox (Personal)/0 0 0 NSC 2026/MaMAB_RNN/P1_Theory/code/results/S1_mamba.csv
+       process  phi  rho_delta_It   pval   CI_lo   CI_hi
+ AR(1) phi=0.3 0.30        0.0471 0.5079 -0.0859  0.1776
+ AR(1) phi=0.7 0.70       -0.1410 0.0464 -0.2792  0.0139
+AR(1) phi=0.95 0.95       -0.1773 0.0120 -0.3135 -0.0034
+
+Study S1 complete in 922.3 s
+======================================================================

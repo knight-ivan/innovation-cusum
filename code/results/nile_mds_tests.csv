@@ -1,0 +1,3 @@
+"model","lag","LB_stat","LB_pval","pass_MDS"
+"AR(1) residuals",5,17.559,0.0036,FALSE
+"AR(1) residuals",10,30.214,8e-04,FALSE

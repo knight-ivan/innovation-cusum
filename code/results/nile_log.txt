@@ -1,0 +1,3 @@
+Error in library(forecast) : there is no package called 'forecast'
+Calls: suppressPackageStartupMessages -> withCallingHandlers -> library
+Execution halted

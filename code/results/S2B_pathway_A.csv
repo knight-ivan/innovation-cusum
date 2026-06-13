@@ -1,0 +1,4 @@
+method,h,detect_rate,false_alarm_rate,delay_mean,delay_median,delay_90pct
+raw,5.0,1.0,0.6025,-16.27,-15.0,14.0
+whitened,5.0,0.9955,0.2235,5.86,8.0,33.0
+pathway_a,5.0,1.0,0.1225,10.14,10.0,32.0

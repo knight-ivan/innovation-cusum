@@ -1,0 +1,2 @@
+setting,phi_before,phi_after,true_tau,CUSUM_detect_rate,CUSUM_delay_mean,CUSUM_delay_median,CUSUM_delay_90pct,MSE_before_pre,MSE_before_post,MSE_oracle_post,MSE_ratio,n_test_seqs
+Abrupt change-point AR,0.3,0.85,100,1.0,-28.49,-33.0,11.0,1.00199,2.25201,1.04697,2.248,1000
