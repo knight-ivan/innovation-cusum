@@ -607,8 +607,8 @@ This is not a proof of gate consistency for an unconstrained trained LSTM.
   stated MDS decomposition.
 
   \textit{Rate condition.}
-  The conditions $b_T\to 0$, $m_T\to\infty$, $m_T/T\to 0$ are both necessary
-  and sufficient for the approximation bound to be $o(1)$.
+  The conditions $b_T\to 0$, $m_T\to\infty$, $m_T/T\to 0$ are sufficient
+  for the approximation bound to be $o(1)$.
 \end{proof}
 
 \subsection{Proof of Theorem~\ref{thm:arl} of the main paper (In-Control ARL Lower Bound)}
@@ -701,8 +701,7 @@ This is not a proof of gate consistency for an unconstrained trained LSTM.
     \E[\mathcal{Z}_t\given\F_{t-1}]
     \leq \frac{4\norm{\Sigma_0^{-1}}_{\mathrm{op}}\eta_d^2}{d} =: \eta_d'.
   \]
-  (The factor of~4 is absorbed into the $O(\cdot)$ notation in the
-  corollary statement, where $\eta_d'=O(\|\Sigma_0^{-1}\|_{\mathrm{op}}\eta_d^2/d)$.)
+  (The factor of~4 appears explicitly in the corollary statement, where $\eta_d':=4\|\Sigma_0^{-1}\|_{\mathrm{op}}\eta_d^2/d$.)
   Under $\eta_d = O(1)$ and bounded $\norm{\Sigma_0^{-1}}_{\mathrm{op}}$,
   $\eta_d' = O(d^{-1}) \to 0$.
   Setting $k_d = k$ (fixed), $\kappa_d = k - \eta_d' \to k > 0$,
@@ -771,8 +770,10 @@ proof; the argument is standard \citep{doukhan1994mixing}.
   at every $t$.
   Uniqueness: two stationary causal solutions satisfy
   $\norm{H_0^{(1)}-H_0^{(2)}}_{L^2}
-  \leq\rho^t(\norm{H_0^{(1)}}_{L^2}+\norm{H_0^{(2)}}_{L^2})\to 0$
-  by stationarity, so they are $L^2$-equal.
+  \leq\rho^t\norm{H_0^{(1)}-H_0^{(2)}}_{L^2}$
+  by the geometric coupling applied back $t$ steps (stationarity gives
+  $\norm{H_0^{(i)}-H_0^{(j)}}_{L^2}=\norm{H_{-t}^{(i)}-H_{-t}^{(j)}}_{L^2}$),
+  which forces $\norm{H_0^{(1)}-H_0^{(2)}}_{L^2}=0$ since $\rho<1$.
   The coupling bound follows with $\tilde h_0=H_0^*$.
 \end{proof}
 

@@ -880,8 +880,8 @@ Table~\ref{tab:cusum-cp} shows the three-way comparison at $h = 5$.
 M3 (the Innovation CUSUM) achieves the lowest false-alarm rate (12\%) while maintaining
 100\% detection, outperforming even M2 (22\%) which is given the correct AR
 model.  The $\mathrm{ARL}_0$ of M3 ($\approx 436$) matches that of M2
-($\approx 440$) and both are close to the i.i.d.\ nominal (285), confirming
-that LSTM residuals behave near-independently in the in-control regime ---
+($\approx 440$) and both exceed the i.i.d.\ nominal (285), indicating
+conservative false-alarm control consistent with the fact that LSTM residuals behave near-independently but not exactly independently in the in-control regime ---
 consistent with the approximate prediction-residual MDS mechanism in Proposition~\ref{prop:predresid}.
 
 The mean detection delay of M3 (+10 steps) is slightly longer than M2 (+6 steps),
@@ -1242,8 +1242,7 @@ All three methods detect the change-point correctly with a positive delay
 (Table~\ref{tab:nile}, Figure~\ref{fig:nile}).
 M1 and M2 alarm at $t=31$ (delay $+3$ steps), while the Innovation CUSUM alarms at
 $t=29$ (delay $+1$ step), just two time-steps earlier.
-On a $T=100$ series this difference is practically meaningful: a two-step
-improvement corresponds to a 7\% reduction in detection lag.
+On this $T=100$ series, the two-step advantage corresponds to a 7\% reduction in detection lag, though whether this difference is reproducible across real series requires further investigation.
 More importantly, the Innovation CUSUM achieves this on data where the in-control
 dynamics were learned from only 28 observations amplified by bootstrap — a
 regime where parametric whitening (M2) offers no advantage over the raw
