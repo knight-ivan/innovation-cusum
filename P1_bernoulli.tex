@@ -217,12 +217,11 @@ We work on a complete probability space $(\Omega, \mathcal{A}, \mathbb{P})$.
 Let $(X_t)_{t\geq 1}$ be a strictly stationary ergodic process with natural
 filtration $\mathcal{F}_t = \sigma(X_1,\ldots,X_t)$ and tail $\sigma$-algebra
 $\Tsig = \bigcap_{t\geq 1}\sigma(X_t, X_{t+1},\ldots)$.
-An RNN processes the sequence via $h_t = \phi(W_h h_{t-1} + W_x x_t + b_h)$
+Throughout Sections~\ref{sec:theory}--\ref{sec:pathway} we use $p$ to denote the hidden-state dimension and $d_{\mathrm{in}}$ for the input dimension.
+An RNN processes the sequence via $h_t = \phi(W_h h_{t-1} + W_x x_t + b_h)$ (with $h_t\in\R^p$)
 and an LSTM augments this with a gated cell state; both architectures are
 defined precisely in Section~\ref{app:background} of the Supplementary Material.
-Throughout Sections~\ref{sec:theory}--\ref{sec:pathway} we use $p$ to denote
-the hidden-state dimension of the RNN and $d_{\mathrm{in}}$ for the input
-dimension.  In Section~\ref{sec:empirical} the symbol $d$ refers to the
+In Section~\ref{sec:empirical} the symbol $d$ refers to the
 observation (input) dimension of the multivariate DGP, following the
 change-point literature convention.
 Throughout, we assume the effective recurrent Lipschitz constant satisfies
@@ -639,8 +638,9 @@ where $k>0$ is a reference (slack) value and $h>0$ is the alarm threshold.
   the in-control ARL of the two-sided procedure satisfies
   $\E_0[\tau_h^{\pm}] \geq \E_0[\tau_h]/2$, so the lower bound
   \eqref{eq:arl-lb} extends to the two-sided case with an additional
-  factor of $1/2$.  The qualitative exponential growth in $h$ is
-  preserved.
+  factor of $1/2$: explicitly,
+  $\E_0[\tau_h^{\pm}] \geq \frac{1}{4\sqrt{2}}\exp\!\bigl(\kappa h/(2\sigma^2)\bigr)$.
+  The qualitative exponential growth in $h$ is preserved.
 \end{remark}
 
 \subsection{Dimension Stability}
@@ -724,7 +724,7 @@ where $k>0$ is a reference (slack) value and $h>0$ is the alarm threshold.
 \label{sec:empirical}
 
 This section presents eight empirical studies that follow a clear logical
-progression; six are reported here and two supporting studies (LS-Diag and J-Surr) are deferred to the Supplementary Material.  Study~MDS examines the MDS property (Theorem~\ref{thm:mds})
+progression.  Study~MDS examines the MDS property (Theorem~\ref{thm:mds})
 in controlled stationary settings.  Study~CUSUM-CP then asks whether a CUSUM built
 on LSTM innovations outperforms classical detectors at a known change-point,
 empirically testing the prediction of Theorem~\ref{thm:arl}.
@@ -881,9 +881,7 @@ Table~\ref{tab:cusum-cp} shows the three-way comparison at $h = 5$.
 M3 (the Innovation CUSUM) achieves the lowest false-alarm rate (12\%) while maintaining
 100\% detection, outperforming even M2 (22\%) which is given the correct AR
 model.  The $\mathrm{ARL}_0$ of M3 ($\approx 436$) matches that of M2
-($\approx 440$) and both exceed the i.i.d.\ nominal (285), indicating
-conservative false-alarm control consistent with the fact that LSTM residuals behave near-independently but not exactly independently in the in-control regime ---
-consistent with the approximate prediction-residual MDS mechanism in Proposition~\ref{prop:predresid}.
+($\approx 440$) and both exceed the i.i.d.\ nominal (285), indicating that in-control LSTM residuals are slightly under-dispersed relative to the i.i.d.\ calibration assumption, consistent with the theoretical ARL lower bound of Theorem~\ref{thm:arl} holding with slack.
 
 The mean detection delay of M3 (+10 steps) is slightly longer than M2 (+6 steps),
 reflecting the standard false-alarm/delay trade-off: fewer spurious alarms

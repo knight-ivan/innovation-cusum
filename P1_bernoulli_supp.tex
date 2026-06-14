@@ -501,8 +501,10 @@ Section~\ref{sec:nonstationary} of the main paper.
        + L_\phi\norm{W_x}_{\mathrm{op}}\norm{X_t}_{L^{2+\delta}}
        + L_\phi\norm{b_h}.
   \]
-  Stationarity gives a common value $C = c'/(1-\rho) < \infty$, so
-  $\sup_t\E\norm{M_t^*}^{2+\delta} \leq (2C)^{2+\delta} < \infty$.
+  Stationarity gives a common value $C = c'/(1-\rho) < \infty$, so $\sup_t\norm{H_t^*}_{L^{2+\delta}} \leq C$.
+  Since $D_t^* = \E[H_t^*\given\F_{t-1}]$ and conditional expectation is an $L^{2+\delta}$ contraction,
+  $\norm{M_t^*}_{L^{2+\delta}} = \norm{H_t^* - D_t^*}_{L^{2+\delta}} \leq \norm{H_t^*}_{L^{2+\delta}} + \norm{D_t^*}_{L^{2+\delta}} \leq 2C$,
+  so $\sup_t\E\norm{M_t^*}^{2+\delta} \leq (2C)^{2+\delta} < \infty$.
   Since $(H_t^*, M_t^*)$ is a measurable function of $(X_t, X_{t-1}, \ldots)$ via the causal representation of Theorem~\ref{thm:mds} in the main paper, and $(X_t)$ is strictly stationary ergodic, the joint process $(H_t^*, M_t^*, X_t)$ is also strictly stationary and ergodic.
   By the ergodic theorem,
   $\frac{1}{T}\sum_{t=1}^T\E[M_t^*(M_t^*)^\top\given\F_{t-1}] \xrightarrow{a.s.} \Sigma_M^*$.
