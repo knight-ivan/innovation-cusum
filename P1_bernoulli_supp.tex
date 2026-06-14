@@ -36,7 +36,7 @@
 \newcommand{\F}{\mathcal{F}}
 \newcommand{\G}{\mathcal{G}}
 \newcommand{\A}{\mathcal{A}}
-\newcommand{\Z}{\mathcal{Z}}
+\newcommand{\Z}{\mathbb{Z}}
 \newcommand{\Tsig}{\mathcal{T}_\infty}
 \newcommand{\norm}[1]{\left\lVert #1 \right\rVert}
 \newcommand{\abs}[1]{\left| #1 \right|}
@@ -386,11 +386,11 @@ Section~\ref{sec:nonstationary} of the main paper.
   $\Delta_0 = \norm{h_0 - H_0^*}_{L^2}$.
 
   \textbf{Part (i): $L^2$-boundedness.}
-  The framework assumes $\phi(0)=0$ (as holds for $\tanh$),
-  so the Lipschitz bound gives $\norm{\phi(u)} \leq L_\phi\norm{u}$.
+  We prove the $C_0$ formula for the case $\phi(0)=0$ (e.g.\ $\tanh$, ReLU),
+  where the Lipschitz bound gives $\norm{\phi(u)} \leq L_\phi\norm{u}$.
   (For activations with $\phi(0)\neq 0$, e.g.\ sigmoid, an additional
-  term $\norm{\phi(0)}/(1-\rho)$ appears in $C_0$, but finiteness is
-  unchanged; the stated $C_0$ formula covers the $\phi(0)=0$ case.)
+  term $L_\phi\norm{\phi(0)}/(1-\rho)$ is added to $C_0$, consistent with the
+  general formula stated in Theorem~\ref{thm:mds} of the main paper.)
   By the Lipschitz bound $\norm{\phi(u)}\leq L_\phi\norm{u}$ and
   Minkowski's inequality in $L^2$,
   \[
@@ -482,9 +482,8 @@ Section~\ref{sec:nonstationary} of the main paper.
   $\mathrm{rank}(W_x)=p$ together with $X_t$ not entirely predictable
   from $\F_{t-1}$.  When $W_x$ has full row rank,
   $W_x^\top v\neq0$ for all nonzero $v$, which implies
-  $\Var(v^\top H_t^*\mid\F_{t-1})>0$ a.s.\ for all nonzero $v$.
-  This argument can fail when $\phi$ is a saturating nonlinearity in a
-  nearly flat region; the nondegeneracy condition~\eqref{eq:nondeg}
+  $\Var(v^\top H_t^*\mid\F_{t-1})>0$ a.s.\ for all nonzero $v$ under \emph{linear} activation (so that variance propagates linearly through $g_t$).
+  This implication can fail for nonlinear $\phi$ in a nearly flat or saturating region; the nondegeneracy condition~\eqref{eq:nondeg}
   is the correct sufficient condition in general.
 \end{proof}
 
@@ -504,6 +503,7 @@ Section~\ref{sec:nonstationary} of the main paper.
   \]
   Stationarity gives a common value $C = c'/(1-\rho) < \infty$, so
   $\sup_t\E\norm{M_t^*}^{2+\delta} \leq (2C)^{2+\delta} < \infty$.
+  Since $(H_t^*, M_t^*)$ is a measurable function of $(X_t, X_{t-1}, \ldots)$ via the causal representation of Theorem~\ref{thm:mds} in the main paper, and $(X_t)$ is strictly stationary ergodic, the joint process $(H_t^*, M_t^*, X_t)$ is also strictly stationary and ergodic.
   By the ergodic theorem,
   $\frac{1}{T}\sum_{t=1}^T\E[M_t^*(M_t^*)^\top\given\F_{t-1}] \xrightarrow{a.s.} \Sigma_M^*$.
   The conditional Lindeberg condition holds because $C_{2+\delta}:=\E\norm{M_0^*}^{2+\delta}<\infty$:
@@ -651,7 +651,7 @@ This is not a proof of gate consistency for an unconstrained trained LSTM.
   \]
 
   \textbf{Step 3: CUSUM representation and union bound.}
-  By the standard recursive argument, the one-sided CUSUM satisfies
+  By the standard recursive argument \citep[p.~20]{siegmund1985sequential}, the one-sided CUSUM satisfies
   $S_t = (\max_{0\leq s\leq t}\sum_{j=s+1}^t(\hat{e}_j-k))^+$ for all $t\geq 0$.
   Hence $\{\tau_h \leq n\} \subseteq \{\max_{0 \leq s < t \leq n}
   \sum_{j=s+1}^t (\hat{e}_j - k) \geq h\}$.

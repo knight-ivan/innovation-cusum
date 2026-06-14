@@ -42,7 +42,7 @@
 \newcommand{\F}{\mathcal{F}}
 \newcommand{\G}{\mathcal{G}}
 \newcommand{\A}{\mathcal{A}}
-\newcommand{\Z}{\mathcal{Z}}
+% \Z intentionally undefined (use \mathbb{Z} for integers, \mathcal{Z} directly for scores)
 \newcommand{\Tsig}{\mathcal{T}_\infty}
 \newcommand{\norm}[1]{\left\lVert #1 \right\rVert}
 \newcommand{\abs}[1]{\left| #1 \right|}
@@ -724,7 +724,7 @@ where $k>0$ is a reference (slack) value and $h>0$ is the alarm threshold.
 \label{sec:empirical}
 
 This section presents eight empirical studies that follow a clear logical
-progression.  Study~MDS examines the MDS property (Theorem~\ref{thm:mds})
+progression; six are reported here and two supporting studies (LS-Diag and J-Surr) are deferred to the Supplementary Material.  Study~MDS examines the MDS property (Theorem~\ref{thm:mds})
 in controlled stationary settings.  Study~CUSUM-CP then asks whether a CUSUM built
 on LSTM innovations outperforms classical detectors at a known change-point,
 empirically testing the prediction of Theorem~\ref{thm:arl}.
@@ -1306,10 +1306,9 @@ from mid-2007 onward, making it difficult to identify a single clean change-poin
 effectively instantaneous at the cross-sector level.
 
 Because $T_0$ is large, no bootstrapping is required; the LSTM is trained on
-rolling windows of length 100 drawn from the in-control period.  The threshold
-$h$ for each method is calibrated by a Monte Carlo binary search targeting
-$\mathrm{ARL}_0 = 250$ estimated over 300 randomly drawn in-control
-subsequences of length 100, ensuring a fair and symmetric comparison.
+rolling windows of length 100 drawn from the in-control period.
+The threshold and slope parameters are fixed at $h=5$ and $k=0.5$, consistent with all other studies.
+The ARL$_0$ values in Table~\ref{tab:etf} are estimated from 300 randomly drawn in-control subsequences of length 100 from the pre-COVID period.
 
 The three CUSUM variants from Study CUSUM-DIM are applied in each configuration.
 M1 (Raw) forms the Mahalanobis score
@@ -1412,7 +1411,7 @@ in-control sequences used to estimate ARL$_0$.
 PELT uses an $\ell_2$ cost (detecting changes in mean and variance) with a fixed
 penalty of $7.0$, selected by grid search on univariate ($d=1$) in-control
 VAR(1) sequences to yield ARL$_0 \approx 202$, approximately matching the Innovation CUSUM's
-ARL$_0 \approx 187$ at $d=1$.  The same penalty is then held fixed across all $d$.
+ARL$_0 \approx 184$ at $d=1$ (this study's $N_{\mathrm{ARL}}=500$ estimate; Study~CUSUM-DIM reports 187 with $N_{\mathrm{ARL}}=2000$, the difference reflecting Monte Carlo variance).  The same penalty is then held fixed across all $d$.
 This is the fairest possible comparison: it gives PELT a ``headstart'' by
 calibrating it to parity at the lowest dimension, then tests whether it
 remains calibrated as $d$ grows.
