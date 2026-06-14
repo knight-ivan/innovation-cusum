@@ -351,7 +351,7 @@ or a tail projection.
   $\Delta_0=\norm{h_0-H_0^*}_{L^2}$.  Then, for each $t\geq 2$:
   \begin{enumerate}[label=(\roman*), itemsep=3pt]
     \item \textbf{($L^2$-boundedness.)}
-      $(h_t)$ is uniformly $L^2$-bounded:
+      $(h_t)$ is uniformly $L^2$-bounded.  When $\phi(0)=0$ (e.g.\ $\tanh$, ReLU):
       \[
         \sup_t\norm{h_t}_{L^2}
         \leq \norm{h_0}_{L^2}
@@ -359,6 +359,7 @@ or a tail projection.
                   +\norm{b_h}\bigr)}{1-\rho}
         =: C_0 < \infty.
       \]
+      For activations with $\phi(0)\neq 0$ (e.g.\ sigmoid), an additional term $L_\phi\|\phi(0)\|/(1-\rho)$ is added to $C_0$; finiteness is unchanged.
     \item \textbf{(MDS decomposition.)}
       The Doob decomposition $h_t=D_t+M_t$ holds, where
       $D_t:=\E[h_t\given\F_{t-1}]$ is $\F_{t-1}$-measurable (predictable)
@@ -970,7 +971,7 @@ Table~\ref{tab:mds-var} reports the Hosking MDS pass rate (fraction of test
 sequences not rejected at 5\%).
 LSTM innovations pass the MDS test at rates 0.89--0.99 across all
 $(d, \rho)$ combinations, closely matching the OLS-residual baseline
-and uniformly exceeding the nominal 0.95 level in the lower-persistence
+and at or above the nominal 0.95 level in the lower-persistence
 configurations.
 The slight dip at $\rho_{\mathrm{op}}=0.95$ (pass rate 0.89--0.95) reflects
 the slower convergence of the hidden state when the process is near-unit-root;
@@ -1325,10 +1326,8 @@ Table~\ref{tab:etf} summarizes the results across both configurations
 ($h=5$, $k=0.5$, 500 Monte Carlo sequences of length 500 for ARL$_0$
 estimation).  In Part~A ($d=1$), the Innovation CUSUM alarms at $t=17$, fifteen steps
 before the officially designated COVID peak $\tau^*=32$.
-The negative delay should be interpreted cautiously: it may reflect genuine
-early-warning signals in the LSTM innovation process — the S\&P 500 sell-off
-began in early February, two weeks before the February 19 peak — rather than a
-false alarm in the strict pre-change sense.  M1 and M2 alarm at $t=36$
+Under the formal definition of Section~3.1, any alarm before $\tau^*$ constitutes a false alarm.
+The negative delay should nonetheless be interpreted cautiously: the S\&P 500 sell-off began in early February, two weeks before the officially designated February 19 peak, so the true onset of the distributional shift is itself uncertain and the pre-$\tau^*$ alarm may reflect genuine early-warning signals in the LSTM innovation process.  M1 and M2 alarm at $t=36$
 ($+4$ delay), after the peak.
 Their in-control ARL$_0$ values are lower than the Innovation CUSUM's (38 and 36
 versus 43), indicating more frequent false alarms under the pre-COVID

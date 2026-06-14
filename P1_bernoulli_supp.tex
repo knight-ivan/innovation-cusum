@@ -267,6 +267,11 @@ We give precise definitions of the two architectures whose hidden states we anal
   The initial state $h_0 \in \R^d$ is fixed or learnable; the $L^2$ theory below assumes it is square-integrable.
 \end{definition}
 
+\begin{remark}[Notation]
+  In this appendix $d$ denotes the hidden-state dimension and $p$ the input dimension.
+  In the main paper (Section~2), the same dimensions are written $p$ (hidden) and $d_{\mathrm{in}}$ (input); the symbol $d$ in the main paper refers to the observation dimension in the empirical studies (Section~4).
+\end{remark}
+
 \begin{assumption}[Effective operator-norm contractivity]
 \label{ass:spectral}
   Throughout the paper we assume
@@ -417,7 +422,8 @@ Section~\ref{sec:nonstationary} of the main paper.
   Conditional on $\F_{t-1}$, the previous state $h_{t-1}$ is fixed and
   the only new random input is $X_t$.  Put $\mu_t = \E[X_t\mid\F_{t-1}]$
   and define $g_t(x) := \phi(W_h h_{t-1} + W_x x + b_h)$.
-  Since conditional expectation is the $L^2$ projection onto $\F_{t-1}$,
+  Since $h_{t-1}$ is $\F_{t-1}$-measurable, $g_t(\mu_t) = \phi(W_hh_{t-1}+W_x\mu_t+b_h)$ is $\F_{t-1}$-measurable.
+  By the best-approximation property of the conditional expectation ($D_t = \E[h_t|\F_{t-1}]$ minimizes the $L^2$ distance to $h_t$ over all $\F_{t-1}$-measurable functions),
   \begin{align*}
     \E\bigl\{\norm{M_t}^2\mid\F_{t-1}\bigr\}
     &\leq \E\bigl\{\norm{g_t(X_t) - g_t(\mu_t)}^2\mid\F_{t-1}\bigr\} \\
@@ -682,8 +688,9 @@ This is not a proof of gate consistency for an unconstrained trained LSTM.
   inequality and Jensen's inequality,
   $\norm{b_t}_2 \leq \norm{\E[\hat{e}_t\given\F_{t-1}]}_2 + \norm{\mu_0}_2
     \leq \eta_d + \eta_d = 2\eta_d$,
-  where the second term uses $\norm{\mu_0}_2 = \norm{\E[b_t']}_2 \leq
-  \E\norm{b_t'}_2 \leq \eta_d$ (with $b_t' = \E[\hat{e}_t\given\F_{t-1}]$).
+  where the second term uses $\norm{\mu_0}_2 \leq \E\norm{\E[\hat{e}_t|\F_{t-1}]}_2
+  \leq \norm{\E[\hat{e}_t|\F_{t-1}]}_{L^2(\Omega\to\R^d)} \leq \eta_d$
+  (Jensen's inequality and Assumption~(B1)).
   Write $u_t := \hat{e}_t - \mu_0 - b_t$ (the centered MDS part;
   $\E[u_t\given\F_{t-1}] = 0$ by construction).
   Expanding, using $\E[u_t\given\F_{t-1}] = 0$ to kill the cross-term, and
