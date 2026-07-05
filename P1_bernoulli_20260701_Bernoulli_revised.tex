@@ -155,6 +155,13 @@ misspecification, short calibration windows, and multivariate monitoring.
 \kwd{locally stationary processes}
 \end{keyword}
 
+\begin{keyword}[class=MSC]
+\kwd[Primary ]{62L10}
+\kwd{60G42}
+\kwd[; secondary ]{62M10}
+\kwd{62M45}
+\end{keyword}
+
 \end{frontmatter}
 
 \section{Introduction}
@@ -169,6 +176,25 @@ Several commonly used tools solve parts of this problem. Classical CUSUM procedu
 \citep{killick2012optimal} and Bayesian online methods
 \citep{adams2007bayesian} offer flexible alternatives. These approaches, however, generally lose their false-alarm guarantees once the serial dependence structure is unknown or the observation dimension grows. Classical time-series models handle dependence explicitly: autoregressive models fix the lag order, hidden Markov models encode memory through a finite state space, and Kalman filters propagate a Gaussian sufficient statistic
 \citep{box2015time,hamilton1994time}. They inherit clean guarantees when the model is correct, but only at the price of requiring the model to be correct. What is missing is a monitoring scheme whose false-alarm behavior remains valid under unknown serial dependence and growing dimension.
+
+A further strand of literature monitors \emph{residuals} rather than raw
+observations.  Monitoring with estimated parameters goes back at least to
+\citet{chu1996monitoring}; the asymptotics of sequential residual
+empirical processes were developed by \citet{bai1994residuals};
+\citet{lai1995sequential} treats sequential detection in dynamical
+systems; and \citet{aue2013structural} survey structural-break detection
+for time series.  These procedures monitor the residuals of a
+\emph{specified} parametric class, and their guarantees are tied to that
+class being correct.  In a complementary direction, conformal test
+martingales and e-detectors \citep{vovk2005algorithmic,shin2024edetectors}
+provide anytime-valid nonparametric monitoring under exchangeability-type
+conditions or a known in-control reference.  The present paper sits
+between the two strands: like the residual tradition it monitors one-step
+prediction errors, but the predictor is learned rather than specified;
+like the e-detector tradition it avoids a parametric model of the
+dynamics, but the in-control requirement is an explicit residual
+drift-and-tail condition rather than exchangeability, and the monitor is
+the classical Page CUSUM.
 
 This paper takes a route with a long pedigree in time-series analysis:
 transform the observations into innovations, then monitor the innovations.
@@ -388,7 +414,11 @@ decreasing filtration $\G_n$).
   itself imply that an RNN hidden state converges to a tail projection.  The
   hidden state is a stochastic recurrence driven by the observations, and its
   long-run behavior must be analyzed separately, as in
-  Theorem~\ref{thm:mds}.
+  Theorem~\ref{thm:mds}.  The lemma's role here is scoping: it identifies
+  the tail $\sigma$-algebra as the natural carrier of any ``long-run
+  summary'' interpretation, and it motivates conditioning on the two-sided
+  past in Section~\ref{sec:rnn-decomp}, where the object of analysis is
+  the stationary innovation rather than a tail limit of $h_t$.
 \end{remark}
 
 \begin{remark}[Non-tail-measurable targets]
@@ -984,9 +1014,9 @@ the in-control conditional-drift condition~(B1).
 
 \begin{proof}
   Work under the conditional probability law given the event
-  $\{\tau_h>\tau\}$.  This event is $\F_\tau$-measurable, and the stated
-  post-change drift and bounded-increment assumptions are assumed to hold
-  under this conditional law for all $t>\tau$.  Write $Y_j=\hat e_j-k$.
+  $\{\tau_h>\tau\}$.  This event is $\F_\tau$-measurable, and since
+  (O1)--(O2) are almost-sure conditions they continue to hold under the
+  conditional law.  Write $Y_j=\hat e_j-k$.
   The one-sided CUSUM admits the representation
   $S_t=\bigl(\max_{0\leq s\leq t}\sum_{j=s+1}^t Y_j\bigr)^+$; taking the
   start index $s=\tau$ gives
@@ -1208,7 +1238,7 @@ change-point.
 \subsection{Study MDS: Stationary Case --- Prediction-Residual MDS Diagnostic}
 \label{sec:mds}
 
-We train one \texttt{InstrumentedLSTM} (hidden dimension $d=32$, spectral
+We train one \texttt{InstrumentedLSTM} (hidden dimension $p=32$, spectral
 normalization on $W_h$, Adam, $N=1000$ training sequences of length $T=150$,
 40 epochs) on each process and compute one-step-ahead residuals
 $r_t = X_{t+1} - \hat{y}_t$ on $N_\text{test} = 1000$ independent sequences
@@ -1425,6 +1455,10 @@ for M3 the LSTM innovation score is analogously aggregated and calibrated
 on burn-in in-control sequences.
 Threshold $h=5$, $N_{\mathrm{test}}=1000$ change-point sequences,
 $N_{\mathrm{ARL}}=2000$ in-control sequences.
+ARL$_0$ is the mean alarm time over in-control sequences of length
+$5T=1000$, with alarm-free runs right-censored at the sequence length;
+censoring biases the estimate downward, so the reported ARL$_0$ values
+are conservative.
 
 The deterioration of M1 and M2 with dimension has a clear structural explanation.
 When the observations are autocorrelated (as under any VAR with
@@ -1596,7 +1630,11 @@ effectively instantaneous at the cross-sector level.
 Because $T_0$ is large, no bootstrapping is required; the LSTM is trained on
 rolling windows of length 100 drawn from the in-control period.
 The threshold and slope parameters are fixed at $h=5$ and $k=0.5$, consistent with all other studies.
-The ARL$_0$ values in Table~\ref{tab:etf} are estimated from 300 randomly drawn in-control subsequences of length 100 from the pre-COVID period.
+The ARL$_0$ values in Table~\ref{tab:etf} are estimated from 500
+in-control score sequences of length 500, generated by block bootstrap
+(block length 10) from the pre-COVID calibration scores; alarm-free runs
+are right-censored at the sequence length, so the estimates are
+conservative.
 
 The three CUSUM variants from Study CUSUM-DIM are applied in each configuration.
 M1 (Raw) forms the Mahalanobis score
@@ -1644,7 +1682,8 @@ flat until after the February 19 peak.
 \centering
 \caption{Study ETF: US equity sector ETF CUSUM results ($h=5$, $k=0.5$).
   Known change-point $\tau^*=32$ (2020-02-19).
-  ARL$_0$ estimated from 300 randomly drawn in-control subsequences of length~100.
+  ARL$_0$ estimated from 500 block-bootstrapped in-control score sequences
+  of length~500, right-censored at the sequence length.
   Delay = alarm time $-$ $\tau^*$ (negative = before the break).}
 \label{tab:etf}
 \small
