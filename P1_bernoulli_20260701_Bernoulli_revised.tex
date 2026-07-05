@@ -56,18 +56,27 @@
 
 \endlocaldefs
 
-% Cross-references to Supplementary Material (auto-generated from supplement .aux)
+%% Cross-references to the companion document are LIVE: the companion's
+%% .aux is read at compile time (only its \newlabel entries are kept), so
+%% renumbering can never go stale.  The xr package is NOT used because the
+%% imsart class forbids it; this macro reproduces the same behaviour.
+%% Cold-start compile order: main -> supplement -> main (then bibtex + two
+%% more passes each).  For journal submission (files compiled in
+%% isolation), freeze first:  python3 make_frozen_xrefs.py
 \makeatletter
-\expandafter\def\csname r@app:background\endcsname{{A}{1}{Background and Preliminaries}{section.1}{}}
-\expandafter\def\csname r@app:proofs\endcsname{{B}{4}{Proofs}{section.2}{}}
-\expandafter\def\csname r@app:stationary-causal\endcsname{{B.10}{11}{Stationary Causal Solution and Geometric Coupling}{subsection.2.10}{}}
-\expandafter\def\csname r@app:supp-empirical\endcsname{{D}{13}{Empirical Supplement}{section.4}{}}
-\expandafter\def\csname r@app:supp-eqarl\endcsname{{D.5}{18}{Study CUSUM-EQARL: Equal-$\mathrm {ARL}_0$ Calibrated Comparison}{subsection.4.5}{}}
-\expandafter\def\csname r@app:supp-jsurr\endcsname{{D.8}{23}{Study J-Surr: $J_t$ Surrogate Comparison (Study~S3)}{subsection.4.8}{}}
-\expandafter\def\csname r@app:supp-kal\endcsname{{D.2}{13}{Study KAL: Kalman Filter Benchmark}{subsection.4.2}{}}
-\expandafter\def\csname r@app:supp-nile\endcsname{{D.3}{15}{Study NILE: Real-Data Application --- Nile River Annual Flows}{subsection.4.3}{}}
-\expandafter\def\csname r@prop:stationary-causal\endcsname{{B.1}{11}{Stationary causal solution and geometric coupling}{theorem.2.1}{}}
-\expandafter\def\csname r@tab:assumption-map\endcsname{{B.1}{5}{Map of the main-paper results. The top block (tier one) concerns the contractive RNN and its innovations; the bottom block (tier two) concerns the Innovation CUSUM detector and requires no RNN contraction theorem, only conditional residual-drift and tail conditions on fitted residuals}{table.1}{}}
+\newcommand{\inputcompanionaux}[1]{%
+  \begingroup
+    \let\citation\@gobble
+    \let\bibdata\@gobble
+    \let\bibstyle\@gobble
+    \def\bibcite##1##2{}%
+    \long\def\@writefile##1##2{}%
+    \def\newlabel##1##2{\global\expandafter\def\csname r@##1\endcsname{##2}}%
+    \IfFileExists{#1.aux}%
+      {\@@input #1.aux\relax}%
+      {\typeout{** companion #1.aux not found; run pdflatex on it first}}%
+  \endgroup}
+\inputcompanionaux{P1_bernoulli_supp_20260701_Bernoulli_revised}
 \makeatother
 
 % =============================================================================

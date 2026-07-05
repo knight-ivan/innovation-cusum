@@ -50,27 +50,27 @@
 
 \endlocaldefs
 
-% Cross-references to main paper (auto-generated from main .aux)
+%% Cross-references to the companion document are LIVE: the companion's
+%% .aux is read at compile time (only its \newlabel entries are kept), so
+%% renumbering can never go stale.  The xr package is NOT used because the
+%% imsart class forbids it; this macro reproduces the same behaviour.
+%% Cold-start compile order: main -> supplement -> main (then bibtex + two
+%% more passes each).  For journal submission (files compiled in
+%% isolation), freeze first:  python3 make_frozen_xrefs.py
 \makeatletter
-\expandafter\def\csname r@cor:dim\endcsname{{3.9}{12}{Dimension-stable ARL}{theorem.3.9}{}}
-\expandafter\def\csname r@cor:fclt\endcsname{{2.8}{6}{Functional CLT for MDS innovations}{theorem.2.8}{}}
-\expandafter\def\csname r@cor:ls\endcsname{{2.14}{9}{Approximate local stationary decomposition}{theorem.2.14}{}}
-\expandafter\def\csname r@cor:tradeoff\endcsname{{3.7}{12}{Exponential-ARL / logarithmic-delay trade-off}{theorem.3.7}{}}
-\expandafter\def\csname r@cor:twosided\endcsname{{3.5}{11}{Two-sided Innovation CUSUM}{theorem.3.5}{}}
-\expandafter\def\csname r@eq:Mbound\endcsname{{1}{5}{MDS Decomposition with Stabilization Rate}{equation.2.1}{}}
-\expandafter\def\csname r@eq:local-approx-bound\endcsname{{9}{9}{Approximate local stationary decomposition}{equation.2.9}{}}
-\expandafter\def\csname r@eq:nondeg\endcsname{{5}{6}{MDS Decomposition with Stabilization Rate}{equation.2.5}{}}
-\expandafter\def\csname r@lem:equiv\endcsname{{2.1}{4}{Equivalence of forward and tail limits}{theorem.2.1}{}}
-\expandafter\def\csname r@prop:predresid\endcsname{{2.9}{7}{Bayes prediction residuals are martingale differences}{theorem.2.9}{}}
-\expandafter\def\csname r@prop:rnn-resid-bridge\endcsname{{2.10}{7}{Bridge from recurrent states to prediction innovations}{theorem.2.10}{}}
-\expandafter\def\csname r@prop:whiteness\endcsname{{2.11}{8}{Innovation defect and the misspecification gap}{theorem.2.11}{}}
-\expandafter\def\csname r@sec:empirical\endcsname{{4}{13}{Empirical Studies and Discussion}{section.4}{}}
-\expandafter\def\csname r@sec:nonstationary\endcsname{{2.3}{8}{Extension to Non-Stationary Processes}{subsection.2.3}{}}
-\expandafter\def\csname r@sec:pathway\endcsname{{3}{9}{Innovation CUSUM: In-Control False-Alarm Theory}{section.3}{}}
-\expandafter\def\csname r@sec:theory\endcsname{{2}{3}{Methodology}{section.2}{}}
-\expandafter\def\csname r@thm:arl\endcsname{{3.2}{10}{In-control ARL lower bound for the Innovation CUSUM}{theorem.3.2}{}}
-\expandafter\def\csname r@thm:delay\endcsname{{3.6}{11}{Out-of-control detection-delay upper bound}{theorem.3.6}{}}
-\expandafter\def\csname r@thm:mds\endcsname{{2.5}{5}{MDS Decomposition with Stabilization Rate}{theorem.2.5}{}}
+\newcommand{\inputcompanionaux}[1]{%
+  \begingroup
+    \let\citation\@gobble
+    \let\bibdata\@gobble
+    \let\bibstyle\@gobble
+    \def\bibcite##1##2{}%
+    \long\def\@writefile##1##2{}%
+    \def\newlabel##1##2{\global\expandafter\def\csname r@##1\endcsname{##2}}%
+    \IfFileExists{#1.aux}%
+      {\@@input #1.aux\relax}%
+      {\typeout{** companion #1.aux not found; run pdflatex on it first}}%
+  \endgroup}
+\inputcompanionaux{P1_bernoulli_20260701_Bernoulli_revised}
 \makeatother
 
 % =============================================================================
