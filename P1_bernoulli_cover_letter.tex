@@ -1,0 +1,82 @@
+%!TEX TS-program = pdflatex
+%!TEX encoding = UTF-8 Unicode
+% =============================================================================
+%  Cover letter -- Bernoulli submission
+% =============================================================================
+\documentclass[11pt]{letter}
+\usepackage[a4paper,top=2.0cm,bottom=2.0cm,left=2.5cm,right=2.5cm]{geometry}
+\usepackage{microtype}
+\usepackage[T1]{fontenc}
+
+%\signature{Yuan-chin Ivan Chang}
+%\address{Yuan-chin Ivan Chang\\
+%  Institute of Statistical Science\\
+ % Academia Sinica\\
+ % 128 Academia Road, Section~2, Nankang\\
+%  Taipei 115, Taiwan\\
+%  \texttt{ycchang@stat.sinica.edu.tw}}
+
+\begin{document}
+
+\begin{letter}{The Editors\\ \textit{Bernoulli}\\ Bernoulli Society for
+  Mathematical Statistics and Probability}
+
+\opening{Dear Editors,}
+
+I am pleased to submit the enclosed manuscript, \textit{``Martingale
+Prediction Innovations from Recurrent Networks for Sequential Change-Point
+Detection,''} for consideration for publication in \textit{Bernoulli}.
+
+The contribution is theoretical and deliberately two-tier.  At the first
+tier, for operator-norm contractive recurrent networks, the hidden state
+admits a Doob decomposition into a predictable component and a
+martingale-difference innovation; the transient innovation approaches its
+stationary counterpart geometrically, and the accumulated innovations obey
+a functional central limit theorem.  A bridge proposition translates this
+state-level stabilization into a conditional-drift bound for prediction
+residuals under a Lipschitz readout.  At the second tier, for any fitted
+predictor whose residuals satisfy explicit conditional-drift and
+sub-Gaussian tail conditions, the Innovation CUSUM enjoys an exponential
+in-control average-run-length lower bound and a logarithmic
+detection-delay upper bound --- the classical trade-off, model-free with
+respect to the data-generating dynamics though not assumption-free.  A
+further proposition identifies when learning is statistically useful:
+under a nonlinear conditional mean, fixed linear residualization carries
+an irreducible innovation defect that a consistent learned predictor
+removes.
+
+The empirical studies examine these mechanisms rather than claim a
+performance victory: learned innovations are closer to martingale
+differences under misspecification, calibration is more stable when the
+in-control window is short, and equal-ARL comparisons delimit when the
+learned detector is competitive with correctly specified parametric
+procedures.  The work sits at the interface of probability and
+mathematical statistics, between the residual-based monitoring tradition
+(where the model class is specified) and conformal/e-detector approaches
+(where exchangeability-type conditions replace it), and is, to our
+knowledge, the first to combine recurrent-state innovation theory with
+sequential CUSUM calibration for a learned predictor.
+
+In the interest of full transparency, I note that a companion manuscript,
+\textit{``Backward Coherence and Hidden-State Stability in Recurrent Neural
+Networks: A Quasi-Reverse-Martingale Theory''} (arXiv:2606.08934), develops a
+complementary \emph{reverse}-filtration theory for the convergence and stability
+of the hidden state itself. The present paper works in the \emph{forward}
+filtration, with the innovations; the two manuscripts are self-contained and
+neither relies on the other's results. I would be glad to provide the companion
+to the editors or referees on request.
+
+The manuscript is original, has not been published previously, and is not under
+consideration for publication elsewhere. All proofs, simulation details, and
+reproducible code are provided in the accompanying Supplementary Material. I have
+no conflicts of interest to declare.
+
+Thank you for your consideration. I would be happy to provide any additional
+information the editors may require.
+
+\closing{Sincerely,}
+Yuan-chin Ivan Chang\\
+ycchang@sinica.edu.tw
+
+\end{letter}
+\end{document}
