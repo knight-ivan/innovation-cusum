@@ -50,26 +50,46 @@
 
 \endlocaldefs
 
-%% Cross-references to the companion document are LIVE: the companion's
-%% .aux is read at compile time (only its \newlabel entries are kept), so
-%% renumbering can never go stale.  The xr package is NOT used because the
-%% imsart class forbids it; this macro reproduces the same behaviour.
-%% Cold-start compile order: main -> supplement -> main (then bibtex + two
-%% more passes each).  For journal submission (files compiled in
-%% isolation), freeze first:  python3 make_frozen_xrefs.py
+%% Cross-references to the companion document are LIVE and SELF-FREEZING.
+%% While the companion's .aux is present it is read at compile time (only
+%% its \newlabel entries are kept), so renumbering can never go stale, and
+%% a snapshot \jobname-xrefs.tex is (re)written automatically on every
+%% compile.  When the companion's .aux is absent -- e.g. the journal
+%% compiling this file in isolation -- the snapshot is used instead.
+%% Submission: upload \jobname-xrefs.tex together with the source, exactly
+%% like the .bbl file.  (The xr package is NOT used: imsart forbids it.)
 \makeatletter
-\newcommand{\inputcompanionaux}[1]{%
+\newwrite\companion@xrefs@out
+\newcommand{\companionlabel}[2]{%
+  \global\expandafter\def\csname r@#1\endcsname{#2}}
+\def\companion@readaux#1{%
+  \immediate\openout\companion@xrefs@out=\jobname-xrefs.tex
+  \immediate\write\companion@xrefs@out{%
+    \@percentchar\space Snapshot of the cross-references in #1.aux.}%
+  \immediate\write\companion@xrefs@out{%
+    \@percentchar\space Auto-regenerated on every compile; do not edit.}%
   \begingroup
     \let\citation\@gobble
     \let\bibdata\@gobble
     \let\bibstyle\@gobble
     \def\bibcite##1##2{}%
     \long\def\@writefile##1##2{}%
-    \def\newlabel##1##2{\global\expandafter\def\csname r@##1\endcsname{##2}}%
-    \IfFileExists{#1.aux}%
-      {\@@input #1.aux\relax}%
-      {\typeout{** companion #1.aux not found; run pdflatex on it first}}%
-  \endgroup}
+    \def\newlabel##1##2{%
+      \companionlabel{##1}{##2}%
+      \immediate\write\companion@xrefs@out{%
+        \string\companionlabel{##1}{\unexpanded{##2}}}}%
+    \@@input #1.aux\relax
+  \endgroup
+  \immediate\closeout\companion@xrefs@out}
+\def\companion@fallback#1{%
+  \IfFileExists{\jobname-xrefs.tex}%
+    {\typeout{** #1.aux not found; using frozen snapshot \jobname-xrefs.tex}%
+     \input{\jobname-xrefs.tex}}%
+    {\typeout{** #1.aux not found and no snapshot; companion refs undefined}}}
+\newcommand{\inputcompanionaux}[1]{%
+  \IfFileExists{#1.aux}%
+    {\companion@readaux{#1}}%
+    {\companion@fallback{#1}}}
 \inputcompanionaux{P1_bernoulli_20260701_Bernoulli_revised}
 \makeatother
 
