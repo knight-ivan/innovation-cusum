@@ -98,8 +98,8 @@
 
 \begin{frontmatter}
 \title{Supplementary Material for:\\[0.3em]
-  Martingale Innovations from Contractive Recurrent Networks
-  and Dimension-Robust Change-Point Detection}
+  Martingale Innovations from Contractive Recurrent Networks:\\[0.1em]
+  A Distribution-Free Foundation for Sequential Monitoring}
 \runtitle{Supplementary Material}
 \author{\inits{Y.-C.\,I.}\fnms{Yuan-chin Ivan}~\snm{Chang}}
 \end{frontmatter}
@@ -299,9 +299,11 @@ We give precise definitions of the two architectures whose hidden states we anal
   In the main paper (Section~2), the same dimensions are written $p$ (hidden) and $d_{\mathrm{in}}$ (input); the symbol $d$ in the main paper refers to the observation dimension in the empirical studies (Section~4).
 \end{remark}
 
-\begin{assumption}[Effective operator-norm contractivity]
-\label{ass:spectral}
-  Throughout the paper we assume
+\begin{assumption}[Effective operator-norm contractivity, restated]
+\label{ass:spectral-supp}
+  This restates the main paper's contractivity assumption for the reader's
+  convenience; it is not a separate hypothesis.  Throughout the paper we
+  assume
   \[
     L_\phi\norm{W_h}_{\mathrm{op}}<1,
   \]
@@ -402,6 +404,9 @@ Prop~\ref{prop:rnn-resid-bridge} & Recurrent predictor residuals
 Prop~\ref{prop:whiteness} & Fitted vs.\ linear residuals
   & nonlinear conditional mean; consistent learned predictor
   & irreducible linear defect; learned defect $\to0$ \\
+Prop~\ref{prop:whiteness-rate} & Fitted-predictor defect $\eta_T$
+  & approximation rate $W^{-2\beta}$; $\beta$-mixing excess-risk rate
+  & $\eta_T=\widetilde O(T^{-\beta/(2\beta+1)})$; margin $\kappa_T\uparrow k$ \\
 \midrule
 Thm~\ref{thm:arl} & Innovation CUSUM score
   & drift margin $k>\eta$, conditional sub-Gaussianity
@@ -412,6 +417,9 @@ Thm~\ref{thm:delay} & Innovation CUSUM score
 Cor~\ref{cor:tradeoff} & Innovation CUSUM score
   & Assumptions above
   & exponential-ARL / logarithmic-delay trade-off \\
+Thm~\ref{thm:optimality} & Innovation CUSUM score
+  & Assumptions above; Gaussian innovation shift for exactness
+  & Lorden order-optimality; exact minimax optimality (Gaussian) \\
 Cor~\ref{cor:dim} & Mahalanobis innovation score
   & uniform-in-$d$: bounded $\eta_d$, $\lambda_{\min}(\Sigma_0)\ge c_0$,
     conditional homoskedasticity, $O(1)$ score sub-Gaussianity
@@ -678,6 +686,61 @@ Cor~\ref{cor:dim} & Mahalanobis innovation score
   and the $L^2$ bound follows from $\sup_t\norm{\hat{m}_t - m_t}_{L^2} \leq \eta$.
 \end{proof}
 
+\subsection{Proof of Proposition~\ref{prop:rnn-resid-bridge} of the main paper (Bridge from Recurrent States to Prediction Innovations)}
+\label{app:proof-bridge}
+
+\begin{proof}[Proof of Proposition~\ref{prop:rnn-resid-bridge} in the main paper]
+  By the triangle inequality and Lipschitz continuity of $o$,
+  \[
+    \norm{o(h_t)-m_t}_{L^2}
+    \leq
+    \norm{o(h_t)-o(H_t^*)}_{L^2}
+    +
+    \norm{o(H_t^*)-m_t}_{L^2}
+    \leq
+    L_o\norm{h_t-H_t^*}_{L^2}
+    +
+    \norm{o(H_t^*)-m_t}_{L^2}.
+  \]
+  Proposition~\ref{prop:stationary-causal} gives
+  $\norm{h_t-H_t^*}_{L^2}\leq\rho^t\Delta_0$, proving
+  \eqref{eq:bridge-bound}.  The conditional-drift bound follows from
+  Proposition~\ref{prop:predresid}, since
+  $\E[\hat e_{t+1}\given\F_t]=m_t-\hat m_t$.  The final statement is obtained
+  by substituting the stated readout-error bound.
+\end{proof}
+
+\subsection{Proof of Proposition~\ref{prop:whiteness} of the main paper (Innovation Defect and the Misspecification Gap)}
+\label{app:proof-whiteness}
+
+\begin{proof}[Proof of Proposition~\ref{prop:whiteness} in the main paper]
+  (i) Since $\hat m_t$ is $\F_t$-measurable,
+  $\E[\hat e_{t+1}\given\F_t]=\E[X_{t+1}\given\F_t]-\hat m_t=m_t-\hat m_t$.
+  (ii) $m_t^{\mathrm{lin}}$ is the $L^2$-orthogonal projection of $X_{t+1}$
+  onto $L_t$, and among $\F_t$-measurable predictors the conditional mean
+  $m_t$ is itself the projection onto all of $L^2(\F_t)$; hence
+  $\norm{m_t-m_t^{\mathrm{lin}}}_{L^2}=\mathrm{dist}_{L^2}(m_t,L_t)$, which is
+  constant in $t$ by stationarity and strictly positive unless $m_0\in L_0$.
+  (iii) is immediate from (i) and the triangle inequality.
+\end{proof}
+
+\subsection{Proof of Proposition~\ref{prop:whiteness-rate} of the main paper (Rate of the Innovation Defect and of the Guarantee)}
+\label{app:proof-whiteness-rate}
+
+\begin{proof}[Proof of Proposition~\ref{prop:whiteness-rate} in the main paper]
+  (i) Since $m_t=\E[X_{t+1}\mid\F_t]$ is the $L^2$ projection of $X_{t+1}$
+  onto $\F_t$, the Pythagorean identity gives
+  $R(\phi)=\sigma_e^2+\E\|m_t-g_\phi(h_t)\|^2$; with
+  $\eta_T=\|m_t-\hat m_t\|_{L^2}$ from Proposition~\ref{prop:whiteness}(i) this
+  yields $\eta_T^2=R(\hat\phi)-\sigma_e^2$, and adding and subtracting
+  $\inf_{\phi\in\Phi}R(\phi)$ gives the split, with
+  $\varepsilon_{\mathrm{app}}=\inf_{\phi\in\Phi}R(\phi)-\sigma_e^2
+   =\inf_{\phi\in\Phi}\E\|m_t-g_\phi(h_t)\|^2$.
+  (ii) is the stated balance of the two rate assumptions; and~(iii)
+  substitutes $\eta_T$ into the drift margin $\kappa_T=k-\eta_T$ of
+  Theorems~\ref{thm:arl} and~\ref{thm:optimality}.
+\end{proof}
+
 \subsection{Heuristic Derivation: Forget-Gate Information Ratio}
 \label{app:proof-forget-heuristic}
 
@@ -734,69 +797,66 @@ This is not a proof of gate consistency for an unconstrained trained LSTM.
 \label{app:proof-thmarl}
 
 \begin{proof}[Proof of Theorem~\ref{thm:arl} in the main paper]
-  We work throughout under Assumptions~(B1)--(B3) of the main paper.
-  Write $\kappa = k - \eta > 0$ for the net drift margin.
+  Write $Y_t=\hat e_t-k$ and $\kappa=k-\eta>0$, and let
+  $\theta^\ast=2\kappa/\sigma^2$ be the Lundberg tilt.  The argument is a
+  renewal (excursion) bound; no union bound over time pairs is used.
 
   \textbf{Step 1: Exponential supermartingale.}
-  For any $\lambda > 0$ and any pair $0 \leq s < t$, define
-  \[
-    \Lambda_t^{(s)}(\lambda)
-    := \exp\!\left(\lambda\sum_{j=s+1}^{t}(\hat{e}_j - k)
-        - (t-s)\bigl[\lambda\eta + \tfrac{1}{2}\lambda^2\sigma^2
-                      - \lambda k\bigr]\right).
-  \]
   By Assumption~(B2) (conditional sub-Gaussianity) and~(B1)
-  ($\E[\hat{e}_t\given\F_{t-1}] \leq \eta$),
+  ($\E[\hat e_t\given\F_{t-1}]\leq\eta$), for every $\lambda>0$,
   \[
-    \E\!\left[e^{\lambda\hat{e}_t}\given\F_{t-1}\right]
-    \leq e^{\lambda\eta + \lambda^2\sigma^2/2},
+    \E\!\left[e^{\lambda Y_t}\given\F_{t-1}\right]
+    = e^{-\lambda k}\,\E\!\left[e^{\lambda\hat e_t}\given\F_{t-1}\right]
+    \leq e^{-\lambda k+\lambda\eta+\lambda^2\sigma^2/2}
+    = e^{-\lambda\kappa+\lambda^2\sigma^2/2}.
   \]
-  so $\E[\Lambda_t^{(s)}(\lambda)\given\F_{t-1}] \leq \Lambda_{t-1}^{(s)}(\lambda)$:
-  the process is a non-negative supermartingale with $\Lambda_s^{(s)}(\lambda) = 1$.
+  The exponent $-\lambda\kappa+\tfrac12\lambda^2\sigma^2$ vanishes at
+  $\lambda=\theta^\ast=2\kappa/\sigma^2$, so
+  $\E[e^{\theta^\ast Y_t}\given\F_{t-1}]\leq 1$; hence, for any fixed start
+  index $s$, the process
+  $t\mapsto\exp\{\theta^\ast\sum_{j=s+1}^t Y_j\}$ is a non-negative
+  $(\F_t)_{t\geq s}$-supermartingale equal to $1$ at $t=s$.
 
-  \textbf{Step 2: Optimal tilt and segment-sum bound.}
-  Write $g(\lambda) := \lambda\eta + \tfrac{1}{2}\lambda^2\sigma^2 - \lambda k
-  = -\lambda\kappa + \tfrac{1}{2}\lambda^2\sigma^2$ for the drift term in
-  $\Lambda_t^{(s)}(\lambda)$.  Since
-  $\exp\{\lambda\sum_{j=s+1}^t(\hat e_j - k)\}
-   = \Lambda_t^{(s)}(\lambda)\,e^{(t-s)g(\lambda)}$,
-  any $\lambda$ with $g(\lambda)\leq 0$ yields a bound that is uniform in
-  the segment length $t-s$; the condition $g(\lambda)\leq 0$ holds exactly
-  for $0<\lambda\leq 2\kappa/\sigma^2$, and the largest admissible tilt
-  $\lambda^* = 2\kappa/\sigma^2$ (the positive zero of $g$, rather than its
-  minimizer $\kappa/\sigma^2$) gives the best exponent.
-  With $g(\lambda^*)=0$,
-  $\exp\{\lambda^*\sum_{j=s+1}^t(\hat e_j - k)\} = \Lambda_t^{(s)}(\lambda^*)$,
-  so by Markov's inequality and the supermartingale bound
-  $\E_0[\Lambda_t^{(s)}(\lambda^*)] \leq 1$:
+  \textbf{Step 2: Excursion structure.}
+  The one-sided CUSUM $S_t=(S_{t-1}+Y_t)^+$ returns to zero at the stopping
+  times $\rho_0=0$ and $\rho_i=\inf\{t>\rho_{i-1}:S_t=0\}$.  Between two
+  consecutive returns the reflection at $0$ is inactive, so on
+  $(\rho_{i-1},\rho_i]$ the statistic equals the running sum from the last
+  reset, $S_t=\sum_{j=\rho_{i-1}+1}^t Y_j$.  Call $(\rho_{i-1},\rho_i]$ the
+  $i$-th \emph{excursion}, and let
+  $E_i=\{\max_{\rho_{i-1}<t\leq\rho_i}S_t\geq h\}$ be the event that it reaches
+  the threshold.
+
+  \textbf{Step 3: Per-excursion crossing bound.}
+  Fix $i$, put $W_t=\sum_{j=\rho_{i-1}+1}^t Y_j$ for $t>\rho_{i-1}$, and let
+  $\varsigma_i=\inf\{t>\rho_{i-1}:W_t\geq h\ \text{or}\ W_t\leq0\}$.  By
+  Step~1 the process $U_t=\exp(\theta^\ast W_t)$ is a non-negative
+  supermartingale, so optional stopping through $\varsigma_i\wedge n$ followed
+  by Fatou's lemma gives $\E[U_{\varsigma_i}\given\F_{\rho_{i-1}}]\leq
+  U_{\rho_{i-1}}=1$.  On $E_i$ the stopped walk satisfies $W_{\varsigma_i}\geq
+  h$, so $U_{\varsigma_i}\geq e^{\theta^\ast h}$, while $U_{\varsigma_i}\geq0$
+  always; therefore
   \[
-    \Prob_0\!\left(\sum_{j=s+1}^t(\hat{e}_j - k) \geq h\right)
-    \leq e^{-\lambda^*h} = e^{-2\kappa h/\sigma^2}.
+    1\;\geq\;\E[U_{\varsigma_i}\given\F_{\rho_{i-1}}]
+     \;\geq\; e^{\theta^\ast h}\,\Prob_0(E_i\given\F_{\rho_{i-1}}),
+    \qquad\text{i.e.}\qquad
+    \Prob_0(E_i\given\F_{\rho_{i-1}})\;\leq\; e^{-\theta^\ast h}\quad\text{a.s.}
   \]
 
-  \textbf{Step 3: CUSUM representation and union bound.}
-  By the standard recursive argument \citep[p.~20]{siegmund1985sequential}, the one-sided CUSUM satisfies
-  $S_t = (\max_{0\leq s\leq t}\sum_{j=s+1}^t(\hat{e}_j-k))^+$ for all $t\geq 0$.
-  Hence $\{\tau_h \leq n\} \subseteq \{\max_{0 \leq s < t \leq n}
-  \sum_{j=s+1}^t (\hat{e}_j - k) \geq h\}$.
-  The number of pairs $(s, t)$ with $0 \leq s < t \leq n$ is $\binom{n+1}{2} \leq n^2$.
-  The union bound and Step~2 give
-  \begin{equation}
-    \Prob_0(\tau_h \leq n)
-    \leq n^2\,e^{-2\kappa h/\sigma^2}
-    \qquad \text{for all }n \geq 1.
-    \label{eq:supp-pbound}
-  \end{equation}
-
-  \textbf{Step 4: ARL lower bound.}
-  Set $c := e^{-2\kappa h/\sigma^2}$ and $N := \lfloor (2c)^{-1/2}\rfloor$.
-  For $0 \leq n \leq N$, $n^2 c \leq 1/2$, so $\Prob_0(\tau_h > n) \geq 1/2$.
-  Since $N+1 \geq \tfrac{1}{\sqrt{2}}e^{\kappa h/\sigma^2}$,
+  \textbf{Step 4: Geometric domination.}
+  Let $N=\inf\{i\geq1:E_i\ \text{occurs}\}$ be the index of the first excursion
+  to reach $h$.  Because $\prod_{i<n}\mathbf 1_{E_i^c}$ is
+  $\F_{\rho_{n-1}}$-measurable and
+  $\E[\mathbf 1_{E_n^c}\given\F_{\rho_{n-1}}]\geq1-e^{-\theta^\ast h}$, the
+  tower property yields, inductively,
+  $\Prob_0(N>n)\geq(1-e^{-\theta^\ast h})^{\,n}$ for every $n\geq0$.  The alarm
+  occurs within excursion $N$, so $\tau_h\geq\rho_{N-1}+1\geq N$ (each
+  excursion has length at least one).  Consequently
   \[
-    \E_0[\tau_h]
-    = \sum_{n=0}^{\infty} \Prob_0(\tau_h > n)
-    \geq \frac{N+1}{2}
-    \geq \frac{1}{2\sqrt{2}}\,e^{\kappa h/\sigma^2}.
+    \E_0[\tau_h]\;\geq\;\E_0[N]
+      \;=\;\sum_{n=0}^{\infty}\Prob_0(N>n)
+      \;\geq\;\sum_{n=0}^{\infty}\bigl(1-e^{-\theta^\ast h}\bigr)^{\,n}
+      \;=\;e^{\theta^\ast h}\;=\;e^{2\kappa h/\sigma^2}. \qedhere
   \]
 \end{proof}
 
@@ -809,35 +869,112 @@ This is not a proof of gate consistency for an unconstrained trained LSTM.
   condition~(B1) ($\E[-\hat e_t\given\F_{t-1}]\leq\eta$ a.s.\ in-control,
   as assumed in Corollary~\ref{cor:twosided})
   and condition~(B2), which is symmetric in $\pm\hat e_t$, the
-  segment-sum bound of Step~2 of the proof of Theorem~\ref{thm:arl}
-  applies verbatim to $-\hat e_t$.
+  per-excursion crossing bound of the proof of Theorem~\ref{thm:arl}
+  applies to $-\hat e_t$ as well, with the same Lundberg tilt
+  $\theta^\ast=2\kappa/\sigma^2$.
   A bound of the form $\E_0[\tau_h^{\pm}]\geq\E_0[\tau_h]/2$ does \emph{not}
-  follow from a union bound on $\tau_h^+$ and $\tau_h^-$ individually, since
-  the expectation of a minimum of two stopping times is not controlled by
-  the average of their individual expectations.  Instead, the union-bound
-  argument of Step~3 is re-run on the combined event.
-  Writing $c:=e^{-2\kappa h/\sigma^2}$, the segment-sum bound gives
-  $\Prob_0(\tau_h^+\leq n)\leq n^2c$ and, by the mirrored argument,
-  $\Prob_0(\tau_h^-\leq n)\leq n^2c$; a union bound over the two events
-  then gives
+  follow from the individual expectations, since the expectation of a minimum
+  of two stopping times is not controlled by the average of their individual
+  expectations.  We instead pass through tail bounds.
+  Let $N^+$ (resp.\ $N^-$) be the number of excursions of the $+$ (resp.\
+  $-$) arm before it alarms.  Since the alarm falls in the $N^\pm$-th
+  excursion, $\tau_h^+\geq N^+$, so $\{\tau_h^+\leq n\}\subseteq\{N^+\leq n\}$
+  and, by Steps~3--4 of the proof of Theorem~\ref{thm:arl},
+  \[
+    \Prob_0(\tau_h^+\leq n)\;\leq\;\Prob_0(N^+\leq n)
+      \;=\;1-(1-e^{-\theta^\ast h})^{\,n}\;\leq\;n\,e^{-\theta^\ast h},
+  \]
+  and likewise for $\tau_h^-$; here the last step uses Bernoulli's
+  inequality.  A union bound over the two arms gives, with
+  $c:=e^{-\theta^\ast h}$,
   \[
     \Prob_0(\tau_h^{\pm}\leq n)
-    = \Prob_0(\{\tau_h^+\leq n\}\cup\{\tau_h^-\leq n\})
-    \leq 2n^2c
-    \qquad\text{for all } n\geq1.
+    =\Prob_0(\{\tau_h^+\leq n\}\cup\{\tau_h^-\leq n\})
+    \leq 2nc\qquad\text{for all }n\geq1.
   \]
-  Setting $N':=\lfloor(4c)^{-1/2}\rfloor$, for $0\leq n\leq N'$ we have
-  $2n^2c\leq1/2$, so $\Prob_0(\tau_h^{\pm}>n)\geq1/2$; since
-  $N'+1\geq\tfrac{1}{2}e^{\kappa h/\sigma^2}$,
+  Writing $m:=\lfloor(2c)^{-1}\rfloor$, for $0\leq n\leq m$ we have
+  $2nc\leq1$, hence $\Prob_0(\tau_h^{\pm}>n)\geq1-2nc$, and
   \[
-    \E_0[\tau_h^{\pm}]
-    = \sum_{n=0}^{\infty}\Prob_0(\tau_h^{\pm}>n)
-    \geq \frac{N'+1}{2}
-    \geq \frac{1}{4}\exp\!\bigl(\kappa h/\sigma^2\bigr).
+    \E_0[\tau_h^{\pm}]=\sum_{n=0}^{\infty}\Prob_0(\tau_h^{\pm}>n)
+      \;\geq\;\sum_{n=0}^{m}(1-2nc)
+      \;=\;(m+1)(1-cm)
+      \;\geq\;\frac{1}{2c}\cdot\frac12
+      \;=\;\tfrac14\,e^{2\kappa h/\sigma^2},
   \]
-  The exponent $\kappa/\sigma^2$ matches the one-sided bound; the
-  pre-exponential constant $1/4$ is obtained directly from the union bound
-  rather than from a halving of $\E_0[\tau_h]$.
+  where the last inequality uses $m+1\geq(2c)^{-1}$ and $cm\leq\tfrac12$.
+  The exponent $2\kappa/\sigma^2$ matches the sharp one-sided rate; the
+  factor $\tfrac14$ arises from the two-arm union bound.
+\end{proof}
+
+\subsection{Proof of Theorem~\ref{thm:delay} of the main paper (Out-of-Control Detection-Delay Upper Bound)}
+\label{app:proof-delay}
+
+\begin{proof}[Proof of Theorem~\ref{thm:delay} in the main paper]
+  Work under the conditional probability law given the event
+  $\{\tau_h>\tau\}$.  This event is $\F_\tau$-measurable, and since
+  (O1)--(O2) are almost-sure conditions they continue to hold under the
+  conditional law.  Write $Y_j=\hat e_j-k$.
+  The one-sided CUSUM admits the representation
+  $S_t=\bigl(\max_{0\leq s\leq t}\sum_{j=s+1}^t Y_j\bigr)^+$; taking the
+  start index $s=\tau$ gives
+  $S_t\geq W_t:=\sum_{j=\tau+1}^t Y_j$ for $t\geq\tau$.  Hence
+  $\tau_h=\inf\{t:S_t\geq h\}\leq
+  N:=\inf\{t>\tau:W_t\geq h\}$.
+  For $t>\tau$ the process
+  $M_t=W_t-\sum_{j=\tau+1}^t\E[Y_j\given\F_{j-1}]$ is a martingale under the
+  conditional law with increments bounded by $2B$, and its compensator
+  satisfies
+  $\sum_{j=\tau+1}^t\E[Y_j\given\F_{j-1}]\geq\mu\,(t-\tau)$ by~(O1).
+  Since the increments are bounded and the drift is at least $\mu>0$,
+  $N-\tau$ has finite expectation: the compensator obeys
+  $\sum_{j=\tau+1}^{\tau+n}\E[Y_j\given\F_{j-1}]\geq\mu n$, so
+  $\{W_{\tau+n}<h\}\subseteq\{M_{\tau+n}<h-\mu n\}$, and applying the
+  Azuma--Hoeffding inequality to the martingale $M$ (increments bounded by
+  $2B$, $M_\tau=0$) gives, for $n$ large enough that $\mu n>h$,
+  $\Prob(W_{\tau+n}<h\mid\tau_h>\tau)\leq
+  \exp\{-(\mu n-h)^2/(8B^2n)\}$, which
+  is summable in $n$ and yields $\E[N-\tau\mid\tau_h>\tau]<\infty$; hence
+  optional stopping applies:
+  $\E[M_N\mid\tau_h>\tau]=0$, giving
+  \[
+    \mu\,\E[N-\tau\mid\tau_h>\tau]
+    \;\leq\;
+    \E\Bigl[\textstyle\sum_{j=\tau+1}^N
+      \E[Y_j\given\F_{j-1}]\,\Bigm|\,\tau_h>\tau\Bigr]
+    \;=\; \E[W_N\mid\tau_h>\tau].
+  \]
+  Finally $W_{N-1}<h$ by definition of $N$, and
+  $W_N=W_{N-1}+Y_N<h+B$, so
+  $\E[W_N\mid\tau_h>\tau]\leq h+B$.  Combining,
+  $\E[N-\tau\mid\tau_h>\tau]\leq(h+B)/\mu$, and $\tau_h\leq N$
+  yields~\eqref{eq:delay}.
+  Because (O1)--(O2) are conditional almost-sure statements, the identical
+  argument run conditionally on $\F_\tau$ gives the stronger
+  essential-supremum bound
+  $\operatorname*{ess\,sup}\,\E\bigl[(\tau_h-\tau)^+\mid\F_\tau\bigr]\leq(h+B)/\mu$,
+  uniformly over the change-point; this is the form used in
+  Theorem~\ref{thm:optimality}.
+\end{proof}
+
+\subsection{Proof of Theorem~\ref{thm:optimality} of the main paper (Asymptotic Optimality of the Innovation CUSUM)}
+\label{app:proof-optimality}
+
+\begin{proof}[Proof of Theorem~\ref{thm:optimality} in the main paper]
+  (i) Assumption~(O1) is a conditional almost-sure statement uniform in the
+  change-point, so the bound of Theorem~\ref{thm:delay} holds in the
+  essential-supremum form
+  $\operatorname*{ess\,sup}\E_\nu[(\tau_h-\nu+1)^+\mid\F_{\nu-1}]\leq(h+B)/\mu$
+  for every $\nu\geq1$; substituting $h_\gamma$ gives the displayed bound,
+  and the lower bound is \citet{lorden1971procedures}.
+  (ii) The Gaussian log-likelihood-ratio increment is
+  $\log\{\varphi_\sigma(\hat e_t-\eta-\delta)/\varphi_\sigma(\hat e_t-\eta)\}
+   =(\delta/\sigma^2)\bigl(\hat e_t-\eta-\tfrac{\delta}{2}\bigr)$, a positive
+  multiple of $\hat e_t-k$ with $k=\eta+\delta/2$; hence the CUSUM of
+  $\hat e_t-k$ and the Page CUSUM of the log-likelihood ratio define the same
+  stopping rule up to the threshold rescaling $\theta^\ast=\delta/\sigma^2$,
+  and the exact optimality of the latter \citep{moustakides1986optimal}
+  transfers.  The identities $\kappa=\mu=\delta/2$ and
+  $I=\delta^2/(2\sigma^2)$ are direct computations.
 \end{proof}
 
 \subsection{Proof of Corollary~\ref{cor:dim} of the main paper (Dimension-Stable ARL)}
@@ -858,18 +995,14 @@ This is not a proof of gate consistency for an unconstrained trained LSTM.
   and the second term uses $\norm{\mu_0}_2 \leq \E\norm{\E[\hat{e}_t|\F_{t-1}]}_2
   \leq \norm{\E[\hat{e}_t|\F_{t-1}]}_{L^2(\Omega\to\R^d)} \leq \eta_d$
   (Jensen's inequality and the same aggregate bound).
-  Write $\tilde{u}_t := \hat{e}_t - \mu_0 - b_t$ (the zero-mean part;
-  $\E[\tilde{u}_t\given\F_{t-1}] = 0$ by construction; note $\tilde{u}_t \neq u_t$
-  in the corollary, where $u_t = \hat{e}_t - \mu_0$).
-  Since $b_t b_t^\top \succeq 0$,
+  Write $\tilde{u}_t := \hat{e}_t - \mu_0 - b_t$ (the conditionally centered
+  deviation; $\E[\tilde{u}_t\given\F_{t-1}] = 0$ by construction). By the
+  homoskedasticity hypothesis of the corollary, applied directly to
+  $\tilde u_t$,
   \[
     \E[\tilde{u}_t\tilde{u}_t^\top\given\F_{t-1}]
-    = \E[(\hat{e}_t-\mu_0)(\hat{e}_t-\mu_0)^\top\given\F_{t-1}] - b_t b_t^\top
-    \preceq \E[(\hat{e}_t-\mu_0)(\hat{e}_t-\mu_0)^\top\given\F_{t-1}]
-    \preceq \Sigma_0,
+    \preceq \Sigma_0.
   \]
-  the last step by the conditional homoskedasticity assumption on $u_t = \hat{e}_t-\mu_0$
-  in the corollary.
   Expanding with the cross-term zero,
   \begin{align*}
     \E\!\left[\norm{\Sigma_0^{-1/2}(\hat{e}_t-\mu_0)}^2\given\F_{t-1}\right]
@@ -1064,7 +1197,7 @@ all configurations.
 \label{app:supp-empirical}
 
 
-This section collects the seven supporting empirical studies referenced in
+This section collects the eight supporting empirical studies referenced in
 Section~\ref{sec:empirical} of the main paper.
 Studies~MDS-VAR, KAL, NILE, and PELT extend the main-text studies to
 multivariate MDS diagnostics, a Kalman-filter benchmark, a second real
@@ -1073,6 +1206,23 @@ Studies~CUSUM-EQARL and CUSUM-MISSPEC examine the dimension-scaling claim
 under a fair comparison and exhibit the genuine advantage of a learned
 predictor under misspecification; and Studies~LS-Diag and J-Surr probe
 locally stationary and abruptly changing regimes.
+It also holds one example-trajectory figure for the main-text
+Study~CUSUM-CP, placed here for space.
+
+\subsection{Study CUSUM-CP: Example CUSUM Trajectory}
+\label{app:supp-cusumcp-traj}
+This figure supplements the main-text Study~CUSUM-CP; it displays the CUSUM
+paths of the three detectors on a single representative sequence.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.6\linewidth]{code/figures/S2B_pathway_A_trajectory.png}
+\caption{Study CUSUM-CP: CUSUM trajectories on one example sequence
+  ($\phi: 0.30 \to 0.85$, $\tau^* = 100$, dashed red).
+  M1 fires before the true change-point; M2 and M3 fire after.
+  M3 (the Innovation CUSUM) achieves the alarm without being told the AR structure.}
+\label{fig:cusum-traj}
+\end{figure}
 
 % ── Study S4 ──────────────────────────────────────────────────────────────────
 \subsection{Study MDS-VAR: Multivariate MDS Diagnostic (VAR)}
@@ -1520,8 +1670,8 @@ is misspecified, the learned innovations are markedly whiter and detection is
 faster; this is documented separately in Study~CUSUM-MISSPEC.
 
 \subsubsection*{Reproducibility}
-Produced by \texttt{code/study\_equal\_arl\_tier2.py} (per-sequence regime)
-and \texttt{code/study\_equal\_arl\_estimation.py} (per-sequence vs.\ global),
+Produced by \texttt{code/study\_\allowbreak equal\_\allowbreak arl\_\allowbreak tier2.py} (per-sequence regime)
+and \texttt{code/study\_\allowbreak equal\_\allowbreak arl\_\allowbreak estimation.py} (per-sequence vs.\ global),
 both reusing the Study~CUSUM-DIM pipeline and seed verbatim and writing to
 \texttt{code/results/}.
 
@@ -1605,8 +1755,8 @@ process; its advantage is the whitest innovations, the fastest detection, and
 model-agnostic calibration.
 
 \subsubsection*{Reproducibility}
-Produced by \texttt{code/study\_misspecified.py} (\texttt{nlrot} mode),
-writing \texttt{code/results/misspecified\_nlrot.csv}.
+Produced by \texttt{code/study\_\allowbreak misspecified.py} (\texttt{nlrot} mode),
+writing \texttt{code/\allowbreak results/\allowbreak misspecified\_\allowbreak nlrot.csv}.
 
 \subsection{Study LS-Diag: Locally Stationary AR (Study~S2A)}
 \label{app:supp-lsdiag}

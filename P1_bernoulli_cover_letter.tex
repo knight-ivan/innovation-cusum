@@ -24,8 +24,9 @@
 \opening{Dear Editors,}
 
 I am pleased to submit the enclosed manuscript, \textit{``Martingale
-Prediction Innovations from Recurrent Networks for Sequential Change-Point
-Detection,''} for consideration for publication in \textit{Bernoulli}.
+Innovations from Contractive Recurrent Networks: A Distribution-Free
+Foundation for Sequential Monitoring,''} for consideration for publication
+in \textit{Bernoulli}.
 
 The contribution is theoretical and deliberately two-tier.  At the first
 tier, for operator-norm contractive recurrent networks, the hidden state
@@ -36,14 +37,19 @@ a functional central limit theorem.  A bridge proposition translates this
 state-level stabilization into a conditional-drift bound for prediction
 residuals under a Lipschitz readout.  At the second tier, for any fitted
 predictor whose residuals satisfy explicit conditional-drift and
-sub-Gaussian tail conditions, the Innovation CUSUM enjoys an exponential
-in-control average-run-length lower bound and a logarithmic
-detection-delay upper bound --- the classical trade-off, model-free with
-respect to the data-generating dynamics though not assumption-free.  A
-further proposition identifies when learning is statistically useful:
-under a nonlinear conditional mean, fixed linear residualization carries
-an irreducible innovation defect that a consistent learned predictor
-removes.
+sub-Gaussian tail conditions, the Innovation CUSUM enjoys a \emph{sharp}
+exponential in-control average-run-length lower bound --- at the Lundberg
+rate that coincides with the classical i.i.d.\ CUSUM exponent, proved by a
+renewal argument rather than a union bound --- together with a logarithmic
+detection-delay upper bound.  The two combine into the exponential-alarm /
+logarithmic-delay trade-off, which we show is \emph{minimax optimal} in
+Lorden's sense, and exactly so under a Gaussian innovation shift; the
+guarantee is model-free with respect to the data-generating dynamics though
+not assumption-free.  Two further propositions identify when learning is
+statistically useful: under a nonlinear conditional mean, fixed linear
+residualization carries an irreducible innovation defect that a consistent
+learned predictor removes, at a rate that transfers to the monitoring
+guarantee.
 
 The empirical studies examine these mechanisms rather than claim a
 performance victory: learned innovations are closer to martingale
