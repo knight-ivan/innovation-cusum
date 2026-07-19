@@ -579,29 +579,23 @@ counterpart (iv), and the stationary innovation covariance $\Sigma_M^*$
 \begin{remark}[Scope of the nondegeneracy condition]
 \label{rem:rank}
   The nondegeneracy condition~\eqref{eq:nondeg} is the cleanest sufficient
-  condition for $\lambda_{\min}(\Sigma_M^*)>0$: it directly requires
-  that the innovation $M_t^*$ has non-zero variance in every direction.
-  The full row rank condition $\mathrm{rank}(W_x)=p$ is a natural
-  structural sufficient condition for \eqref{eq:nondeg} under linear
-  activation, but it can fail to imply \eqref{eq:nondeg} for saturating
-  nonlinearities ($\tanh$, sigmoid) when the conditional support of $X_t$
-  lies in a region where the activation is nearly flat.
-  In the common regime $d_{\mathrm{in}} < p$ (e.g.\ scalar input with
-  $p=32$ hidden units), $W_x$ cannot have full row rank, so the
-  \emph{linear} sufficient condition above is unavailable; under a linear
-  or locally linearized activation, $\Sigma_M^*$ is then at most
-  rank-$d_{\mathrm{in}}$.
-  This rank bound is specific to the linear case and does not extend to
-  genuinely nonlinear $\phi$: a low-dimensional input transformed
-  nonlinearly can produce a covariance of rank larger than $d_{\mathrm{in}}$
-  (for example, a scalar input mapped through coordinates that respond to
-  $Z$ and to a nonlinear function of $Z$, such as $Z^2$, can populate more
-  than one independent direction of $\Sigma_M^*$).  Consequently, whether
-  $\Sigma_M^*$ is rank-deficient when $d_{\mathrm{in}}<p$ depends on the
-  activation and cannot be read off from $\mathrm{rank}(W_x)$ alone.
-  In practice one should verify positive definiteness from a pilot run.
-  The functional CLT (Corollary~\ref{cor:fclt}) requires positive
-  definiteness as a stated hypothesis rather than deriving it from $W_x$.
+  condition for $\lambda_{\min}(\Sigma_M^*)>0$: it requires the innovation
+  $M_t^*$ to have non-zero variance in every direction.  Full row rank
+  $\mathrm{rank}(W_x)=p$ is a natural structural sufficient condition under
+  linear activation, but need not imply~\eqref{eq:nondeg} for saturating
+  nonlinearities ($\tanh$, sigmoid) when the conditional support of $X_t$ lies
+  where the activation is nearly flat.  In the common regime
+  $d_{\mathrm{in}}<p$ (e.g.\ scalar input, $p=32$ hidden units) $W_x$ cannot
+  have full row rank, so that linear sufficient condition is unavailable, and
+  under a linear or locally linearized activation $\Sigma_M^*$ is at most
+  rank-$d_{\mathrm{in}}$.  That bound is specific to the linear case: a
+  low-dimensional input transformed nonlinearly can yield rank larger than
+  $d_{\mathrm{in}}$ (a scalar $Z$ mapped through coordinates responding to $Z$
+  and to $Z^2$ already populates two directions).  Whether $\Sigma_M^*$ is
+  rank-deficient when $d_{\mathrm{in}}<p$ therefore depends on the activation
+  and cannot be read off from $\mathrm{rank}(W_x)$ alone; in practice one
+  should verify positive definiteness from a pilot run, and the functional CLT
+  (Corollary~\ref{cor:fclt}) assumes it rather than deriving it from $W_x$.
 \end{remark}
 
 \begin{corollary}[Functional CLT for MDS innovations]
@@ -971,29 +965,24 @@ the classical exponential-ARL / logarithmic-delay trade-off
 
 \begin{remark}[Calibration in practice]
 \label{rem:calibration}
-  The operating constants of Assumption~\ref{ass:pathway} are estimated on
-  a held-out in-control calibration segment, disjoint from both the
-  training data and the monitored stream.  The theorem requires an upper
-  bound on the \emph{conditional} residual drift
-  $\E[\hat e_t\given\F_{t-1}]$, not merely a small unconditional residual
-  mean.  In practice the unobserved conditional drift is assessed through
-  conservative diagnostics: the calibration residual mean, autocorrelation tests, and, when available,
-  residual-on-past regressions or nonlinear predictability checks of the kind
-  described in Section~\ref{sec:mds}.  These diagnostics provide
-  an empirical proxy for $\eta$; they do not constitute a theorem-valid
-  estimator of the essential supremum in Assumption~\ref{ass:pathway}(B1).
-  The sub-Gaussian proxy $\sigma$ is taken as the calibration standard
-  deviation of $\hat e_t$ (or, when a hard bound $\hat e_t\in[-B,B]$ is
-  available, $\sigma=B$ as in Assumption~\ref{ass:pathway}(B2)).  The
-  reference value is then set to satisfy $k>\eta$ with a comfortable margin
-  $\kappa=k-\eta$, and the threshold $h$ follows from the formula in
-  Theorem~\ref{thm:arl} for the target ARL~$L$.  Because \eqref{eq:arl-lb}
-  depends on $\eta$ and $\sigma$ only through upper bounds, over-estimating
-  either is conservative: it lowers the guaranteed ARL rather than
-  invalidating the bound.  The empirical studies of
-  Section~\ref{sec:empirical} report the sensitivity of ARL$_0$ and
-  detection delay to $(k,h)$ and separate theoretical calibration from
-  finite-sample diagnostic calibration.
+  The operating constants of Assumption~\ref{ass:pathway} are estimated on a
+  held-out in-control segment, disjoint from both the training data and the
+  monitored stream.  The theorem requires an upper bound on the
+  \emph{conditional} residual drift $\E[\hat e_t\given\F_{t-1}]$, not merely a
+  small unconditional mean; in practice this is assessed by conservative
+  diagnostics---the calibration residual mean, autocorrelation tests, and, when
+  available, residual-on-past regressions or the nonlinear predictability checks
+  of Section~\ref{sec:mds}.  These give an empirical proxy for $\eta$; they do
+  \emph{not} constitute a theorem-valid estimator of the essential supremum in
+  Assumption~\ref{ass:pathway}(B1).  The sub-Gaussian proxy $\sigma$ is the
+  calibration standard deviation of $\hat e_t$ (or $\sigma=B$ when
+  $\hat e_t\in[-B,B]$, as in~(B2)); $k$ is set with a comfortable margin
+  $\kappa=k-\eta>0$, and $h$ follows from Theorem~\ref{thm:arl} for the target
+  ARL~$L$.  Because \eqref{eq:arl-lb} depends on $\eta$ and $\sigma$ only
+  through upper bounds, over-estimating either is conservative: it lowers the
+  guaranteed ARL rather than invalidating the bound.
+  Section~\ref{sec:empirical} reports the sensitivity of ARL$_0$ and delay to
+  $(k,h)$, separating theoretical from finite-sample diagnostic calibration.
 \end{remark}
 
 \begin{corollary}[Two-sided Innovation CUSUM]
@@ -1123,11 +1112,9 @@ where $\E_\nu$ (resp.\ $\E_\infty$) denotes the law with change at $\nu$
       matching, in order, the universal lower bound
       $\inf_{\tau\in\mathcal C_\gamma}\mathcal J(\tau)\geq(\log\gamma)/I\,(1-o(1))$
       of \citet{lorden1971procedures}, with $I$ the Kullback--Leibler
-      information number of the change.  The detector is thus
-      order-optimal (rate-optimal in $\log\gamma$), with \emph{detection
-      efficiency} $2\kappa\mu/\sigma^2$; first-order (constant-matching)
-      optimality holds only when this efficiency equals $I$, i.e.\ in the
-      Gaussian case of part~(ii) below.
+      information number of the change.  The detector is thus order-optimal,
+      with \emph{detection efficiency} $2\kappa\mu/\sigma^2$; first-order
+      optimality requires this efficiency to equal $I$, i.e.\ part~(ii).
     \item \textbf{(Exact minimax optimality, Gaussian innovations.)}
       Suppose that, conditionally on $\F_{t-1}$, the innovation $\hat e_t$ is
       Gaussian with variance $\sigma^2$ and mean $\eta$ in control and
@@ -1503,7 +1490,7 @@ M2: Whitened CUSUM     & 0.224 & 0.772 & 0.004 & $+5.9$  & 440 \\
 
 \begin{figure}[tp]
 \centering
-\includegraphics[width=\linewidth]{code/figures/S2B_pathway_A_comparison.png}
+\includegraphics[width=0.88\linewidth]{code/figures/S2B_pathway_A_comparison.png}
 \caption{Study CUSUM-CP: three-way CUSUM comparison.
   Left: false-positive rate (pre-$\tau^*$ alarms; dashed line = nominal 5\%).
   Center: mean delay over any alarm (contaminated by false positives for
@@ -1621,7 +1608,7 @@ parameters degrades but a pretrained predictor does not.
 
  \begin{figure}[tp]
 \centering
-\includegraphics[width=0.92\textwidth]{code/figures/S6_pathway_A_heatmap.png}
+\includegraphics[width=0.80\textwidth]{code/figures/S6_pathway_A_heatmap.png}
 \caption{Study CUSUM-DIM: ARL$_0$ (left) and false-alarm rate (right) as functions of
   dimension $d$ for the three CUSUM methods.
   The Innovation CUSUM (green) maintains a high, growing ARL$_0$ and a stable FA rate,
@@ -1677,7 +1664,7 @@ $d$ & Method & FP & TP & FN & Delay$^\ddagger$ & ARL$_0$ \\
 
 \begin{figure}[tp]
 \centering
-\includegraphics[width=0.55\textwidth]{code/figures/S6_pathway_A_delay_profile.png}
+\includegraphics[width=0.48\textwidth]{code/figures/S6_pathway_A_delay_profile.png}
 \caption{Study CUSUM-DIM: Distribution of detection delay (steps from $\tau$ to alarm)
   across $d\in\{1,2,5,10\}$.
   The Innovation CUSUM (right column) consistently yields positive delays (valid
@@ -1800,10 +1787,10 @@ Config & Method & Alarm $t$ & Delay & ARL$_0$ \\
 \begin{figure}[tp]
 \centering
 \begin{minipage}{0.49\linewidth}\centering
-\includegraphics[width=\linewidth]{code/figures/S8_etf_cusum_partA.png}
+\includegraphics[width=0.88\linewidth]{code/figures/S8_etf_cusum_partA.png}
 \end{minipage}\hfill
 \begin{minipage}{0.49\linewidth}\centering
-\includegraphics[width=\linewidth]{code/figures/S8_etf_cusum_partB.png}
+\includegraphics[width=0.88\linewidth]{code/figures/S8_etf_cusum_partB.png}
 \end{minipage}
 \caption{Study ETF: CUSUM trajectories on the COVID test window
   (2020-01-01 to 2022-06-30); the vertical dashed line marks $\tau^*=32$
