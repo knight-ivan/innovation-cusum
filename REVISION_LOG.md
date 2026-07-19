@@ -5,6 +5,27 @@
 **Target journal:** Bernoulli (imsart `bj`, author-year)
 **Last updated:** 2026-07-19
 
+## Round 10 — Page-limit compliance (2026-07-19, commit `eae7314`)
+
+**Bernoulli limits papers to 25 pages in its template, including references**
+(<https://www.bernoullisociety.org/publications/bernoulli-journal/bernoulli-journal-notes-for-authors>);
+overflow belongs in the online supplement, and non-compliance "may result in
+immediate rejection". The main had reached 26 pp (the Round-8 optimality
+clarification tipped it over), with only two references spilling onto p. 26.
+
+Recovered the page with **no content lost**: tightened wording in
+`rem:calibration`, `rem:rank`, and `thm:optimality`(i) — every caveat kept — and
+reduced figure widths ~12% (`S2B_pathway_A_comparison` and the two `S8` ETF
+panels to `0.88\linewidth`; `S6_pathway_A_heatmap` `0.92`→`0.80\textwidth`;
+`S6_pathway_A_delay_profile` `0.55`→`0.48\textwidth`).
+
+*Diagnostic worth remembering:* prose trimming alone did **not** reduce the page
+count — LaTeX float placement reabsorbed every line freed (pp. 18/20/21/23 all
+carry figures). Reducing figure **height** was the only effective lever.
+
+Main now **25 pp** (at the limit), supplement 27 pp. Any future addition to the
+main must be offset or moved to the supplement.
+
 ## Round 9 — Submission package (2026-07-19)
 
 Built `P1_bernoulli_submission_2026_0719/` (3.3 MB, self-contained, untracked
