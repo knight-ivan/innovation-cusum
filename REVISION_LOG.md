@@ -3,7 +3,32 @@
 **Paper:** Martingale Prediction Innovations from Recurrent Networks for Sequential Change-Point Detection
 (formerly: *Martingale Innovations from Contractive Recurrent Networks and Dimension-Robust Change-Point Detection*)
 **Target journal:** Bernoulli (imsart `bj`, author-year)
-**Last updated:** 2026-07-05
+**Last updated:** 2026-07-19
+
+## Round 7 — Final-check retitle (2026-07-19, commit `167a08d`)
+
+Pre-submission final check surfaced a title-vs-body contradiction: the title
+claimed "A Distribution-Free Foundation" while the body (Remark after
+Cor. tradeoff) states the guarantee "is **not** distribution-free in the
+assumption-free sense... it requires the... tail conditions of
+Assumption (B1)–(B3)." Retitled across main, supplement, and cover letter:
+
+  *Martingale Innovations from Contractive Recurrent Networks: A
+   Distribution-Free Foundation for Sequential Monitoring*
+  → **Martingale Innovations from Recurrent Networks for Sequential
+     Change-Point Detection**
+
+Drops the "Distribution-Free" overclaim and "Contractive" (which undersold the
+architecture-agnostic tier 2); foregrounds change-point detection to route to
+the sequential-detection community and separate from the forward/reverse
+companion (arXiv:2606.08934). Running head → "Martingale Innovations for
+Change-Point Detection". Also verified: cross-refs resolve live *and* isolated
+(0 undefined, 0 `??`); all 11 figures present in `code/figures/`; assumptions
+(B1)–(B3) consistent; no overfull boxes. Deferred (user, when ready): build the
+clean dated submission folder; decide whether to add the forward/reverse
+companion note to the paper body (currently cover-letter only).
+
+---
 
 ---
 
@@ -146,10 +171,13 @@ fragile proposition numbers. Companion-manuscript transparency note retained.
 - [x] All items of `Revision suggestion 1` addressed in the current text
 - [x] ARL₀ estimation text matches the code and results CSV
 - [x] Cover letter consistent with manuscript claims
-- [ ] **User**: verify the companion arXiv ID (2606.08934) in the cover letter
+- [x] Companion arXiv ID **2606.08934 verified** (2026-07-19): resolves to the
+      correct companion, "Backward Coherence... A Quasi-Reverse-Martingale
+      Theory" (Chang, submitted 2026-06-08)
+- [x] Abstract length: **195 words** (already under the ~200 target; the earlier
+      244-word count was pre-revision)
 - [ ] **User**: final read of both PDFs (newest passages: intro related-work
       paragraph, Assumption (B1), delay proof, the two ARL₀ passages)
-- [ ] Optional: trim abstract (244 words) to ~200
 
 **Upload**: main PDF (+ `.tex`, `.bbl`, `-xrefs.tex` if source requested),
 supplement PDF (+ likewise), cover letter PDF.
