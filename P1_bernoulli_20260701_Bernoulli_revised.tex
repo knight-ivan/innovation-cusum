@@ -126,12 +126,15 @@ predictor.  The development is two-tier.  First, for contractive recurrent
 networks, the hidden state admits a Doob decomposition into a predictable
 part and a martingale-difference innovation that stabilizes geometrically
 and whose partial sums obey a functional central limit theorem.  Second, for
-any predictor with bounded conditional residual drift and sub-Gaussian
-tails, the Innovation CUSUM has a sharp exponential lower bound on the
-in-control average run length and a logarithmic upper bound on the detection
-delay; together they attain the minimax-optimal detection rate, exactly so
-under a Gaussian innovation shift.  The guarantee needs no parametric model
-for the data.  We also identify when learning helps: under a nonlinear
+any predictor with an almost-sure bound on the conditional residual drift and
+sub-Gaussian tails, the Innovation CUSUM has an exponential lower bound on the
+in-control average run length---with the best exponent available uniformly over
+that class---and a logarithmic upper bound on the detection delay.  In the
+Gaussian mean-shift case the statistic coincides with the classical
+likelihood-ratio CUSUM and is first-order minimax optimal.  The guarantee needs
+no parametric model for the observed dynamics, though it is not assumption-free;
+we also give conditions under which a learning guarantee verifies the drift
+condition with high probability.  We also identify when learning helps: under a nonlinear
 conditional mean, linear residualization has an irreducible defect that a
 learned predictor removes.  Simulations and real-data examples illustrate the
 theory.
@@ -369,62 +372,6 @@ alone is a Markov chain.
 Full definitions, the reverse martingale convergence theorem, and the
 i.i.d. Hewitt--Savage zero-one law are collected in Section~\ref{app:background} of the Supplementary Material.
 
-\subsection{Equivalence of Forward and Tail Limits}
-\label{sec:lemma}
-
-The first result resolves the apparent tension between the \emph{forward}
-perspective (the hidden state is adapted to the increasing filtration $\F_t$)
-and the \emph{reverse} perspective (selective memory is characterized by the
-decreasing filtration $\G_n$).
-
-\begin{lemma}[Equivalence of forward and tail limits]
-\label{lem:equiv}
-  Let $(X_t)_{t\geq 1}$ be a stationary ergodic sequence on $(\Omega,\A,\Prob)$,
-  and let $\theta : \Omega \to \R$ be bounded and tail-measurable,
-  i.e.\ $\theta \in L^\infty(\Omega, \Tsig, \Prob)$.
-  Within this lemma only, let $\F_t = \sigma(X_1,\ldots,X_t)$ denote the
-  one-sided natural filtration, and let
-  $\G_n = \sigma(X_n,X_{n+1},\ldots)$ be the reverse filtration,
-  so that $\Tsig = \bigcap_{n\geq 1}\G_n$.  Then:
-  \begin{enumerate}[label=(\alph*), itemsep=3pt]
-    \item $\E[\theta\given\F_t] \xrightarrow{a.s.\ \text{and}\ L^1} \theta$
-      as $t \to \infty$.
-    \item $\E[\theta\given\G_n] \xrightarrow{a.s.\ \text{and}\ L^1} \theta$
-      as $n \to \infty$.
-    \item Both limits equal $\theta$ almost surely; consequently,
-      $\lim_{t\to\infty}\E[\theta\given\F_t] = \lim_{n\to\infty}\E[\theta\given\G_n]$
-      a.s.
-  \end{enumerate}
-  For a non-tail-measurable $\theta \in L^1(\Omega,\A,\Prob)$:
-  \begin{enumerate}[label=(\alph*), start=4, itemsep=3pt]
-    \item $\E[\theta\given\F_t] \xrightarrow{a.s.} \E[\theta\given\F_\infty^+]$,
-      which may be strictly larger (in $\sigma$-algebra terms) than $\Tsig$.
-    \item $\E[\theta\given\G_n] \xrightarrow{a.s.} \E[\theta\given\Tsig]$,
-      the projection of $\theta$ onto $\Tsig$, which extracts only the
-      structurally persistent component.
-  \end{enumerate}
-\end{lemma}
-
-\begin{proof}
-  See Section~\ref{app:proofs} of the Supplementary Material.
-\end{proof}
-
-\begin{remark}[Interpretation for sequential learning]
-\label{rem:interp-lemma}
-  Lemma~\ref{lem:equiv} resolves only the conditional-expectation part of the
-  forward/reverse tension: if the target is already tail-measurable, then
-  conditioning on the increasing natural filtration and conditioning on the
-  decreasing tail filtration identify the same limit.  It does \emph{not} by
-  itself imply that an RNN hidden state converges to a tail projection.  The
-  hidden state is a stochastic recurrence driven by the observations, and its
-  long-run behavior must be analyzed separately, as in
-  Theorem~\ref{thm:mds}.  The lemma's role here is scoping: it identifies
-  the tail $\sigma$-algebra as the natural carrier of any ``long-run
-  summary'' interpretation, and it motivates conditioning on the two-sided
-  past in Section~\ref{sec:rnn-decomp}, where the object of analysis is
-  the stationary innovation rather than a tail limit of $h_t$.
-\end{remark}
-
 \begin{remark}[Non-tail-measurable targets]
 \label{rem:nontail}
   Parts (d) and (e) show that when the target $\theta$ is not tail-measurable,
@@ -506,7 +453,7 @@ counterpart (iv), and the stationary innovation covariance $\Sigma_M^*$
                   +\norm{b_h}\bigr)}{1-\rho}
         =: C_0 < \infty.
       \]
-      For activations with $\phi(0)\neq 0$ (e.g.\ sigmoid), an additional term $L_\phi\|\phi(0)\|/(1-\rho)$ is added to $C_0$; finiteness is unchanged.
+      For activations with $\phi(0)\neq 0$ (e.g.\ sigmoid), an additional term $\|\phi(0)\|/(1-\rho)$ is added to $C_0$ (from $\|\phi(u)\|\leq\|\phi(0)\|+L_\phi\|u\|$, so the constant enters undamped by $L_\phi$); finiteness is unchanged.
     \item \textbf{(MDS decomposition.)}
       The Doob decomposition $h_t=D_t+M_t$ holds, where
       $D_t:=\E[h_t\given\F_{t-1}]$ is $\F_{t-1}$-measurable (predictable)
@@ -570,7 +517,9 @@ counterpart (iv), and the stationary innovation covariance $\Sigma_M^*$
   Part~(iv) shows that the transient MDS innovation approaches the
   stationary innovation at the same geometric rate $\rho^t$ as the
   hidden state itself, which justifies asymptotic calibration of
-  the Innovation CUSUM from a burn-in period of order $(1-\rho)^{-1}$ steps.
+  the Innovation CUSUM after a burn-in of order
+  $\log(\Delta_0/\varepsilon)/(-\log\rho)\approx\log(\Delta_0/\varepsilon)/(1-\rho)$
+  steps to reach tolerance $\varepsilon$.
   Part~(v) provides the stationary innovation covariance $\Sigma_M^*$
   needed for the functional central limit theorem (CLT) and for Mahalanobis
   scoring in the multivariate CUSUM.
@@ -752,9 +701,10 @@ defect to zero.
 Proposition~\ref{prop:whiteness} is qualitative: a consistent learned
 predictor removes the defect.  The next result makes the removal
 \emph{quantitative}, decomposing the defect exactly into an estimation and an
-approximation part and propagating its decay into the monitoring guarantee.
+approximation part.  It is a \emph{conditional} rate calculation: the rates in
+part~(ii) are assumed, not established here for the recurrent class.
 
-\begin{proposition}[Rate of the innovation defect and of the guarantee]
+\begin{proposition}[Rate of the innovation defect; conditional calculation]
 \label{prop:whiteness-rate}
   Let $\hat m=g_{\hat\phi}$ be the recurrent predictor fitted by empirical
   risk minimization over a class $\Phi$ from $T$ in-control observations, and
@@ -773,26 +723,76 @@ approximation part and propagating its decay into the monitoring guarantee.
       \]
       where $\varepsilon_{\mathrm{app}}=\inf_{\phi\in\Phi}\E\|m_t-g_\phi(h_t)\|^2$
       is the class approximation error for the Bayes predictor.
-    \item \textbf{(Rate.)}  Suppose the width-$W$ class $\Phi_W$ approximates
-      the Bayes predictor at rate
-      $\varepsilon_{\mathrm{app}}(\Phi_W)\le c_{\mathrm A}\,W^{-2\beta}$
-      (as available for smooth filters approximated by recurrent/reservoir
-      maps, \citep{gonon2020reservoir}) and obeys, for $\beta$-mixing
-      in-control data, the excess-risk bound
+    \item \textbf{(Rate, under assumed approximation and estimation bounds.)}
+      Suppose the width-$W$ class $\Phi_W$ approximates the Bayes predictor at
+      rate $\varepsilon_{\mathrm{app}}(\Phi_W)\le c_{\mathrm A}\,W^{-2s}$ with
+      smoothness index $s>0$ (the form available for smooth filters
+      approximated by recurrent/reservoir maps,
+      \citealp{gonon2020reservoir}), and obeys, for $\beta$-mixing in-control
+      data, an excess-risk bound
       $\E\,\varepsilon_{\mathrm{est}}\le c_{\mathrm E}\,W\log T/T$
       \citep{mohri2010stability}.  Balancing at
-      $W\asymp(T/\log T)^{1/(2\beta+1)}$ gives
-      $\E\,\eta_T = O\!\bigl((T/\log T)^{-\beta/(2\beta+1)}\bigr)
-       =\widetilde O\!\bigl(T^{-\beta/(2\beta+1)}\bigr)$.
-    \item \textbf{(Effect on the guarantee.)}  Hence the net drift margin
-      $\kappa_T=k-\eta_T\uparrow k$, and by Theorem~\ref{thm:arl} the
-      guaranteed in-control ARL exponent $2\kappa_T/\sigma^2$ and the
-      detection efficiency $2\kappa_T\mu/\sigma^2$ approach their
-      Bayes-optimal values at the rate $\eta_T$ of part~(ii); in
-      the Gaussian regime of Theorem~\ref{thm:optimality} the efficiency
-      approaches the information number $I$ at this rate.
+      $W\asymp(T/\log T)^{1/(2s+1)}$ gives
+      $\E\,\eta_T = O\!\bigl((T/\log T)^{-s/(2s+1)}\bigr)
+       =\widetilde O\!\bigl(T^{-s/(2s+1)}\bigr)$.
+      Both bounds are \emph{hypotheses}: the cited results do not establish
+      these exact rates for the recurrent class used here, whose parameter
+      count grows faster than $W$ and for which mixing enters through an
+      effective sample size.
+    \item \textbf{(What this does \emph{not} give.)}  The defect $\eta_T$ is an
+      $L^2$ quantity, whereas Assumption~\ref{ass:pathway}(B1) requires an
+      \emph{almost-sure} bound on $\E[\hat e_t\given\F_{t-1}]$.  An $L^2$ rate
+      does not imply an essential-supremum bound, so $\eta_T$ may \emph{not} be
+      substituted for $\eta$ in Theorem~\ref{thm:arl}: part~(ii) controls a
+      diagnostic, not the constant entering the ARL guarantee.
+      Proposition~\ref{prop:hp-drift} supplies the additional uniform control
+      under which a learning guarantee does verify (B1).
   \end{enumerate}
 \end{proposition}
+
+The next proposition closes that gap, making explicit the price: control must be
+\emph{uniform} over the reachable state space, not merely in $L^2$.
+
+\begin{proposition}[High-probability verification of the drift condition]
+\label{prop:hp-drift}
+  Work under Assumption~\ref{ass:spectral} and suppose:
+  \begin{enumerate}[label=(H\arabic*), itemsep=2pt]
+    \item \textbf{(Bounded inputs.)}  $\norm{X_t}\le B_X$ a.s.; then
+      $\norm{h_t}\le C_h$ a.s.\ for an explicit constant $C_h$ (see the proof),
+      so $h_t$ and $H_t^*$ lie in the compact set
+      $\mathcal H:=\{h:\norm{h}\le C_h\}$.
+    \item \textbf{(Uniform approximation.)}  The readout class contains an
+      $L_o$-Lipschitz $o_\star$ with
+      $a_\infty:=\operatorname*{ess\,sup}_t\,|o_\star(H_t^*)-m_t|<\infty$.
+    \item \textbf{(Uniform estimation, with high probability.)}  The fitted
+      readout $\hat o$ satisfies, with probability at least $1-\delta_T$ over
+      the training sample $\mathcal D_T$,
+      $\sup_{h\in\mathcal H}|\hat o(h)-o_\star(h)|\le\varepsilon_T$.
+  \end{enumerate}
+  Then, on that training event,
+  $\bigl|\E[\hat e_{t+1}\given\F_t]\bigr|
+   \le a_\infty+\varepsilon_T+L_o\rho^{t}\Delta_0^\infty$ a.s.\ for every $t$,
+  where $\Delta_0^\infty:=\operatorname*{ess\,sup}\norm{h_0-H_0^*}$.
+  Consequently, for $t\ge t_0$ with $L_o\rho^{t_0}\Delta_0^\infty\le\varepsilon_T$,
+  Assumption~\ref{ass:pathway}(B1) holds with
+  $\bar\eta_T:=a_\infty+2\varepsilon_T$; and if $k>\bar\eta_T$ then,
+  conditionally on $\mathcal D_T$, Theorem~\ref{thm:arl} gives
+  $\E_0[\tau_h\given\mathcal D_T]\ge\exp\{2(k-\bar\eta_T)h/\sigma^2\}$
+  on an event of probability at least $1-\delta_T$.
+\end{proposition}
+
+\begin{proof}
+  See Section~\ref{app:proofs} of the Supplementary Material.
+\end{proof}
+
+\begin{remark}[What (H3) costs]
+  (H1)--(H2) are structural; (H3) is the substantive price, demanding sup-norm
+  rather than $L^2$ estimation error.  On the compact $\mathcal H$ this is the
+  natural regime---uniform convergence over a bounded Lipschitz readout class
+  follows from covering-number arguments under $\beta$-mixing---but we do not
+  establish (H3) for a specific architecture, and regard doing so as the main
+  route to making $\eta$ genuinely estimable.
+\end{remark}
 
 \begin{proof}
   See Section~\ref{app:proofs} of the Supplementary Material.
@@ -802,7 +802,7 @@ approximation part and propagating its decay into the monitoring guarantee.
 \subsection{Extension to Non-Stationary Processes}
 \label{sec:nonstationary}
 
-The results in Sections~\ref{sec:lemma}--\ref{sec:rnn-decomp} require
+The results in Section~\ref{sec:rnn-decomp} require
 stationarity.  We now describe how they extend to the locally stationary
 setting of \citet{dahlhaus1997fitting}.
 
@@ -931,9 +931,11 @@ the classical exponential-ARL / logarithmic-delay trade-off
     \label{eq:arl-lb}
   \end{equation}
   where $\kappa=k-\eta$ is the net drift margin and $\sigma^2$ the
-  sub-Gaussianity parameter.  The exponent $\theta^\ast=2\kappa/\sigma^2$ is
-  the Lundberg (adjustment) coefficient of the increment $\hat e_t-k$ and
-  \emph{coincides with the classical i.i.d.\ CUSUM rate}; equivalently, an
+  sub-Gaussianity parameter.  The exponent $\theta^\ast=2\kappa/\sigma^2$ is the
+  \emph{sub-Gaussian adjustment exponent} of the increment $\hat e_t-k$: it is
+  the largest tilt certified by (B1)--(B2), and it coincides with the exact
+  Lundberg coefficient---and hence with the classical i.i.d.\ CUSUM rate---in
+  the Gaussian benchmark.  Equivalently, an
   in-control ARL of at least $L$ is guaranteed by
   $h\geq (\sigma^2/2\kappa)\ln L$.
 \end{theorem}
@@ -952,13 +954,16 @@ the classical exponential-ARL / logarithmic-delay trade-off
   The ARL grows exponentially in $h$ at the rate $2\kappa/\sigma^2$, where
   $\kappa=k-\eta$ is the net margin between the reference value and the
   in-control conditional residual drift; the bound degrades gracefully as
-  $\eta$ increases, becoming vacuous only when $\eta\to k$.  This exponent is
-  the best attainable under Assumption~\ref{ass:pathway}: it is the Lundberg
-  coefficient and matches the exact exponential rate of the classical
-  i.i.d.\ CUSUM \citep{siegmund1985sequential,lorden1971procedures}, so no
-  looseness remains in the exponent, and --- in contrast to an elementary
-  Chernoff-plus-union-bound estimate --- the pre-exponential constant is
-  unity.  The threshold formula $h\geq(\sigma^2/2\kappa)\ln L$ enables
+  $\eta$ increases, becoming vacuous only when $\eta\to k$.  The exponent is
+  best possible \emph{uniformly over the class} defined by
+  Assumption~\ref{ass:pathway}: the Gaussian mean-shift increment attains it,
+  so no exponent exceeding $2\kappa/\sigma^2$ is valid for every law satisfying
+  (B1)--(B2), and there it matches the exact exponential rate of the classical
+  i.i.d.\ CUSUM \citep{siegmund1985sequential,lorden1971procedures}.  For a
+  particular non-Gaussian increment law the exact Lundberg root may be larger,
+  so the bound is sharp for the class rather than for every member of it.  In
+  contrast to an elementary Chernoff-plus-union-bound estimate, the
+  pre-exponential constant is unity.  The threshold formula $h\geq(\sigma^2/2\kappa)\ln L$ enables
   principled calibration from $\eta$ and $\sigma^2$ alone, without
   distributional knowledge.
 \end{remark}
@@ -993,12 +998,8 @@ the classical exponential-ARL / logarithmic-delay trade-off
   $S_t^- = (S_{t-1}^- - \hat e_t - k)^+$.  If
   Assumption~\ref{ass:pathway} holds for both $\hat e_t$ and $-\hat e_t$
   (in particular, $|\E[\hat e_t\given\F_{t-1}]|\leq\eta$ a.s.\ in-control),
-  then
-  \[
-    \E_0[\tau_h^{\pm}]
-    \;\geq\; \tfrac{1}{4}\exp\!\left(\frac{2\kappa h}{\sigma^2}\right),
-  \]
-  with the same sharp exponent $2\kappa/\sigma^2$ as in
+  then $\E_0[\tau_h^{\pm}]\geq\tfrac14\exp(2\kappa h/\sigma^2)$,
+  with the same exponent $2\kappa/\sigma^2$ as in
   Theorem~\ref{thm:arl}.
   The empirical studies in Section~\ref{sec:empirical} use this two-sided
   version.
@@ -1052,11 +1053,8 @@ the in-control conditional-drift condition~(B1).
   Under Assumptions~\ref{ass:pathway} and (O1)--(O2), choosing the threshold
   $h=(\sigma^2/2\kappa)\ln L$ gives simultaneously an in-control
   guarantee $\E_0[\tau_h]\geq L$ and a detection-delay guarantee
-  \[
-    \E\bigl[\tau_h-\tau\mid\tau_h>\tau\bigr]
-    \;\leq\; \frac{1}{\mu}\Bigl(\tfrac{\sigma^2}{2\kappa}\ln L+B\Bigr)
-    \;=\; O\!\Bigl(\tfrac{\ln L}{\mu}\Bigr).
-  \]
+  $\E[\tau_h-\tau\mid\tau_h>\tau]\leq\mu^{-1}\bigl((\sigma^2/2\kappa)\ln L+B\bigr)
+   =O(\ln L/\mu)$.
 \end{corollary}
 
 \begin{proof}
@@ -1104,28 +1102,36 @@ where $\E_\nu$ (resp.\ $\E_\infty$) denotes the law with change at $\nu$
   \begin{enumerate}[label=(\roman*), itemsep=3pt]
     \item \textbf{(Order optimality.)}  Under Assumption~\ref{ass:pathway}
       and (O1)--(O2),
-      \[
-        \mathcal J(\tau_{h_\gamma})
-        \;\leq\;\frac{\sigma^2}{2\kappa\mu}\,\log\gamma+\frac{B}{\mu}
-        \;=\;O(\log\gamma),
-      \]
-      matching, in order, the universal lower bound
-      $\inf_{\tau\in\mathcal C_\gamma}\mathcal J(\tau)\geq(\log\gamma)/I\,(1-o(1))$
-      of \citet{lorden1971procedures}, with $I$ the Kullback--Leibler
-      information number of the change.  The detector is thus order-optimal,
-      with \emph{detection efficiency} $2\kappa\mu/\sigma^2$; first-order
-      optimality requires this efficiency to equal $I$; see part~(ii).
-    \item \textbf{(Exact minimax optimality, Gaussian innovations.)}
+      $\mathcal J(\tau_{h_\gamma})\leq(\sigma^2/2\kappa\mu)\log\gamma+B/\mu=O(\log\gamma)$,
+      so the delay scales logarithmically in $\gamma$, with \emph{detection
+      efficiency} $2\kappa\mu/\sigma^2$.  If in addition the change admits a
+      Kullback--Leibler information number, i.e.\ the conditional
+      log-likelihood ratios satisfy
+      $n^{-1}\sum_{t=\nu}^{\nu+n-1}\log\{dP_\nu(\cdot\given\F_{t-1})/
+      dP_\infty(\cdot\given\F_{t-1})\}\to I\in(0,\infty)$
+      under the regularity of \citet{lorden1971procedures}, then this matches
+      \emph{in order} the universal lower bound
+      $\inf_{\tau\in\mathcal C_\gamma}\mathcal J(\tau)\geq(\log\gamma)/I\,(1-o(1))$,
+      so the detector is order-optimal; first-order optimality additionally
+      requires the efficiency to equal $I$, which is the case of part~(ii).
+      Assumption~\ref{ass:pathway} and (O1)--(O2) alone constrain residual
+      moments, not likelihood ratios, and so do not by themselves define $I$.
+    \item \textbf{(Gaussian innovations: efficiency attains $I$, and exact
+      optimality under exact calibration.)}
       Suppose that, conditionally on $\F_{t-1}$, the innovation $\hat e_t$ is
       Gaussian with variance $\sigma^2$ and mean $\eta$ in control and
       $\eta+\delta$ after the change ($\delta>0$), and that the reference is
       the midpoint $k=\eta+\delta/2$ (so $\kappa=\mu=\delta/2$).  Then the
       detection efficiency equals the information number,
-      $2\kappa\mu/\sigma^2=\delta^2/(2\sigma^2)=I$, the Innovation CUSUM
-      coincides with the Page likelihood-ratio CUSUM for the change, and it
-      is \emph{exactly} optimal for $\inf_{\tau\in\mathcal C_\gamma}\mathcal
-      J(\tau)$ \citep{moustakides1986optimal}; in particular
-      $\mathcal J(\tau_{h_\gamma})\sim(\log\gamma)/I$.
+      $2\kappa\mu/\sigma^2=\delta^2/(2\sigma^2)=I$, and the Innovation CUSUM
+      coincides with the Page likelihood-ratio CUSUM for the change; hence
+      $\mathcal J(\tau_{h_\gamma})\sim(\log\gamma)/I$, i.e.\ $\tau_{h_\gamma}$
+      is \emph{first-order} asymptotically minimax optimal.  Exact Lorden
+      optimality \citep{moustakides1986optimal} holds for the Page CUSUM whose
+      threshold is calibrated so that its in-control ARL equals $\gamma$
+      \emph{exactly}; the analytic threshold $h_\gamma$ guarantees only
+      $\E_\infty[\tau_{h_\gamma}]\geq\gamma$ and is in general conservative, so
+      exact optimality is not claimed for $h_\gamma$ itself.
   \end{enumerate}
 \end{theorem}
 
@@ -1881,7 +1887,8 @@ observation dynamics; Theorem~\ref{thm:optimality} shows this trade-off is
 order-optimal in Lorden's minimax framework, and exactly minimax optimal under
 a Gaussian innovation shift.  Propositions~\ref{prop:rnn-resid-bridge} and~\ref{prop:whiteness} link
 state stabilization to residual drift and identify when a learned predictor
-provably beats a fixed linear filter, and Corollary~\ref{cor:dim} treats the
+attains a larger guaranteed drift margin --- and hence a larger guaranteed ARL
+exponent --- than a fixed linear filter, and Corollary~\ref{cor:dim} treats the
 multivariate score.  Empirical studies --- synthetic autoregressive and
 vector-autoregressive processes, a nonlinear misspecified process, the Nile
 discharge series, and US equity sector returns around the 2020 COVID crash ---

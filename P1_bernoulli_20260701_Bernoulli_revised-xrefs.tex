@@ -21,47 +21,51 @@
 \companionlabel{eq:hidden}{{A.8}{3}{Long Short-Term Memory}{equation.1.8}{}}
 \companionlabel{def:ergodic}{{A.14}{4}{Stationarity and ergodicity}{theorem.1.14}{}}
 \companionlabel{app:proofs}{{B}{4}{Proofs}{section.2}{}}
-\companionlabel{app:proof-lemequiv}{{B.1}{4}{Proof of Lemma~\ref {lem:equiv} of the main paper (Equivalence of Forward and Tail Limits)}{subsection.2.1}{}}
+\companionlabel{sec:lemma}{{B.1}{4}{Equivalence of Forward and Tail Limits}{subsection.2.1}{}}
+\companionlabel{lem:equiv}{{B.1}{4}{Equivalence of forward and tail limits}{theorem.2.1}{}}
 \companionlabel{tab:assumption-map}{{B.1}{5}{Map of the main-paper results. The top block (tier one) concerns the contractive RNN and its innovations; the bottom block (tier two) concerns the Innovation CUSUM detector and requires no RNN contraction theorem, only conditional residual-drift and tail conditions on fitted residuals}{table.1}{}}
-\companionlabel{app:proof-thmmds}{{B.2}{5}{Proof of Theorem~\ref {thm:mds} of the main paper (MDS Decomposition with Stabilization Rate)}{subsection.2.2}{}}
+\companionlabel{rem:interp-lemma}{{B.2}{5}{Interpretation for sequential learning}{theorem.2.2}{}}
+\companionlabel{app:proof-lemequiv}{{B.1}{5}{Equivalence of Forward and Tail Limits}{theorem.2.2}{}}
+\companionlabel{app:proof-thmmds}{{B.2}{6}{Proof of Theorem~\ref {thm:mds} of the main paper (MDS Decomposition with Stabilization Rate)}{subsection.2.2}{}}
 \companionlabel{app:proof-corfclt}{{B.3}{7}{Proof of Corollary~\ref {cor:fclt} of the main paper (Functional CLT for MDS Innovations)}{subsection.2.3}{}}
 \companionlabel{app:proof-propresid}{{B.4}{8}{Proof of Proposition~\ref {prop:predresid} of the main paper (Bayes Residuals are MDS)}{subsection.2.4}{}}
-\companionlabel{app:proof-bridge}{{B.5}{8}{Proof of Proposition~\ref {prop:rnn-resid-bridge} of the main paper (Bridge from Recurrent States to Prediction Innovations)}{subsection.2.5}{}}
-\companionlabel{app:proof-whiteness}{{B.6}{8}{Proof of Proposition~\ref {prop:whiteness} of the main paper (Innovation Defect and the Misspecification Gap)}{subsection.2.6}{}}
-\companionlabel{app:proof-whiteness-rate}{{B.7}{8}{Proof of Proposition~\ref {prop:whiteness-rate} of the main paper (Rate of the Innovation Defect and of the Guarantee)}{subsection.2.7}{}}
-\companionlabel{app:proof-forget-heuristic}{{B.8}{9}{Heuristic Derivation: Forget-Gate Information Ratio}{subsection.2.8}{}}
-\companionlabel{app:proof-corls}{{B.9}{9}{Proof of Corollary~\ref {cor:ls} of the main paper (Locally Stationary Approximation)}{subsection.2.9}{}}
-\companionlabel{app:proof-thmarl}{{B.10}{9}{Proof of Theorem~\ref {thm:arl} of the main paper (In-Control ARL Lower Bound)}{subsection.2.10}{}}
-\companionlabel{app:proof-twosided}{{B.11}{10}{Proof of Corollary~\ref {cor:twosided} of the main paper (Two-Sided Innovation CUSUM)}{subsection.2.11}{}}
-\companionlabel{app:proof-delay}{{B.12}{11}{Proof of Theorem~\ref {thm:delay} of the main paper (Out-of-Control Detection-Delay Upper Bound)}{subsection.2.12}{}}
-\companionlabel{app:proof-optimality}{{B.13}{11}{Proof of Theorem~\ref {thm:optimality} of the main paper (Asymptotic Optimality of the Innovation CUSUM)}{subsection.2.13}{}}
-\companionlabel{app:proof-cordim}{{B.14}{11}{Proof of Corollary~\ref {cor:dim} of the main paper (Dimension-Stable ARL)}{subsection.2.14}{}}
-\companionlabel{app:stationary-causal}{{B.15}{12}{Stationary Causal Solution and Geometric Coupling}{subsection.2.15}{}}
-\companionlabel{prop:stationary-causal}{{B.1}{12}{Stationary causal solution and geometric coupling}{theorem.2.1}{}}
-\companionlabel{app:sims}{{C}{13}{Simulation Details}{section.3}{}}
-\companionlabel{tab:hparam}{{C.2}{14}{LSTM architecture and training settings used across all studies}{table.2}{}}
-\companionlabel{app:supp-empirical}{{D}{14}{Empirical Supplement}{section.4}{}}
-\companionlabel{app:supp-cusumcp-traj}{{D.1}{14}{Study CUSUM-CP: Example CUSUM Trajectory}{subsection.4.1}{}}
-\companionlabel{fig:cusum-traj}{{D.1}{15}{Study CUSUM-CP: CUSUM trajectories on one example sequence ($\phi : 0.30 \to 0.85$, $\tau ^* = 100$, dashed red). M1 fires before the true change-point; M2 and M3 fire after. M3 (the Innovation CUSUM) achieves the alarm without being told the AR structure}{figure.1}{}}
-\companionlabel{app:supp-mdsvar}{{D.2}{15}{Study MDS-VAR: Multivariate MDS Diagnostic (VAR)}{subsection.4.2}{}}
-\companionlabel{tab:mds-var}{{D.3}{16}{Study MDS-VAR: Hosking MDS pass rate (nominal level 0.05) for LSTM innovations and OLS residuals on VAR(1) data. $\hat {\rho }_{\mathrm {op}}$ = estimated $\|\hat \Phi \|_{\mathrm {op}}$ from LSTM hidden states}{table.3}{}}
-\companionlabel{app:supp-kal}{{D.3}{16}{Study KAL: Kalman Filter Benchmark}{subsection.4.3}{}}
-\companionlabel{app:supp-nile}{{D.4}{16}{Study NILE: Real-Data Application --- Nile River Annual Flows}{subsection.4.4}{}}
-\companionlabel{tab:kal}{{D.4}{17}{Study KAL: NMSE of $J_t$ estimators relative to the oracle. $N=1000$ test sequences; $T=200$. Bold: best non-oracle estimator per row}{table.4}{}}
-\companionlabel{fig:kal}{{D.2}{17}{Study KAL: Mean $J_t$ trajectories at $\phi =0.70$ over 20 test sequences. Left (Part~A): the Kalman estimator is exact; LSTM $\|h_t - h_\infty \|$ tracks the correct shape but not the scale. Right (Part~B): with observation noise the LSTM hidden-state norm more closely tracks the oracle than the EM-estimated Kalman filter}{figure.2}{}}
-\companionlabel{tab:nile}{{D.5}{18}{Study NILE: Nile River change-point detection ($\tau =28$, $h=4$). Delay = alarm time $-$ $\tau $ (positive = after change)}{table.5}{}}
-\companionlabel{fig:nile}{{D.3}{18}{Study NILE: CUSUM trajectories for the Nile River series. Vertical dashed line marks the known change-point $\tau =28$ (1898). The Innovation CUSUM (bottom) crosses threshold $h=4$ at $t=29$, two steps before the raw and whitened methods}{figure.3}{}}
-\companionlabel{app:supp-pelt}{{D.5}{18}{Study PELT: Change-Point Detection Benchmark (PELT vs.\ Innovation CUSUM)}{subsection.4.5}{}}
-\companionlabel{tab:pelt}{{D.6}{19}{Study PELT: PELT vs the Innovation CUSUM across dimensions ($\tau =100$, $T=200$, 1000 change-point sequences, 500 ARL$_0$ sequences). PELT uses $\ell _2$ cost, penalty $7.0$ calibrated to ARL$_0 \approx 200$ at $d=1$. FA = fraction of sequences with alarm before $\tau $. Delay = mean steps from $\tau $ to alarm (conditioned on detection; negative = pre-alarm). $\dagger $: PELT's high ARL$_0$ at $d=2$ reflects near-zero detection (5.6\%), not a well-calibrated procedure}{table.6}{}}
-\companionlabel{fig:pelt}{{D.4}{20}{Study PELT: ARL$_0$ (left), false-alarm rate (middle), and mean detection delay (right) for PELT (red) and the Innovation CUSUM (green) across $d \in \{1,2,5,10\}$. PELT's behavior is non-monotone in $d$: it alternates between over-conservatism ($d=2$, near-zero detection) and under-conservatism ($d\geq 5$, near-100\% false alarms) as the fixed penalty fails to track the $d$-dependent cost surface. The Innovation CUSUM's ARL$_0$ rises steadily and its false-alarm rate remains controlled throughout}{figure.4}{}}
-\companionlabel{app:supp-eqarl}{{D.6}{20}{Study CUSUM-EQARL: Equal-$\mathrm {ARL}_0$ Calibrated Comparison}{subsection.4.6}{}}
-\companionlabel{tab:eqarl-arl}{{D.7}{20}{Fixed-$h$ ($h=5$) in-control $\mathrm {ARL}_0$ from Study~CUSUM-DIM. At $h=5$ the detectors operate at very different false-alarm levels, so the fixed-$h$ comparison is not like-for-like}{table.7}{}}
-\companionlabel{tab:eqarl}{{D.8}{21}{Study CUSUM-EQARL: calibrated threshold $h$ and (FP, TP) at the common target $\mathrm {ARL}_0=200$, under per-sequence vs.\ global nuisance estimation. Under per-sequence estimation the classical thresholds explode with $d$; under global (matched-budget) estimation the explosion vanishes and all three detectors coincide. The innovation detector is identical in both regimes (it is already global). Monte Carlo SE $\leq 0.016$ on the rates}{table.8}{}}
-\companionlabel{app:supp-misspec}{{D.7}{22}{Study CUSUM-MISSPEC: A Genuine Advantage under Misspecification}{subsection.4.7}{}}
-\companionlabel{tab:misspec}{{D.9}{22}{Study CUSUM-MISSPEC: fair (global-estimation) comparison at $\mathrm {ARL}_0=200$ on the nonlinear rotation-change process (marginal std before/after $\approx 0.79/0.77$, confirming a pure dynamics change). ``ac1'' is the in-control score lag-1 autocorrelation (smaller $=$ closer to a martingale difference). Bold marks the shortest delay and the smallest ac1 per block}{table.9}{}}
-\companionlabel{app:supp-lsdiag}{{D.8}{23}{Study LS-Diag: Locally Stationary AR (Study~S2A)}{subsection.4.8}{}}
-\companionlabel{tab:supp-S2A}{{D.10}{23}{Study S2A: Performance on 1000 locally stationary AR sequences. LSTM trained at $\phi _{\mathrm {center}} = 0.50$; true $\phi (u) = 0.50 + 0.40\sin (2\pi u)$}{table.10}{}}
-\companionlabel{fig:supp-S2A}{{D.5}{24}{Study S2A: (a) Time-varying $\phi (u)$; (b) normalized true $J(u)$ (red) vs.\ mean forget gate $\bar f_t$ (blue $\pm $ 1\,s.d.); (c) per-step prediction MSE over 1000 locally stationary sequences. The forget gate systematically mis-adapts: it moves opposite to $J(u)$, yielding the strongly negative Spearman correlation in Table~\ref {tab:supp-S2A}}{figure.5}{}}
-\companionlabel{app:supp-jsurr}{{D.9}{25}{Study J-Surr: $J_t$ Surrogate Comparison (Study~S3)}{subsection.4.9}{}}
-\companionlabel{tab:supp-S3}{{D.11}{25}{Study S3: Normalized MSE of four $J_t$ estimators. Mean and median over 500 replications (KLIEP burn-in of $W=50$ steps excluded from evaluation)}{table.11}{}}
-\companionlabel{fig:supp-S3}{{D.6}{26}{Study S3: NMSE boxplots for four $\hat J_t$ estimators on DGP~A (left) and DGP~B (right). The dotted line at NMSE$\,=1$ marks the trivial baseline}{figure.6}{}}
+\companionlabel{app:proof-bridge}{{B.5}{9}{Proof of Proposition~\ref {prop:rnn-resid-bridge} of the main paper (Bridge from Recurrent States to Prediction Innovations)}{subsection.2.5}{}}
+\companionlabel{app:proof-whiteness}{{B.6}{9}{Proof of Proposition~\ref {prop:whiteness} of the main paper (Innovation Defect and the Misspecification Gap)}{subsection.2.6}{}}
+\companionlabel{app:proof-whiteness-rate}{{B.7}{9}{Proof of Proposition~\ref {prop:whiteness-rate} of the main paper (Rate of the Innovation Defect and of the Guarantee)}{subsection.2.7}{}}
+\companionlabel{app:proof-hp-drift}{{B.8}{9}{Proof of Proposition~\ref {prop:hp-drift} of the main paper (High-Probability Verification of the Drift Condition)}{subsection.2.8}{}}
+\companionlabel{app:proof-forget-heuristic}{{B.9}{10}{Heuristic Derivation: Forget-Gate Information Ratio}{subsection.2.9}{}}
+\companionlabel{app:proof-corls}{{B.10}{10}{Proof of Corollary~\ref {cor:ls} of the main paper (Locally Stationary Approximation)}{subsection.2.10}{}}
+\companionlabel{app:proof-thmarl}{{B.11}{11}{Proof of Theorem~\ref {thm:arl} of the main paper (In-Control ARL Lower Bound)}{subsection.2.11}{}}
+\companionlabel{app:proof-twosided}{{B.12}{11}{Proof of Corollary~\ref {cor:twosided} of the main paper (Two-Sided Innovation CUSUM)}{subsection.2.12}{}}
+\companionlabel{app:proof-delay}{{B.13}{12}{Proof of Theorem~\ref {thm:delay} of the main paper (Out-of-Control Detection-Delay Upper Bound)}{subsection.2.13}{}}
+\companionlabel{app:proof-optimality}{{B.14}{12}{Proof of Theorem~\ref {thm:optimality} of the main paper (Asymptotic Optimality of the Innovation CUSUM)}{subsection.2.14}{}}
+\companionlabel{app:proof-cordim}{{B.15}{13}{Proof of Corollary~\ref {cor:dim} of the main paper (Dimension-Stable ARL)}{subsection.2.15}{}}
+\companionlabel{app:stationary-causal}{{B.16}{14}{Stationary Causal Solution and Geometric Coupling}{subsection.2.16}{}}
+\companionlabel{prop:stationary-causal}{{B.3}{14}{Stationary causal solution and geometric coupling}{theorem.2.3}{}}
+\companionlabel{app:sims}{{C}{14}{Simulation Details}{section.3}{}}
+\companionlabel{tab:hparam}{{C.2}{15}{LSTM architecture and training settings used across all studies}{table.2}{}}
+\companionlabel{app:supp-empirical}{{D}{16}{Empirical Supplement}{section.4}{}}
+\companionlabel{app:supp-cusumcp-traj}{{D.1}{16}{Study CUSUM-CP: Example CUSUM Trajectory}{subsection.4.1}{}}
+\companionlabel{fig:cusum-traj}{{D.1}{16}{Study CUSUM-CP: CUSUM trajectories on one example sequence ($\phi : 0.30 \to 0.85$, $\tau ^* = 100$, dashed red). M1 fires before the true change-point; M2 and M3 fire after. M3 (the Innovation CUSUM) achieves the alarm without being told the AR structure}{figure.1}{}}
+\companionlabel{app:supp-mdsvar}{{D.2}{16}{Study MDS-VAR: Multivariate MDS Diagnostic (VAR)}{subsection.4.2}{}}
+\companionlabel{tab:mds-var}{{D.3}{17}{Study MDS-VAR: Hosking MDS pass rate (nominal level 0.05) for LSTM innovations and OLS residuals on VAR(1) data. $\hat {\rho }_{\mathrm {op}}$ = estimated $\|\hat \Phi \|_{\mathrm {op}}$ from LSTM hidden states}{table.3}{}}
+\companionlabel{app:supp-kal}{{D.3}{17}{Study KAL: Kalman Filter Benchmark}{subsection.4.3}{}}
+\companionlabel{fig:kal}{{D.2}{18}{Study KAL: Mean $J_t$ trajectories at $\phi =0.70$ over 20 test sequences. Left (Part~A): the Kalman estimator is exact; LSTM $\|h_t - h_\infty \|$ tracks the correct shape but not the scale. Right (Part~B): with observation noise the LSTM hidden-state norm more closely tracks the oracle than the EM-estimated Kalman filter}{figure.2}{}}
+\companionlabel{tab:kal}{{D.4}{18}{Study KAL: NMSE of $J_t$ estimators relative to the oracle. $N=1000$ test sequences; $T=200$. Bold: best non-oracle estimator per row}{table.4}{}}
+\companionlabel{app:supp-nile}{{D.4}{18}{Study NILE: Real-Data Application --- Nile River Annual Flows}{subsection.4.4}{}}
+\companionlabel{tab:nile}{{D.5}{19}{Study NILE: Nile River change-point detection ($\tau =28$, $h=4$). Delay = alarm time $-$ $\tau $ (positive = after change)}{table.5}{}}
+\companionlabel{app:supp-pelt}{{D.5}{19}{Study PELT: Change-Point Detection Benchmark (PELT vs.\ Innovation CUSUM)}{subsection.4.5}{}}
+\companionlabel{fig:nile}{{D.3}{20}{Study NILE: CUSUM trajectories for the Nile River series. Vertical dashed line marks the known change-point $\tau =28$ (1898). The Innovation CUSUM (bottom) crosses threshold $h=4$ at $t=29$, two steps before the raw and whitened methods}{figure.3}{}}
+\companionlabel{tab:pelt}{{D.6}{21}{Study PELT: PELT vs the Innovation CUSUM across dimensions ($\tau =100$, $T=200$, 1000 change-point sequences, 500 ARL$_0$ sequences). PELT uses $\ell _2$ cost, penalty $7.0$ calibrated to ARL$_0 \approx 200$ at $d=1$. FA = fraction of sequences with alarm before $\tau $. Delay = mean steps from $\tau $ to alarm (conditioned on detection; negative = pre-alarm). $\dagger $: PELT's high ARL$_0$ at $d=2$ reflects near-zero detection (5.6\%), not a well-calibrated procedure}{table.6}{}}
+\companionlabel{fig:pelt}{{D.4}{21}{Study PELT: ARL$_0$ (left), false-alarm rate (middle), and mean detection delay (right) for PELT (red) and the Innovation CUSUM (green) across $d \in \{1,2,5,10\}$. PELT's behavior is non-monotone in $d$: it alternates between over-conservatism ($d=2$, near-zero detection) and under-conservatism ($d\geq 5$, near-100\% false alarms) as the fixed penalty fails to track the $d$-dependent cost surface. The Innovation CUSUM's ARL$_0$ rises steadily and its false-alarm rate remains controlled throughout}{figure.4}{}}
+\companionlabel{app:supp-eqarl}{{D.6}{21}{Study CUSUM-EQARL: Equal-$\mathrm {ARL}_0$ Calibrated Comparison}{subsection.4.6}{}}
+\companionlabel{tab:eqarl-arl}{{D.7}{22}{Fixed-$h$ ($h=5$) in-control $\mathrm {ARL}_0$ from Study~CUSUM-DIM. At $h=5$ the detectors operate at very different false-alarm levels, so the fixed-$h$ comparison is not like-for-like}{table.7}{}}
+\companionlabel{tab:eqarl}{{D.8}{22}{Study CUSUM-EQARL: calibrated threshold $h$ and (FP, TP) at the common target $\mathrm {ARL}_0=200$, under per-sequence vs.\ global nuisance estimation. Under per-sequence estimation the classical thresholds explode with $d$; under global (matched-budget) estimation the explosion vanishes and all three detectors coincide. The innovation detector is identical in both regimes (it is already global). Monte Carlo SE $\leq 0.016$ on the rates}{table.8}{}}
+\companionlabel{app:supp-misspec}{{D.7}{23}{Study CUSUM-MISSPEC: A Genuine Advantage under Misspecification}{subsection.4.7}{}}
+\companionlabel{tab:misspec}{{D.9}{24}{Study CUSUM-MISSPEC: fair (global-estimation) comparison at $\mathrm {ARL}_0=200$ on the nonlinear rotation-change process (marginal std before/after $\approx 0.79/0.77$, confirming a pure dynamics change). ``ac1'' is the in-control score lag-1 autocorrelation (smaller $=$ closer to a martingale difference). Bold marks the shortest delay and the smallest ac1 per block}{table.9}{}}
+\companionlabel{app:supp-lsdiag}{{D.8}{24}{Study LS-Diag: Locally Stationary AR (Study~S2A)}{subsection.4.8}{}}
+\companionlabel{tab:supp-S2A}{{D.10}{25}{Study S2A: Performance on 1000 locally stationary AR sequences. LSTM trained at $\phi _{\mathrm {center}} = 0.50$; true $\phi (u) = 0.50 + 0.40\sin (2\pi u)$}{table.10}{}}
+\companionlabel{fig:supp-S2A}{{D.5}{26}{Study S2A: (a) Time-varying $\phi (u)$; (b) normalized true $J(u)$ (red) vs.\ mean forget gate $\bar f_t$ (blue $\pm $ 1\,s.d.); (c) per-step prediction MSE over 1000 locally stationary sequences. The forget gate systematically mis-adapts: it moves opposite to $J(u)$, yielding the strongly negative Spearman correlation in Table~\ref {tab:supp-S2A}}{figure.5}{}}
+\companionlabel{app:supp-jsurr}{{D.9}{27}{Study J-Surr: $J_t$ Surrogate Comparison (Study~S3)}{subsection.4.9}{}}
+\companionlabel{tab:supp-S3}{{D.11}{27}{Study S3: Normalized MSE of four $J_t$ estimators. Mean and median over 500 replications (KLIEP burn-in of $W=50$ steps excluded from evaluation)}{table.11}{}}
+\companionlabel{fig:supp-S3}{{D.6}{28}{Study S3: NMSE boxplots for four $\hat J_t$ estimators on DGP~A (left) and DGP~B (right). The dotted line at NMSE$\,=1$ marks the trivial baseline}{figure.6}{}}

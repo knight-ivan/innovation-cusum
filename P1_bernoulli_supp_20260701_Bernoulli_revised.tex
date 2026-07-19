@@ -254,7 +254,7 @@ appropriate decreasing sigma-fields.  The key convergence theorem is:
   (unless the martingale is uniformly integrable).
   Reverse martingales are automatically uniformly integrable, so both modes of
   convergence are free.  This property is useful for tail-projection arguments such as
-  Lemma~\ref{lem:equiv} of the main paper.
+  Lemma~\ref{lem:equiv}.
 \end{remark}
 
 \subsection{The Hewitt--Savage Zero-One Law}
@@ -428,10 +428,61 @@ Cor~\ref{cor:dim} & Mahalanobis innovation score
 \end{tabular}
 \end{table}
 
-\subsection{Proof of Lemma~\ref{lem:equiv} of the main paper (Equivalence of Forward and Tail Limits)}
+\subsection{Equivalence of Forward and Tail Limits}
+\label{sec:lemma}
+
+The first result resolves the apparent tension between the \emph{forward}
+perspective (the hidden state is adapted to the increasing filtration $\F_t$)
+and the \emph{reverse} perspective (selective memory is characterized by the
+decreasing filtration $\G_n$).
+
+\begin{lemma}[Equivalence of forward and tail limits]
+\label{lem:equiv}
+  Let $(X_t)_{t\geq 1}$ be a stationary ergodic sequence on $(\Omega,\A,\Prob)$,
+  and let $\theta : \Omega \to \R$ be bounded and tail-measurable,
+  i.e.\ $\theta \in L^\infty(\Omega, \Tsig, \Prob)$.
+  Within this lemma only, let $\F_t = \sigma(X_1,\ldots,X_t)$ denote the
+  one-sided natural filtration, and let
+  $\G_n = \sigma(X_n,X_{n+1},\ldots)$ be the reverse filtration,
+  so that $\Tsig = \bigcap_{n\geq 1}\G_n$.  Then:
+  \begin{enumerate}[label=(\alph*), itemsep=3pt]
+    \item $\E[\theta\given\F_t] \xrightarrow{a.s.\ \text{and}\ L^1} \theta$
+      as $t \to \infty$.
+    \item $\E[\theta\given\G_n] \xrightarrow{a.s.\ \text{and}\ L^1} \theta$
+      as $n \to \infty$.
+    \item Both limits equal $\theta$ almost surely; consequently,
+      $\lim_{t\to\infty}\E[\theta\given\F_t] = \lim_{n\to\infty}\E[\theta\given\G_n]$
+      a.s.
+  \end{enumerate}
+  For a non-tail-measurable $\theta \in L^1(\Omega,\A,\Prob)$:
+  \begin{enumerate}[label=(\alph*), start=4, itemsep=3pt]
+    \item $\E[\theta\given\F_t] \xrightarrow{a.s.} \E[\theta\given\F_\infty^+]$,
+      which may be strictly larger (in $\sigma$-algebra terms) than $\Tsig$.
+    \item $\E[\theta\given\G_n] \xrightarrow{a.s.} \E[\theta\given\Tsig]$,
+      the projection of $\theta$ onto $\Tsig$, which extracts only the
+      structurally persistent component.
+  \end{enumerate}
+\end{lemma}
+
+\begin{remark}[Interpretation for sequential learning]
+\label{rem:interp-lemma}
+  Lemma~\ref{lem:equiv} resolves only the conditional-expectation part of the
+  forward/reverse tension: if the target is already tail-measurable, then
+  conditioning on the increasing natural filtration and conditioning on the
+  decreasing tail filtration identify the same limit.  It does \emph{not} by
+  itself imply that an RNN hidden state converges to a tail projection.  The
+  hidden state is a stochastic recurrence driven by the observations, and its
+  long-run behavior must be analyzed separately, as in
+  Theorem~\ref{thm:mds}.  The lemma's role here is scoping: it identifies
+  the tail $\sigma$-algebra as the natural carrier of any ``long-run
+  summary'' interpretation, and it motivates conditioning on the two-sided
+  past in Section~\ref{sec:rnn-decomp}, where the object of analysis is
+  the stationary innovation rather than a tail limit of $h_t$.
+\end{remark}
+
 \label{app:proof-lemequiv}
 
-\begin{proof}[Proof of Lemma~\ref{lem:equiv} in the main paper]
+\begin{proof}[Proof of Lemma~\ref{lem:equiv}]
   \textbf{Part (a).}
   Since $\theta \in L^\infty \subseteq L^1$ and $\theta$ is
   $\Tsig$-measurable, it is also $\F_\infty^+$-measurable because
@@ -736,9 +787,63 @@ Cor~\ref{cor:dim} & Mahalanobis innovation score
   $\inf_{\phi\in\Phi}R(\phi)$ gives the split, with
   $\varepsilon_{\mathrm{app}}=\inf_{\phi\in\Phi}R(\phi)-\sigma_e^2
    =\inf_{\phi\in\Phi}\E\|m_t-g_\phi(h_t)\|^2$.
-  (ii) is the stated balance of the two rate assumptions; and~(iii)
-  substitutes $\eta_T$ into the drift margin $\kappa_T=k-\eta_T$ of
-  Theorems~\ref{thm:arl} and~\ref{thm:optimality}.
+  (ii) is the stated balance of the two assumed rates.  (iii) is the
+  observation that $\eta_T$ is an $L^2$ norm while
+  Assumption~\ref{ass:pathway}(B1) constrains
+  $\operatorname*{ess\,sup}_t\E[\hat e_t\mid\F_{t-1}]$; since
+  $\|\cdot\|_{L^2}\leq\operatorname*{ess\,sup}|\cdot|$ but not conversely, no
+  bound on $\eta_T$ implies (B1), and $\eta_T$ cannot replace $\eta$ in
+  Theorem~\ref{thm:arl}.
+\end{proof}
+
+\subsection{Proof of Proposition~\ref{prop:hp-drift} of the main paper (High-Probability Verification of the Drift Condition)}
+\label{app:proof-hp-drift}
+
+\begin{proof}[Proof of Proposition~\ref{prop:hp-drift} in the main paper]
+  \emph{Step 1 (compact reachable set).}  By (H1) and Lipschitzness of $\phi$,
+  $\norm{h_t}\leq\norm{\phi(0)}+L_\phi\bigl(\norm{W_h}_{\mathrm{op}}\norm{h_{t-1}}
+  +\norm{W_x}_{\mathrm{op}}B_X+\norm{b_h}\bigr)
+  =\norm{\phi(0)}+\rho\norm{h_{t-1}}+L_\phi(\norm{W_x}_{\mathrm{op}}B_X+\norm{b_h})$
+  a.s.  Iterating this affine recursion and using $\rho<1$ gives
+  $\norm{h_t}\leq C_h$ a.s.\ for every $t$, with
+  \[
+    C_h:=\max\Bigl\{\norm{h_0}_\infty,\;
+      \frac{\norm{\phi(0)}+L_\phi\bigl(\norm{W_x}_{\mathrm{op}}B_X+\norm{b_h}\bigr)}{1-\rho}\Bigr\};
+  \]
+  the same
+  bound holds for the stationary causal solution $H_t^*$, which is driven by
+  the same bounded inputs.  Hence $h_t,H_t^*\in\mathcal H$ a.s.
+
+  \emph{Step 2 (pathwise coupling).}  Both $h_t$ and $H_t^*$ satisfy the same
+  recursion driven by the same input path, so under
+  Assumption~\ref{ass:spectral} the map is a $\rho$-contraction in the state
+  argument and
+  $\norm{h_t-H_t^*}\leq\rho\norm{h_{t-1}-H_{t-1}^*}\leq\cdots\leq
+  \rho^{t}\norm{h_0-H_0^*}\leq\rho^{t}\Delta_0^\infty$ a.s.  (This is the
+  pathwise form of the $L^2$ coupling used elsewhere; no expectation is taken.)
+
+  \emph{Step 3 (decomposition).}  By Proposition~\ref{prop:whiteness}(i),
+  $\E[\hat e_{t+1}\mid\F_t]=m_t-\hat m_t$ with $\hat m_t=\hat o(h_t)$.  Insert
+  $o_\star(H_t^*)$ and $o_\star(h_t)$:
+  \[
+    |m_t-\hat o(h_t)|
+    \;\leq\;\underbrace{|m_t-o_\star(H_t^*)|}_{\leq\,a_\infty\ \text{by (H2)}}
+    +\underbrace{|o_\star(H_t^*)-o_\star(h_t)|}_{\leq\,L_o\norm{H_t^*-h_t}}
+    +\underbrace{|o_\star(h_t)-\hat o(h_t)|}_{\leq\,\varepsilon_T\ \text{on the event, by (H3)}} .
+  \]
+  The middle term is at most $L_o\rho^t\Delta_0^\infty$ by Step~2, and the last
+  term is bounded because $h_t\in\mathcal H$ a.s.\ by Step~1, so the sup-norm
+  bound of (H3) applies pointwise.  All three bounds hold almost surely on the
+  training event, giving the displayed inequality.
+
+  \emph{Step 4 (verification of (B1) and the conditional ARL).}  For $t\geq t_0$
+  the transient term is at most $\varepsilon_T$, so
+  $\E[\hat e_{t+1}\mid\F_t]\leq a_\infty+2\varepsilon_T=\bar\eta_T$ a.s.  This is
+  exactly Assumption~\ref{ass:pathway}(B1) with $\eta=\bar\eta_T$.  Conditionally
+  on $\mathcal D_T$ the fitted readout is fixed, so (B2) and the hypotheses of
+  Theorem~\ref{thm:arl} hold conditionally; applying that theorem with
+  $\kappa=k-\bar\eta_T>0$ gives the stated conditional ARL bound, valid on the
+  training event, whose probability is at least $1-\delta_T$ by (H3). $\square$
 \end{proof}
 
 \subsection{Heuristic Derivation: Forget-Gate Information Ratio}
@@ -882,7 +987,7 @@ This is not a proof of gate consistency for an unconstrained trained LSTM.
   and, by Steps~3--4 of the proof of Theorem~\ref{thm:arl},
   \[
     \Prob_0(\tau_h^+\leq n)\;\leq\;\Prob_0(N^+\leq n)
-      \;=\;1-(1-e^{-\theta^\ast h})^{\,n}\;\leq\;n\,e^{-\theta^\ast h},
+      \;\leq\;1-(1-e^{-\theta^\ast h})^{\,n}\;\leq\;n\,e^{-\theta^\ast h},
   \]
   and likewise for $\tau_h^-$; here the last step uses Bernoulli's
   inequality.  A union bound over the two arms gives, with
