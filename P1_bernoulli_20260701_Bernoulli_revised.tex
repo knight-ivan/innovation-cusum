@@ -1093,9 +1093,9 @@ the in-control conditional-drift condition~(B1).
 \label{sec:optimality}
 
 Corollary~\ref{cor:tradeoff} shows the Innovation CUSUM attains the optimal
-\emph{order} of detection delay.  We now record that it is in fact
-asymptotically optimal in Lorden's minimax sense, and \emph{exactly} so in
-the canonical Gaussian case.  For a stopping time $\tau$ and change-point
+\emph{order} of detection delay.  We now record that it is
+order-optimal within Lorden's minimax framework, and is \emph{exactly}
+minimax optimal in the canonical Gaussian case.  For a stopping time $\tau$ and change-point
 $\nu\geq1$, Lorden's worst-case detection delay and the false-alarm
 constraint class are
 \[
@@ -1123,8 +1123,11 @@ where $\E_\nu$ (resp.\ $\E_\infty$) denotes the law with change at $\nu$
       matching, in order, the universal lower bound
       $\inf_{\tau\in\mathcal C_\gamma}\mathcal J(\tau)\geq(\log\gamma)/I\,(1-o(1))$
       of \citet{lorden1971procedures}, with $I$ the Kullback--Leibler
-      information number of the change.  The detector is thus first-order
-      rate-optimal, with \emph{detection efficiency} $2\kappa\mu/\sigma^2$.
+      information number of the change.  The detector is thus
+      order-optimal (rate-optimal in $\log\gamma$), with \emph{detection
+      efficiency} $2\kappa\mu/\sigma^2$; first-order (constant-matching)
+      optimality holds only when this efficiency equals $I$, i.e.\ in the
+      Gaussian case of part~(ii) below.
     \item \textbf{(Exact minimax optimality, Gaussian innovations.)}
       Suppose that, conditionally on $\F_{t-1}$, the innovation $\hat e_t$ is
       Gaussian with variance $\sigma^2$ and mean $\eta$ in control and
@@ -1888,8 +1891,8 @@ ARL lower bound and a matching detection-delay upper bound, combining
 (Corollary~\ref{cor:tradeoff}) into the exponential-false-alarm /
 logarithmic-delay trade-off for a detector with no parametric model for the
 observation dynamics; Theorem~\ref{thm:optimality} shows this trade-off is
-minimax optimal in Lorden's sense --- exactly so under a Gaussian innovation
-shift.  Propositions~\ref{prop:rnn-resid-bridge} and~\ref{prop:whiteness} link
+order-optimal in Lorden's minimax framework, and exactly minimax optimal under
+a Gaussian innovation shift.  Propositions~\ref{prop:rnn-resid-bridge} and~\ref{prop:whiteness} link
 state stabilization to residual drift and identify when a learned predictor
 provably beats a fixed linear filter, and Corollary~\ref{cor:dim} treats the
 multivariate score.  Empirical studies --- synthetic autoregressive and
