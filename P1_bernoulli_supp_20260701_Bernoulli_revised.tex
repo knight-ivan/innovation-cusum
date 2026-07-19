@@ -405,8 +405,14 @@ Prop~\ref{prop:whiteness} & Fitted vs.\ linear residuals
   & nonlinear conditional mean; consistent learned predictor
   & irreducible linear defect; learned defect $\to0$ \\
 Prop~\ref{prop:whiteness-rate} & Fitted-predictor defect $\eta_T$
-  & approximation rate $W^{-2\beta}$; $\beta$-mixing excess-risk rate
-  & $\eta_T=\widetilde O(T^{-\beta/(2\beta+1)})$; margin $\kappa_T\uparrow k$ \\
+  & \emph{assumed} approximation rate $W^{-2s}$; $\beta$-mixing excess-risk rate
+  & $L^2$ defect rate $\eta_T=\widetilde O(T^{-s/(2s+1)})$ only; does \emph{not}
+    imply (B1) \\
+Prop~\ref{prop:hp-drift} & Fitted residual drift
+  & bounded inputs/initial state; uniform approximation; high-probability
+    sup-norm estimation; conditional (B2)
+  & verifies (B1) with $\bar\eta_T$ w.p.\ $\ge1-\delta_T$; conditional ARL
+    bound after burn-in \\
 \midrule
 Thm~\ref{thm:arl} & Innovation CUSUM score
   & drift margin $k>\eta$, conditional sub-Gaussianity
@@ -418,8 +424,9 @@ Cor~\ref{cor:tradeoff} & Innovation CUSUM score
   & Assumptions above
   & exponential-ARL / logarithmic-delay trade-off \\
 Thm~\ref{thm:optimality} & Innovation CUSUM score
-  & Assumptions above; Gaussian innovation shift for exactness
-  & Lorden order-optimality; exact minimax optimality (Gaussian) \\
+  & Assumptions above $+$ KL information number; Gaussian shift for part~(ii)
+  & Lorden order-optimality; first-order optimality at $h_\gamma$ (Gaussian),
+    exact only after exact ARL calibration \\
 Cor~\ref{cor:dim} & Mahalanobis innovation score
   & uniform-in-$d$: bounded $\eta_d$, $\lambda_{\min}(\Sigma_0)\ge c_0$,
     conditional homoskedasticity, $O(1)$ score sub-Gaussianity
@@ -530,7 +537,8 @@ decreasing filtration $\G_n$).
   We prove the $C_0$ formula for the case $\phi(0)=0$ (e.g.\ $\tanh$, ReLU),
   where the Lipschitz bound gives $\norm{\phi(u)} \leq L_\phi\norm{u}$.
   (For activations with $\phi(0)\neq 0$, e.g.\ sigmoid, an additional
-  term $L_\phi\norm{\phi(0)}/(1-\rho)$ is added to $C_0$, consistent with the
+  term $\norm{\phi(0)}/(1-\rho)$ is added to $C_0$---undamped by $L_\phi$,
+  since $\norm{\phi(u)}\leq\norm{\phi(0)}+L_\phi\norm{u}$---consistent with the
   general formula stated in Theorem~\ref{thm:mds} of the main paper.)
   By the Lipschitz bound $\norm{\phi(u)}\leq L_\phi\norm{u}$ and
   Minkowski's inequality in $L^2$,
@@ -807,8 +815,8 @@ decreasing filtration $\G_n$).
   a.s.  Iterating this affine recursion and using $\rho<1$ gives
   $\norm{h_t}\leq C_h$ a.s.\ for every $t$, with
   \[
-    C_h:=\max\Bigl\{\norm{h_0}_\infty,\;
-      \frac{\norm{\phi(0)}+L_\phi\bigl(\norm{W_x}_{\mathrm{op}}B_X+\norm{b_h}\bigr)}{1-\rho}\Bigr\};
+    C_h:=\max\Bigl\{B_0,\;
+      \frac{\norm{\phi(0)}+L_\phi\bigl(\norm{W_x}_{\mathrm{op}}B_X+\norm{b_h}\bigr)}{1-\rho}\Bigr\},
   \]
   the same
   bound holds for the stationary causal solution $H_t^*$, which is driven by
@@ -839,11 +847,17 @@ decreasing filtration $\G_n$).
   \emph{Step 4 (verification of (B1) and the conditional ARL).}  For $t\geq t_0$
   the transient term is at most $\varepsilon_T$, so
   $\E[\hat e_{t+1}\mid\F_t]\leq a_\infty+2\varepsilon_T=\bar\eta_T$ a.s.  This is
-  exactly Assumption~\ref{ass:pathway}(B1) with $\eta=\bar\eta_T$.  Conditionally
-  on $\mathcal D_T$ the fitted readout is fixed, so (B2) and the hypotheses of
-  Theorem~\ref{thm:arl} hold conditionally; applying that theorem with
-  $\kappa=k-\bar\eta_T>0$ gives the stated conditional ARL bound, valid on the
-  training event, whose probability is at least $1-\delta_T$ by (H3). $\square$
+  Assumption~\ref{ass:pathway}(B1) with $\eta=\bar\eta_T$, but \emph{only from
+  $t_0$ onward}: residuals before the burn-in need not satisfy it, which is why
+  the monitor is restarted at $t_0$ with $S_{t_0}=0$ and alarm time
+  $\tau_h^{(t_0)}$.  By (H3) the training sample is independent of the monitored
+  stream (equivalently $\mathcal D_T\subseteq\F_0$), so conditionally on
+  $\mathcal D_T$ the fitted readout is a fixed function; (B2) holds conditionally
+  by (H4).  Hence the hypotheses of Theorem~\ref{thm:arl} are satisfied
+  conditionally on $\mathcal D_T$ for the process $(\hat e_t)_{t>t_0}$, and
+  applying that theorem from time $t_0$ with $\kappa=k-\bar\eta_T>0$ gives
+  $\E_0[\tau_h^{(t_0)}-t_0\mid\mathcal D_T]\geq\exp\{2(k-\bar\eta_T)h/\sigma^2\}$
+  on the training event, whose probability is at least $1-\delta_T$. $\square$
 \end{proof}
 
 \subsection{Heuristic Derivation: Forget-Gate Information Ratio}
@@ -1078,7 +1092,11 @@ This is not a proof of gate consistency for an unconstrained trained LSTM.
   $\hat e_t-k$ and the Page CUSUM of the log-likelihood ratio define the same
   stopping rule up to the threshold rescaling $\theta^\ast=\delta/\sigma^2$,
   and the exact optimality of the latter \citep{moustakides1986optimal}
-  transfers.  The identities $\kappa=\mu=\delta/2$ and
+  transfers.  This exact-optimality conclusion concerns the likelihood-ratio
+  CUSUM threshold calibrated so that $\E_\infty[\tau]=\gamma$ exactly; for the
+  analytic threshold $h_\gamma$, which only guarantees
+  $\E_\infty[\tau_{h_\gamma}]\geq\gamma$, solely the first-order conclusion is
+  asserted.  The identities $\kappa=\mu=\delta/2$ and
   $I=\delta^2/(2\sigma^2)$ are direct computations.
 \end{proof}
 

@@ -264,8 +264,10 @@ residuals satisfying explicit conditional-drift and tail assumptions, the
 Innovation CUSUM has a sharp exponential in-control average-run-length lower
 bound and a corresponding out-of-control detection-delay upper bound
 (Theorems~\ref{thm:arl} and~\ref{thm:delay}); together they attain the
-minimax-optimal detection rate of classical sequential analysis, exactly so
-under a Gaussian innovation shift (Theorem~\ref{thm:optimality}). Fourth, we identify
+minimax-optimal detection \emph{rate} of classical sequential analysis, and in
+the Gaussian mean-shift case the analytic threshold is first-order minimax
+optimal, with exact Lorden optimality holding for the Page CUSUM calibrated to
+the false-alarm constraint (Theorem~\ref{thm:optimality}). Fourth, we identify
 \emph{when} learning helps: under a nonlinear conditional mean, any fixed
 linear residualization carries an irreducible innovation defect, whereas a
 consistent learned predictor drives this defect to zero
@@ -334,10 +336,7 @@ Kolmogorov's extension theorem we may, and do, extend it to a two-sided
 strictly stationary ergodic process $(X_t)_{t\in\mathbb{Z}}$.
 Throughout Sections~\ref{sec:theory}--\ref{sec:pathway} the filtration is
 the \emph{two-sided} natural filtration
-\[
-  \mathcal{F}_t \;=\; \sigma(X_s : s\leq t)\vee\sigma(h_0),
-  \qquad t\in\mathbb{Z},
-\]
+$\mathcal{F}_t=\sigma(X_s:s\leq t)\vee\sigma(h_0)$, $t\in\mathbb{Z}$,
 where the RNN initial state $h_0$ (introduced below) is square-integrable
 and independent of $(X_t)_{t\in\mathbb{Z}}$; a deterministic $h_0$, as in
 all our experiments, is a special case.  Conditioning on the two-sided
@@ -374,7 +373,8 @@ i.i.d. Hewitt--Savage zero-one law are collected in Section~\ref{app:background}
 
 \begin{remark}[Non-tail-measurable targets]
 \label{rem:nontail}
-  Parts (d) and (e) show that when the target $\theta$ is not tail-measurable,
+  Parts~(d)--(e) of Lemma~\ref{lem:equiv} (Supplementary Material) show that
+  when the target $\theta$ is not tail-measurable,
   the forward and reverse limits \emph{differ}: the forward limit
   $\E[\theta\given\F_\infty^+]$ may incorporate information from the finite
   initial segment, while the reverse limit $\E[\theta\given\Tsig]$ discards it.
@@ -497,12 +497,15 @@ counterpart (iv), and the stationary innovation covariance $\Sigma_M^*$
         \quad \text{a.s.}
         \label{eq:nondeg}
       \end{equation}
-      A sufficient condition for \eqref{eq:nondeg} is that $X_t$ is not
-      entirely predictable from $\F_{t-1}$ and $W_x$ has full row rank
-      $\mathrm{rank}(W_x)=p$ under linear activation; this sufficient
-      condition need not apply as stated for nonlinear $\phi$, and can fail
-      for saturating nonlinearities or when $d_{\mathrm{in}}<p$
-      (see Remark~\ref{rem:rank}).
+      Under linear activation \eqref{eq:nondeg} holds precisely when
+      $v^\top W_x\Var(X_t\given\F_{t-1})W_x^\top v>0$ a.s.\ for every $v\neq0$,
+      i.e.\ when the conditional covariance of $X_t$ is positive definite on the
+      range of $W_x^\top$.  Unpredictability of $X_t$ together with
+      $\mathrm{rank}(W_x)=p$ is \emph{not} sufficient: for $W_x=I_2$ and
+      $X_t=(\varepsilon_t,0)^\top$ with $\varepsilon_t$ unpredictable, the second
+      innovation coordinate has zero variance.  For nonlinear $\phi$ the
+      condition can also fail for saturating activations or when
+      $d_{\mathrm{in}}<p$ (see Remark~\ref{rem:rank}).
   \end{enumerate}
 \end{theorem}
 
@@ -569,10 +572,7 @@ counterpart (iv), and the stationary innovation covariance $\Sigma_M^*$
   $\mathbf{T}_T(u):=T^{-1/2}\sum_{t=1}^{\lfloor Tu\rfloor}(M_t-M_t^*)$
   satisfies $\sup_{u\in[0,1]}\|\mathbf{T}_T(u)\|\to 0$ in probability,
   with explicit rate
-  \[
-    \E\!\left[\sup_{u\in[0,1]}\|\mathbf{T}_T(u)\|\right]
-    \leq \frac{2\Delta_0\rho}{\sqrt{T}(1-\rho)} \to 0
-  \]
+  $\E[\sup_{u\in[0,1]}\|\mathbf{T}_T(u)\|]\leq 2\Delta_0\rho/\{\sqrt{T}(1-\rho)\}\to0$
   (see proof for the sup-norm bound and the functional Slutsky argument),
   so \eqref{eq:fclt} holds for $(M_t)$ and $(M_t^*)$ simultaneously.
 \end{corollary}
@@ -584,10 +584,7 @@ counterpart (iv), and the stationary innovation covariance $\Sigma_M^*$
 \begin{proposition}[Bayes prediction residuals are martingale differences]
 \label{prop:predresid}
   Let $Y_{t+1}$ be a square-integrable, $\F_{t+1}$-measurable prediction target and let
-  $m_t=\E[Y_{t+1}\given\F_t]$.  Then
-  \[
-    e_{t+1}=Y_{t+1}-m_t
-  \]
+  $m_t=\E[Y_{t+1}\given\F_t]$.  Then $e_{t+1}=Y_{t+1}-m_t$
   is $\F_{t+1}$-measurable, satisfies $\E[e_{t+1}\given\F_t]=0$, and hence is a martingale difference relative to $(\F_t)$.  If an $\F_t$-measurable estimator
   $\hat m_t$ obeys $\sup_t\norm{\hat m_t-m_t}_{L^2}\leq\eta$, then the fitted
   residuals $\hat e_{t+1}=Y_{t+1}-\hat m_t$ are approximate martingale
@@ -686,16 +683,16 @@ defect to zero.
 \begin{remark}[Consequence for calibration and the ARL guarantee]
 \label{rem:whiteness-arl}
   In the change-point theory of Section~\ref{sec:pathway} the reference value
-  must exceed the innovation defect, $k>\eta$, and the ARL guarantee improves
-  with the net margin $\kappa=k-\eta$ (Theorem~\ref{thm:arl}).  Under
-  nonlinearity in mean, a linear residualization is capped at
-  $\kappa\leq k-\eta_{\mathrm{lin}}$ with $\eta_{\mathrm{lin}}>0$ fixed by the
-  process, whereas a consistent learned predictor attains $\kappa\to k$.  A
-  learned predictor therefore yields a strictly better guaranteed in-control
-  ARL than any fixed linear filter when the conditional mean is nonlinear;
-  Study~CUSUM-MISSPEC (Supplementary Material) exhibits exactly this gap,
-  with the learned innovations markedly whiter than linear-whitening
-  residuals.
+  must exceed the conditional drift, $k>\eta$, and the guarantee improves with
+  the margin $\kappa=k-\eta$ (Theorem~\ref{thm:arl}).  Under nonlinearity in
+  mean a fixed linear residualization retains the irreducible $L^2$ defect
+  $\eta_{\mathrm{lin}}>0$, whereas a consistent learned predictor drives it to
+  zero.  This is a statement about the \emph{$L^2$} defect: since the $\eta$ of
+  (B1) is an essential supremum, a smaller $L^2$ defect does not by itself
+  enlarge the guaranteed margin, and does so only under the additional uniform
+  control of Proposition~\ref{prop:hp-drift}.  Study~CUSUM-MISSPEC
+  (Supplementary Material) exhibits the $L^2$ gap, with the learned innovations
+  markedly whiter than linear-whitening residuals.
 \end{remark}
 
 Proposition~\ref{prop:whiteness} is qualitative: a consistent learned
@@ -709,9 +706,13 @@ part~(ii) are assumed, not established here for the recurrent class.
   Let $\hat m=g_{\hat\phi}$ be the recurrent predictor fitted by empirical
   risk minimization over a class $\Phi$ from $T$ in-control observations, and
   write $\eta_T=\sup_t\|\E[\hat e_{t+1}\mid\F_t]\|_{L^2}$ for its innovation
-  defect, $\sigma_e^2=\E\|X_{t+1}-m_t\|^2$ for the irreducible one-step Bayes
-  risk, and $R(\phi)=\E\|X_{t+1}-g_\phi(h_t)\|^2$ for the population risk (in
-  the stationary regime, so constant in $t$).
+  defect and $\sigma_e^2=\E\|X_{t+1}-m_t\|^2$ for the irreducible one-step Bayes
+  risk.  Because $\hat\phi$ is random, the population risk is taken
+  out-of-sample and conditionally on the training data:
+  $R_{\mathcal D_T}(\phi)=\E[\|X'_{t+1}-g_\phi(h'_t)\|^2\given\mathcal D_T]$,
+  evaluated on an independent stationary trajectory $(X'_t,h'_t)$ (constant in
+  $t$ in the stationary regime); all statements below are conditional on
+  $\mathcal D_T$.
   \begin{enumerate}[label=(\roman*), itemsep=3pt]
     \item \textbf{(Exact bias--variance split.)}  The squared defect equals
       the excess prediction risk and splits into estimation and approximation
@@ -757,17 +758,23 @@ The next proposition closes that gap, making explicit the price: control must be
 \label{prop:hp-drift}
   Work under Assumption~\ref{ass:spectral} and suppose:
   \begin{enumerate}[label=(H\arabic*), itemsep=2pt]
-    \item \textbf{(Bounded inputs.)}  $\norm{X_t}\le B_X$ a.s.; then
-      $\norm{h_t}\le C_h$ a.s.\ for an explicit constant $C_h$ (see the proof),
-      so $h_t$ and $H_t^*$ lie in the compact set
+    \item \textbf{(Bounded inputs and initial state.)}  $\norm{X_t}\le B_X$ and
+      $\norm{h_0}\le B_0$ a.s.\ (in particular $h_0$ may be deterministic, as in
+      the experiments); then $\norm{h_t}\le C_h$ a.s.\ for an explicit constant
+      $C_h$ (see the proof), so $h_t$ and $H_t^*$ lie in the compact set
       $\mathcal H:=\{h:\norm{h}\le C_h\}$.
     \item \textbf{(Uniform approximation.)}  The readout class contains an
       $L_o$-Lipschitz $o_\star$ with
       $a_\infty:=\operatorname*{ess\,sup}_t\,|o_\star(H_t^*)-m_t|<\infty$.
-    \item \textbf{(Uniform estimation, with high probability.)}  The fitted
-      readout $\hat o$ satisfies, with probability at least $1-\delta_T$ over
-      the training sample $\mathcal D_T$,
+    \item \textbf{(Uniform estimation, with high probability.)}  The training
+      sample $\mathcal D_T$ is independent of the monitored stream (equivalently,
+      $\mathcal D_T\subseteq\F_0$, all residual conditions being understood
+      conditionally on $\mathcal D_T$), and the fitted readout $\hat o$
+      satisfies, with probability at least $1-\delta_T$ over $\mathcal D_T$,
       $\sup_{h\in\mathcal H}|\hat o(h)-o_\star(h)|\le\varepsilon_T$.
+    \item \textbf{(Conditional tails.)}  Conditionally on $\mathcal D_T$, the
+      fitted residuals satisfy Assumption~\ref{ass:pathway}(B2) with parameter
+      $\sigma$.
   \end{enumerate}
   Then, on that training event,
   $\bigl|\E[\hat e_{t+1}\given\F_t]\bigr|
@@ -775,9 +782,12 @@ The next proposition closes that gap, making explicit the price: control must be
   where $\Delta_0^\infty:=\operatorname*{ess\,sup}\norm{h_0-H_0^*}$.
   Consequently, for $t\ge t_0$ with $L_o\rho^{t_0}\Delta_0^\infty\le\varepsilon_T$,
   Assumption~\ref{ass:pathway}(B1) holds with
-  $\bar\eta_T:=a_\infty+2\varepsilon_T$; and if $k>\bar\eta_T$ then,
-  conditionally on $\mathcal D_T$, Theorem~\ref{thm:arl} gives
-  $\E_0[\tau_h\given\mathcal D_T]\ge\exp\{2(k-\bar\eta_T)h/\sigma^2\}$
+  $\bar\eta_T:=a_\infty+2\varepsilon_T$ \emph{from time $t_0$ onward}.  Monitoring
+  must therefore be started after the burn-in: let $S_{t_0}:=0$,
+  $S_t:=(S_{t-1}+\hat e_t-k)^+$ for $t>t_0$, and
+  $\tau_h^{(t_0)}:=\inf\{t>t_0:S_t\ge h\}$.  If $k>\bar\eta_T$ then,
+  conditionally on $\mathcal D_T$, Theorem~\ref{thm:arl} applied from $t_0$ gives
+  $\E_0[\tau_h^{(t_0)}-t_0\given\mathcal D_T]\ge\exp\{2(k-\bar\eta_T)h/\sigma^2\}$
   on an event of probability at least $1-\delta_T$.
 \end{proposition}
 
@@ -1518,11 +1528,8 @@ advantage documented in the scalar setting survives as the observation
 dimension $d$ grows --- the central claim of Corollary~\ref{cor:dim}.
 Study~CUSUM-DIM extends the three-way CUSUM comparison to VAR(1) processes with
 dimension $d \in \{1, 2, 5, 10\}$.
-The data-generating process is
-\[
-  X_t = \Phi\,X_{t-1} + \eta_t, \qquad \eta_t \overset{\text{iid}}{\sim}
-  \mathcal{N}(0, I_d),
-\]
+The data-generating process is $X_t=\Phi X_{t-1}+\eta_t$ with
+$\eta_t\overset{\text{iid}}{\sim}\mathcal{N}(0,I_d)$,
 where $\Phi = U\,\mathrm{diag}(\lambda)\,U^\top$ is constructed so that
 $\|\Phi\|_{\mathrm{op}} = \max_i |\lambda_i|$.
 Here and below, $\rho_{\mathrm{op}}$ denotes the operator norm of the VAR
@@ -1546,13 +1553,16 @@ $5T=1000$, with alarm-free runs right-censored at the sequence length;
 censoring biases the estimate downward, so the reported ARL$_0$ values
 are conservative.
 
-The deterioration of M1 and M2 with dimension has a clear structural explanation.
-When the observations are autocorrelated (as under any VAR with
-$\|\Phi\|_{\mathrm{op}}>0$), consecutive Mahalanobis scores are positively
-correlated.
-The Page CUSUM accumulates this autocorrelation, causing the statistic to
-drift upward even in-control and shortening ARL$_0$ well below its nominal
-value.
+The deterioration of M1 and M2 with dimension has a clear structural
+explanation, and it is not autocorrelation as such: a correctly centred score
+with serially correlated increments has no positive \emph{unconditional} drift.
+The mechanism is the conditional-mean mismatch of \eqref{eq:raw-bias}: the raw
+score satisfies
+$\E[\mathcal Z_t^{\mathrm{raw}}\given\F_{t-1}]=d^{-1}\norm{\Phi X_{t-1}}^2>0$
+whenever $\Phi\neq0$, so the Page CUSUM accumulates a genuine positive
+conditional drift and ARL$_0$ falls below its nominal value; serial correlation
+inflates the variance of the accumulated score and compounds---but does not
+create---the effect.
 The problem is compounded in higher dimensions: with $d$ components each
 contributing correlated mass, the effective autocorrelation of $Z_t$ grows,
 so ARL$_0$ collapses as $d$ increases.
@@ -1884,8 +1894,9 @@ ARL lower bound and a matching detection-delay upper bound, combining
 (Corollary~\ref{cor:tradeoff}) into the exponential-false-alarm /
 logarithmic-delay trade-off for a detector with no parametric model for the
 observation dynamics; Theorem~\ref{thm:optimality} shows this trade-off is
-order-optimal in Lorden's minimax framework, and exactly minimax optimal under
-a Gaussian innovation shift.  Propositions~\ref{prop:rnn-resid-bridge} and~\ref{prop:whiteness} link
+order-optimal in Lorden's minimax framework, and first-order minimax optimal
+under a Gaussian innovation shift---exactly so once the threshold is calibrated
+to the false-alarm constraint.  Propositions~\ref{prop:rnn-resid-bridge} and~\ref{prop:whiteness} link
 state stabilization to residual drift and identify when a learned predictor
 attains a larger guaranteed drift margin --- and hence a larger guaranteed ARL
 exponent --- than a fixed linear filter, and Corollary~\ref{cor:dim} treats the
