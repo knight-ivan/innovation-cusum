@@ -1114,7 +1114,7 @@ where $\E_\nu$ (resp.\ $\E_\infty$) denotes the law with change at $\nu$
       of \citet{lorden1971procedures}, with $I$ the Kullback--Leibler
       information number of the change.  The detector is thus order-optimal,
       with \emph{detection efficiency} $2\kappa\mu/\sigma^2$; first-order
-      optimality requires this efficiency to equal $I$, i.e.\ part~(ii).
+      optimality requires this efficiency to equal $I$; see part~(ii).
     \item \textbf{(Exact minimax optimality, Gaussian innovations.)}
       Suppose that, conditionally on $\F_{t-1}$, the innovation $\hat e_t$ is
       Gaussian with variance $\sigma^2$ and mean $\eta$ in control and
@@ -1142,7 +1142,7 @@ where $\E_\nu$ (resp.\ $\E_\infty$) denotes the law with change at $\nu$
   acts through a Gaussian shift of the innovation mean --- the setting in
   which the innovation is the efficient score.  The midpoint reference
   $k=\eta+\delta/2$ that the classical CUSUM design prescribes is precisely
-  the choice maximising $\kappa\mu$ subject to $\kappa+\mu=\delta$.
+  the choice maximizing $\kappa\mu$ subject to $\kappa+\mu=\delta$.
 \end{remark}
 
 \subsection{Dimension Stability}
@@ -1299,7 +1299,7 @@ configuration; Study~CUSUM-DIM uses 1000 test and 2000 in-control sequences.
 
 Three synthetic data-generating processes and one real dataset are used in
 the main text; a second real series, the Nile River annual discharge, is
-analysed in Study~NILE of the Supplementary Material.
+analyzed in Study~NILE of the Supplementary Material.
 The first synthetic process is the AR(1) model $X_t = \phi X_{t-1} + \varepsilon_t$,
 $\varepsilon_t \iid \mathcal{N}(0,1)$, with $\phi \in \{0.3, 0.7, 0.95\}$.
 For the initialization transient starting at $h_0 = 0$,
@@ -1589,7 +1589,7 @@ controlled false-positive rate) while \emph{simultaneously} improving the
 true-positive side, and with misses negligible throughout.
 
 We are careful, however, not to over-read this fixed-$h$ comparison.  Two
-features of the setup favour the innovation detector and are not intrinsic
+features of the setup favor the innovation detector and are not intrinsic
 to it: at the shared threshold the detectors operate at very different
 in-control false-alarm levels (ARL$_0$ from $42$ to $365$ at $d=10$), and
 the classical detectors estimate an $O(d^2)$ nuisance object
@@ -1894,7 +1894,7 @@ detector built on a learned predictor.
 
 Several questions remain open.  The dimension-scaling advantage at fixed
 threshold is, under a fully fair comparison, a finite-sample calibration effect
-rather than a structural one (Study~CUSUM-EQARL); characterising when
+rather than a structural one (Study~CUSUM-EQARL); characterizing when
 short-window nuisance estimation makes the learned score preferable is left
 open, as is a fully non-stationary theory beyond the locally stationary
 approximation of Corollary~\ref{cor:ls}.  The in-control exponent is already
