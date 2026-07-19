@@ -5,6 +5,52 @@
 **Target journal:** Bernoulli (imsart `bj`, author-year)
 **Last updated:** 2026-07-19
 
+## Round 11 — Referee-style report: 3 must-fix corrections (2026-07-19, commit `6ca189a`)
+
+A referee-style report identified three genuine problems, all verified against
+the text and corrected:
+
+1. **`\phi(0)` constant (real error).** Thm 2.5(i) added
+   `L_\phi\|\phi(0)\|/(1-\rho)`; since `\|\phi(u)\|\le\|\phi(0)\|+L_\phi\|u\|`
+   the constant enters undamped, so the term is `\|\phi(0)\|/(1-\rho)`. The old
+   form was **too small** whenever `L_\phi<1` (e.g. sigmoid) — the stated bound
+   could fail.
+2. **Prop 2.13(iii) was invalid.** `\eta_T` is an **L²** defect, but (B1)
+   requires an **almost-sure** conditional-drift bound, so `\eta_T` cannot be
+   substituted for `\eta` in Thm 3.2 — contradicting (B1)'s own caveat. Part
+   (iii) now says so explicitly, and a **new Proposition (`prop:hp-drift`)**
+   supplies the missing bridge: bounded inputs (compact reachable state set) +
+   uniform approximation + a high-probability **sup-norm** estimation bound ⇒
+   (B1) holds with `\bar\eta_T=a_\infty+2\varepsilon_T` on a training event of
+   probability ≥ `1-\delta_T`, giving a conditional ARL guarantee. Proof in the
+   supplement. *This also answers the report's novelty concern — it is the one
+   result that connects the learned model to the CUSUM constant.*
+3. **Thm 3.9(ii) exactness dropped.** `h_\gamma` comes from the ARL *lower*
+   bound (`E_\infty\tau\ge\gamma`, not `=\gamma`) and is conservative;
+   Moustakides exactness requires the Page CUSUM calibrated to ARL exactly
+   `\gamma`. Now: first-order asymptotic optimality for `h_\gamma`; exact
+   optimality stated separately for the calibrated threshold.
+
+Precision pass: "Lundberg coefficient" → sub-Gaussian adjustment exponent
+(exact Lundberg root in the Gaussian benchmark), sharpness restated as
+best-possible *uniformly over the class*; Thm 3.9(i) Lorden comparison made
+conditional on an explicit KL information-number assumption; Prop 2.13
+relabelled a conditional rate calculation with assumed rates flagged and
+smoothness `\beta`→`s` (clashed with β-mixing); two-sided proof `=`→`≤`;
+burn-in restored to `\log(\Delta_0/\varepsilon)/(1-\rho)`; "provably beats a
+fixed linear filter" → larger *guaranteed* drift margin; abstract aligned.
+
+**Declined:** the "affine subspace" objection (affine functions of the history
+*are* `span{1,X_t,…}`, a genuine subspace — the report is wrong here); moving
+the matched-ARL study into the main text and enlarging the empirical footprint
+(conflicts with the 25-page limit).
+
+**Page budget:** Lemma 2.1 moved to the supplement (peripheral here, and a
+remnant of the companion arXiv:2606.08934 — so this also cuts overlap with it)
+and five unreferenced displays inlined. Main back to **25pp**, supp **29pp**.
+Theorem numbers shifted (`thm:mds` 2.5→2.3) and the companion-aux xref system
+tracked this automatically.
+
 ## Round 10 — Page-limit compliance (2026-07-19, commit `eae7314`)
 
 **Bernoulli limits papers to 25 pages in its template, including references**
