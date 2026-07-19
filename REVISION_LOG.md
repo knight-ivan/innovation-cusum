@@ -5,6 +5,36 @@
 **Target journal:** Bernoulli (imsart `bj`, author-year)
 **Last updated:** 2026-07-19
 
+## Round 9 — Submission package (2026-07-19)
+
+Built `P1_bernoulli_submission_2026_0719/` (3.3 MB, self-contained, untracked
+local deliverable). Dated files: `P1_bernoulli_main_2026_0719` (26 pp — the file
+to upload), `_supp_` (27 pp), `_cover_letter_` (2 pp), each with `.tex`/`.pdf`,
+plus `.bbl`, the two `-xrefs.tex` snapshots, `P1_references.bib`,
+`imsart.cls`/`.sty`/`-nameyear.bst`, the 11 referenced figures under
+`code/figures/`, and `README_2026_0719.md`. The `\inputcompanionaux` companion
+references were rewritten to the new filenames (main↔supp, verified pointing at
+each other). Clean-room compiled: 0 undefined, 0 errors, 0 unresolved `??`;
+**isolated compilation re-verified** (each file alone, companion `.aux` removed,
+resolves via its snapshot). Note: figures are PNG; regenerate as PDF from `code/`
+if production prefers vector artwork.
+
+## Round 8 — Optimality overclaim fixed (2026-07-19, commit `9fbb18a`)
+
+A math/stat review found the only substantive overclaim: three places labeled the
+**general-case** delay optimality "first-order rate-optimal" / "asymptotically
+optimal in Lorden's minimax sense". The detector's constant is the detection
+efficiency $2\kappa\mu/\sigma^2$, which equals the KL information $I$ — and hence
+gives first-order/exact optimality — **only** in the Gaussian efficient-score case
+(Thm optimality (ii)); in general only **order**-optimality $O(\log\gamma)$ holds.
+Fixed in the optimality-section intro, Thm optimality (i), and the Conclusion,
+making them consistent with the abstract, intro, and `cor:tradeoff` remark, which
+already said "minimax-optimal detection *rate* / order-optimal … exactly so in the
+Gaussian case". Everything else verified sound — including a line-by-line check of
+the Thm ARL renewal proof (supermartingale valid exactly to $\theta^\ast=2\kappa/\sigma^2$;
+per-excursion bound by optional stopping + Fatou; geometric domination ⇒
+$\E_0[\tau_h]\ge e^{\theta^\ast h}$ with unit constant).
+
 ## Round 7 — Final-check retitle (2026-07-19, commit `167a08d`)
 
 Pre-submission final check surfaced a title-vs-body contradiction: the title
