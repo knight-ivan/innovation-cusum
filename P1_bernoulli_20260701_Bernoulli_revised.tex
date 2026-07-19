@@ -779,7 +779,8 @@ The next proposition closes that gap, making explicit the price: control must be
   Then, on that training event,
   $\bigl|\E[\hat e_{t+1}\given\F_t]\bigr|
    \le a_\infty+\varepsilon_T+L_o\rho^{t}\Delta_0^\infty$ a.s.\ for every $t$,
-  where $\Delta_0^\infty:=\operatorname*{ess\,sup}\norm{h_0-H_0^*}$.
+  where $\Delta_0^\infty:=\operatorname*{ess\,sup}\norm{h_0-H_0^*}\le B_0+C_h<\infty$
+  by~(H1).
   Consequently, for $t\ge t_0$ with $L_o\rho^{t_0}\Delta_0^\infty\le\varepsilon_T$,
   Assumption~\ref{ass:pathway}(B1) holds with
   $\bar\eta_T:=a_\infty+2\varepsilon_T$ \emph{from time $t_0$ onward}.  Monitoring
@@ -796,8 +797,10 @@ The next proposition closes that gap, making explicit the price: control must be
 \end{proof}
 
 \begin{remark}[What (H3) costs]
-  (H1)--(H2) are structural; (H3) is the substantive price, demanding sup-norm
-  rather than $L^2$ estimation error.  On the compact $\mathcal H$ this is the
+  (H1)--(H2) are structural, though (H1) restricts attention to bounded inputs,
+  a sub-regime of the $L^2$ setting used elsewhere and distinct from the Gaussian
+  innovations of Theorem~\ref{thm:optimality}(ii).  (H3) is the substantive
+  price, demanding sup-norm rather than $L^2$ estimation error.  On the compact $\mathcal H$ this is the
   natural regime---uniform convergence over a bounded Lipschitz readout class
   follows from covering-number arguments under $\beta$-mixing---but we do not
   establish (H3) for a specific architecture, and regard doing so as the main
