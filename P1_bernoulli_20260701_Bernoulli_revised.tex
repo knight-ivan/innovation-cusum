@@ -1089,8 +1089,11 @@ number, so the innovation CUSUM attains the optimal first-order rate.
     \label{eq:raw-bias}
   \end{equation}
   the noise term $d^{-1}\mathrm{tr}(I_d)-1$ cancelling exactly.  This bias need
-  not vanish as $d\to\infty$: for $\Phi=\rho_{\mathrm{op}}I_d$ it tends a.s.\ to
-  $\rho_{\mathrm{op}}^2/(1-\rho_{\mathrm{op}}^2)>0$.  Hence no fixed $k$
+  not vanish as $d\to\infty$: for $\Phi=\rho_{\mathrm{op}}I_d$ the coordinates of
+  $X_{t-1}$ are i.i.d.\ stationary AR(1) variables with variance
+  $(1-\rho_{\mathrm{op}}^2)^{-1}$, so by the strong law of large numbers
+  $d^{-1}\norm{\Phi X_{t-1}}^2\to\rho_{\mathrm{op}}^2/(1-\rho_{\mathrm{op}}^2)>0$
+  a.s.  Hence no fixed $k$
   guarantees a positive margin unless it is recalibrated to exceed a bias
   depending on $\Phi$ and the stationary law of $X_{t-1}$---information that raw
   CUSUM calibration does not use.  (For particular $\Phi$ the bias does vanish,
