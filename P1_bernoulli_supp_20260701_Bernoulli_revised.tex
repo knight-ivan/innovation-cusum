@@ -1172,6 +1172,24 @@ This is not a proof of gate consistency for an unconstrained trained LSTM.
   For a symmetric VAR with $\Phi = \rho_{\mathrm{op}} I_d$ and
   $\Sigma_X = (1-\rho_{\mathrm{op}}^2)^{-1}I_d$, this equals
   $\rho_{\mathrm{op}}^2/(1-\rho_{\mathrm{op}}^2) > 0$ for all $\rho_{\mathrm{op}} > 0$.
+
+  The convergence asserted in Corollary~\ref{cor:dim-raw} is in fact pathwise,
+  not merely in mean.  Take the innovation coordinates independent (e.g.\
+  $\varepsilon_t\sim\mathcal N(0,I_d)$).  With $\Phi=\rho_{\mathrm{op}}I_d$ the
+  recursion decouples into $d$ independent scalar AR(1) processes
+  $X_{t,i}=\rho_{\mathrm{op}}X_{t-1,i}+\varepsilon_{t,i}$, so the coordinates
+  $X_{t-1,1},\ldots,X_{t-1,d}$ are i.i.d.\ with stationary variance
+  $(1-\rho_{\mathrm{op}}^2)^{-1}$.  Hence, by the strong law of large numbers
+  applied across coordinates,
+  \[
+    \frac{1}{d}\norm{\Phi X_{t-1}}^2
+      = \rho_{\mathrm{op}}^2\cdot\frac{1}{d}\sum_{i=1}^{d}X_{t-1,i}^2
+      \xrightarrow[\;d\to\infty\;]{\text{a.s.}}
+      \rho_{\mathrm{op}}^2\,\E[X_{t-1,1}^2]
+      = \frac{\rho_{\mathrm{op}}^2}{1-\rho_{\mathrm{op}}^2}>0,
+  \]
+  which is the almost-sure limit stated in the corollary.
+
   Hence the in-control score drifts positive, matching $k_d$ to
   $\eta_d^{\mathrm{raw}}$ requires explicit knowledge of $\Phi$ and $\Sigma_X$,
   which is the bias that learned innovations eliminate by design.
