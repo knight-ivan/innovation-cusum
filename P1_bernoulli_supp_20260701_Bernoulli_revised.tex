@@ -24,10 +24,12 @@
 \newtheorem{lemma}[theorem]{Lemma}
 \newtheorem{corollary}[theorem]{Corollary}
 \theoremstyle{definition}
-\newtheorem{definition}[theorem]{Definition}
-\newtheorem{example}[theorem]{Example}
-\newtheorem{remark}[theorem]{Remark}
-\newtheorem{assumption}[theorem]{Assumption}
+\newtheorem{definition}{Definition}[section]
+\newtheorem{example}{Example}[section]
+%\newtheorem{remark}[theorem]{Remark}
+\newtheorem{remark}{Remark}[section]
+\newtheorem{assumption}{Assumption}[section]
+
 
 \newcommand{\E}{\mathbb{E}}
 \newcommand{\Prob}{\mathbb{P}}
@@ -428,9 +430,13 @@ Thm~\ref{thm:optimality} & Innovation CUSUM score
   & Lorden order-optimality; first-order optimality at $h_\gamma$ (Gaussian),
     exact only after exact ARL calibration \\
 Cor~\ref{cor:dim} & Mahalanobis innovation score
-  & uniform-in-$d$: bounded $\eta_d$, $\lambda_{\min}(\Sigma_0)\ge c_0$,
+  & uniform-in-$d$ (D1)--(D4): bounded $\eta_d$, $\lambda_{\min}(\Sigma_0)\ge c_0$,
     conditional homoskedasticity, $O(1)$ score sub-Gaussianity
   & dimension-stable ARL \\
+Cor~\ref{cor:dim-raw} & Raw (unlearned) Mahalanobis score
+  & VAR(1) observations, identity standardization
+  & conditional bias $d^{-1}\norm{\Phi X_{t-1}}^2$ need not vanish as
+    $d\to\infty$ \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1100,15 +1106,15 @@ This is not a proof of gate consistency for an unconstrained trained LSTM.
   $I=\delta^2/(2\sigma^2)$ are direct computations.
 \end{proof}
 
-\subsection{Proof of Corollary~\ref{cor:dim} of the main paper (Dimension-Stable ARL)}
+\subsection{Proofs of Corollaries~\ref{cor:dim} and~\ref{cor:dim-raw} of the main paper (Dimension Stability)}
 \label{app:proof-cordim}
 
-\begin{proof}[Proof of Corollary~\ref{cor:dim} in the main paper]
-  \textbf{Innovation CUSUM aggregated score.}
+\begin{proof}[Proofs of Corollaries~\ref{cor:dim} and~\ref{cor:dim-raw} in the main paper]
+  \textbf{Corollary~\ref{cor:dim} (innovation CUSUM aggregated score).}
   Since $\hat{e}_t \in \R^d$ is an approximate MDS with approximation
   quality $\eta_d$ --- the aggregate conditional-drift bound
   $\norm{\E[\hat{e}_t\given\F_{t-1}]}_2 \leq \eta_d$ a.s.\
-  (Assumption~(B1) in the vector form stated in
+  (Assumption~(B1) in the vector form (D1) of
   Corollary~\ref{cor:dim}) --- it also satisfies
   $\norm{\E[\hat{e}_t\given\F_{t-1}]}_{L^2} \leq \eta_d$.
   Set $b_t := \E[\hat{e}_t - \mu_0\given\F_{t-1}]$.  By the triangle inequality,
@@ -1150,7 +1156,7 @@ This is not a proof of gate consistency for an unconstrained trained LSTM.
   $\sigma_{Z,d} = O(1)$, so Theorem~\ref{thm:arl} of the main paper applies
   with $\kappa = \kappa_d$ and $\sigma = \sigma_{Z,d}$, giving the uniform ARL bound.
 
-  \textbf{Raw CUSUM collapse.}
+  \textbf{Corollary~\ref{cor:dim-raw} (raw CUSUM collapse).}
   For a VAR(1) process $X_t = \Phi X_{t-1} + \varepsilon_t$ with
   $\varepsilon_t \iid (0, I_d)$, $\mu_0 = 0$, and $\Sigma_0 = I_d$,
   \begin{align*}
@@ -1777,7 +1783,7 @@ innovation CUSUM has no structural dimension-stability advantage}; the
 dramatic fixed-$h$ collapse in Study~CUSUM-DIM is attributable to the two
 confounds above (mismatched operating point and mismatched estimation
 budget), not to a property of the detectors.  This corrects the reading of
-Corollary~\ref{cor:dim}: the corollary's serial-dependence bias is real, but
+Corollary~\ref{cor:dim-raw}: the serial-dependence bias it exhibits is real, but
 once the reference level is calibrated empirically and the nuisance
 parameters are well estimated, it does not manifest as a dimension problem in
 this regime.

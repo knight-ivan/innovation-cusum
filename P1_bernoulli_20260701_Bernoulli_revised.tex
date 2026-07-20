@@ -30,10 +30,11 @@
 \newtheorem{lemma}[theorem]{Lemma}
 \newtheorem{corollary}[theorem]{Corollary}
 \theoremstyle{definition}
-\newtheorem{definition}[theorem]{Definition}
-\newtheorem{example}[theorem]{Example}
-\newtheorem{remark}[theorem]{Remark}
-\newtheorem{assumption}[theorem]{Assumption}
+\newtheorem{definition}{Definition}[section]
+\newtheorem{example}{Example}[section]
+%\newtheorem{remark}[theorem]{Remark}
+\newtheorem{remark}{Remark}[section]
+\newtheorem{assumption}{Assumption}[section]
 
 \newcommand{\E}{\mathbb{E}}
 \newcommand{\Prob}{\mathbb{P}}
@@ -115,29 +116,11 @@
   \printead[presep={\ }]{e1}}
 
 \begin{abstract}
-Sequential monitoring is difficult when observations are serially
-dependent, high-dimensional, and lack a trusted parametric model.  This
-paper revisits the innovations principle with a learned predictor: a
-recurrent network removes the serially predictable component of the stream,
-and a CUSUM statistic monitors the resulting prediction innovations.  Its aim
-is foundational: the false-alarm and delay guarantees of classical
-change-point theory carry over, essentially intact, to a black-box learned
-predictor.  The development is two-tier.  First, for contractive recurrent
-networks, the hidden state admits a Doob decomposition into a predictable
-part and a martingale-difference innovation that stabilizes geometrically
-and whose partial sums obey a functional central limit theorem.  Second, for
-any predictor with an almost-sure bound on the conditional residual drift and
-sub-Gaussian tails, the Innovation CUSUM has an exponential lower bound on the
-in-control average run length---with the best exponent available uniformly over
-that class---and a logarithmic upper bound on the detection delay.  In the
-Gaussian mean-shift case the statistic coincides with the classical
-likelihood-ratio CUSUM and is first-order minimax optimal.  The guarantee needs
-no parametric model for the observed dynamics, though it is not assumption-free;
-we also give conditions under which a learning guarantee verifies the drift
-condition with high probability.  We also identify when learning helps: under a nonlinear
-conditional mean, linear residualization has an irreducible defect that a
-learned predictor removes.  Simulations and real-data examples illustrate the
-theory.
+Sequential monitoring is challenging when observations are serially dependent, high-dimensional, and not governed by a trusted parametric model. This paper revisits the innovations principle using a learned predictor: a recurrent network removes the serially predictable component of the data stream, and a CUSUM statistic monitors the resulting prediction innovations. The central goal is to show that the false-alarm and detection-delay guarantees of classical change-point theory extend, essentially intact, to black-box learned predictors.
+%
+The theoretical development has two parts. First, for contractive recurrent networks, we show that the hidden state admits a Doob decomposition into a predictable component and a martingale-difference innovation. This innovation stabilizes geometrically, and its partial sums satisfy a functional central limit theorem. Second, for any predictor whose conditional residual drift is almost surely bounded and whose residuals have sub-Gaussian tails, we establish an exponential lower bound on the in-control average run length of the Innovation CUSUM, with the optimal exponent uniformly over this class, together with a logarithmic upper bound on detection delay.
+%
+In the Gaussian mean-shift setting, the proposed statistic reduces to the classical likelihood-ratio CUSUM and is first-order minimax optimal. These guarantees require no parametric model for the observed dynamics, although they are not assumption-free. We therefore provide conditions under which a learning guarantee implies the required drift condition with high probability. We also characterize when learning improves monitoring performance: under a nonlinear conditional mean, linear residualization incurs an irreducible error that a learned predictor can eliminate. Simulations and real-data applications illustrate the theory.
 \end{abstract}
 
 \begin{keyword}
@@ -163,166 +146,39 @@ theory.
 \section{Introduction}
 \label{sec:intro}
 
-Streams of data that must be monitored for structural change are now routine: intensive-care units track dozens of physiological signals, public-health agencies monitor infectious-disease incidence, industrial systems log hundreds of correlated sensor channels, and risk desks follow panels of asset returns. In each case, a detector must decide online whether the mechanism generating the stream has changed. The two possible errors have different costs. A \emph{false alarm} --- firing while the system remains in control --- may trigger an unnecessary clinical intervention, halt a production line, or prompt a premature portfolio rebalancing. A \emph{missed detection}, or a long detection delay, may leave a deteriorating patient unmonitored, an equipment fault undetected, or a loss unhedged. The statistical problem is therefore not merely to detect change, but to control false alarms without paying for that control through excessive delay.
+Data streams requiring monitoring for structural change are now ubiquitous. Intensive-care units track dozens of physiological signals, public-health agencies monitor infectious-disease incidence, industrial systems record hundreds of correlated sensor measurements, and risk desks follow panels of asset returns. In each setting, a detector must determine online whether the data-generating mechanism has changed. The two types of error carry different costs. A \emph{false alarm}---signaling a change while the system remains in control---may trigger an unnecessary clinical intervention, halt a production line, or prompt premature portfolio rebalancing. A missed or delayed detection, by contrast, may leave a deteriorating patient unattended, an equipment fault unresolved, or a financial loss unhedged. The statistical objective is therefore not simply to detect change, but to control false alarms without incurring excessive detection delay.
 
-This trade-off is especially difficult in the settings that motivate this paper. The observations are serially dependent; the dependence structure is typically unknown in advance and rarely specified with enough confidence to support a parametric monitor; and the number of monitored coordinates may be large. Sequential change-point detection under these three conditions --- unknown serial dependence, limited model specification, and growing dimension --- is the problem studied here.
+This trade-off is particularly difficult in the settings considered here. Observations are serially dependent, the dependence structure is generally unknown and seldom specified with sufficient confidence to support a parametric monitoring procedure, and the number of monitored coordinates may be large. This paper studies sequential change-point detection under the combined challenges of unknown serial dependence, limited model specification, and high dimensionality.
 
-Several commonly used tools solve parts of this problem. Classical CUSUM procedures are powerful --- indeed optimal --- under independence or a correctly specified parametric model
-\citep{page1954continuous,lorden1971procedures}, while offline segmentation
-\citep{killick2012optimal} and Bayesian online methods
-\citep{adams2007bayesian} offer flexible alternatives. These approaches, however, generally lose their false-alarm guarantees once the serial dependence structure is unknown or the observation dimension grows. Classical time-series models handle dependence explicitly: autoregressive models fix the lag order, hidden Markov models encode memory through a finite state space, and Kalman filters propagate a Gaussian sufficient statistic
-\citep{box2015time,hamilton1994time}. They inherit clean guarantees when the model is correct, but only at the price of requiring the model to be correct. What is missing is a monitoring scheme whose false-alarm behavior remains valid under unknown serial dependence and growing dimension.
+Several established approaches address components of this problem. Classical CUSUM procedures are powerful—and, under standard likelihood-ratio formulations, optimal or asymptotically optimal—when observations are independent and the pre- and post-change distributions are correctly specified \citep{page1954continuous,lorden1971procedures}. Offline segmentation methods \citep{killick2012optimal} and Bayesian online change-point procedures \citep{adams2007bayesian} provide flexible alternatives for identifying structural changes. Their standard theoretical guarantees, however, typically depend on assumptions about the data-generating process and do not automatically extend to settings with unknown serial dependence or increasing dimension.
+%
+Classical time-series models address dependence explicitly. Autoregressive models represent temporal structure through a specified lag order, hidden Markov models encode dependence through a latent finite-state process, and Kalman filters propagate a finite-dimensional Gaussian state estimate \citep{box2015time,hamilton1994time}. These models permit tractable monitoring rules and rigorous guarantees when their structural and distributional assumptions are adequate, but misspecification can distort both false-alarm behavior and detection performance. A less developed objective is therefore to construct a monitoring procedure whose false-alarm guarantees remain valid under weak assumptions on serial dependence while accommodating high- or growing-dimensional observations.
 
-A further strand of literature monitors \emph{residuals} rather than raw
-observations.  Monitoring with estimated parameters goes back at least to
-\citet{chu1996monitoring}; the asymptotics of sequential residual
-empirical processes were developed by \citet{bai1994residuals};
-\citet{lai1995sequential} treats sequential detection in dynamical
-systems; and \citet{aue2013structural} survey structural-break detection
-for time series.  These procedures monitor the residuals of a
-\emph{specified} parametric class, and their guarantees are tied to that
-class being correct.  In a complementary direction, conformal test
-martingales and e-detectors \citep{vovk2005algorithmic,shin2024edetectors}
-provide anytime-valid nonparametric monitoring under exchangeability-type
-conditions or a known in-control reference.  The present paper sits
-between the two strands: like the residual tradition it monitors one-step
-prediction errors, but the predictor is learned rather than specified;
-like the e-detector tradition it avoids a parametric model of the
-dynamics, but the in-control requirement is an explicit residual
-drift-and-tail condition rather than exchangeability, and the monitor is
-the classical Page CUSUM.
 
-This paper takes a route with a long pedigree in time-series analysis:
-transform the observations into innovations, then monitor the innovations.
-The innovations principle --- that the one-step prediction error of an
-optimal predictor carries no serially predictable component --- underlies
-Wiener--Kolmogorov prediction theory, the innovations approach to filtering
-\citep{kailath1968innovations}, residual diagnostics in Box--Jenkins
-modeling \citep{box2015time}, and residual-based detection of abrupt
-changes \citep{basseville1993detection}. In the linear-Gaussian world the
-principle is exact: Kalman-filter innovations are independent, and a CUSUM
-applied to them inherits the classical false-alarm guarantees. Outside
-that world, however, the filter must be specified correctly --- precisely
-what is unavailable when the dependence structure is unknown. Recurrent
-neural networks (RNNs) \citep{rumelhart1986learning}, long short-term
-memory networks (LSTMs) \citep{hochreiter1997long}, gated recurrent units
-(GRUs) \citep{cho2014learning}, and selective state-space models such as
-Mamba \citep{gu2023mamba} learn predictive state representations from data
-rather than fixing the memory structure in advance. They therefore supply
-a natural modern implementation of the innovations principle: use a learned
-predictor to remove the serially predictable component, and monitor what
-remains. The question this paper answers is what survives of the classical
-CUSUM guarantees when the filter is learned rather than specified.
+A further strand of the literature monitors \emph{residuals} rather than raw observations. A seminal formulation of real-time monitoring with estimated parameters is given by \citet{chu1996monitoring}, while \citet{bai1994residuals} establishes weak-convergence results for sequential empirical processes of estimated residuals in ARMA models. \citet{lai1995sequential} develops a broader theory of sequential change-point detection for quality-control and dynamical-system settings, and \citet{aue2013structural} survey methods for detecting structural breaks in time series. Much of this literature constructs residuals from a specified parametric model, so its theoretical guarantees depend on the adequacy of that model and its estimation.
+%
+In a complementary direction, conformal test martingales and e-detectors \citep{vovk2005algorithmic,shin2024edetectors} provide nonparametric, anytime-valid monitoring. Standard conformal constructions rely on exchangeability or related invariance assumptions, whereas e-detectors require valid e-values under the in-control null, often obtained from a known reference distribution or a suitably specified null class. The present paper lies between these two traditions. Like residual-based procedures, it monitors one-step-ahead prediction errors, but the predictor is learned rather than specified parametrically. Like e-detector methods, it does not impose a parametric model on the observed dynamics; instead, its in-control guarantees rely on explicit conditions on the conditional residual drift and tails, and the monitoring statistic is Page’s classical CUSUM.
 
-Two questions must be answered. First, in what precise probabilistic sense
-does a learned recurrent state generate innovations, and how quickly do
-those innovations stabilize, so that calibration performed on a training
-segment remains valid at monitoring time? Second, what sequential-monitoring
-guarantee does a CUSUM applied to learned innovations inherit, and does
-that guarantee withstand growing observation dimension?
+This paper follows a strategy with a long history in time-series analysis: transform the observations into innovations and then monitor those innovations. The innovations principle states that the one-step-ahead error of the conditional-mean predictor is orthogonal to the observed past—or, probabilistically, forms a martingale-difference sequence—and therefore contains no remaining component that is predictable from that past. This principle underlies Wiener--Kolmogorov prediction theory, the innovations approach to filtering \citep{kailath1968innovations}, residual diagnostics in Box--Jenkins modeling \citep{box2015time}, and residual-based methods for detecting abrupt changes \citep{basseville1993detection}.
+%
+Under a correctly specified linear-Gaussian state-space model, the principle takes an especially strong form: Kalman-filter innovations are independent Gaussian variables, and a likelihood-based CUSUM constructed from them retains the corresponding classical false-alarm guarantees. Outside this setting, obtaining exact innovations generally requires knowledge of the relevant conditional distribution or predictor—precisely what is unavailable when the dependence structure is unknown.
+%
+Recurrent neural networks (RNNs) \citep{rumelhart1986learning}, long short-term memory networks (LSTMs) \citep{hochreiter1997long}, gated recurrent units (GRUs) \citep{cho2014learning}, and selective state-space models such as Mamba \citep{gu2023mamba} offer flexible ways to learn predictive state representations from data. Although their architectures still impose a state-update structure, they can learn the effective memory and nonlinear predictive relationships rather than requiring a prespecified time-series model. They therefore provide a natural modern implementation of the innovations principle: use a learned predictor to remove, as far as possible, the serially predictable component of the stream, and monitor the resulting residuals. The question addressed in this paper is which classical CUSUM guarantees remain valid when the predictor is learned rather than specified in advance.
 
-Our answers are deliberately two-tier. At the first tier, for the basic
-RNN recurrence under an operator-norm contraction condition on the recurrent
-weight matrix (Assumption~\ref{ass:spectral}) --- a condition the
-practitioner can \emph{enforce} through spectral normalization
-\citep{miyato2018spectral} rather than merely hope for --- the hidden state
-admits a classical Doob decomposition into a predictable component and a
-martingale-difference innovation. The innovation converges geometrically
-to its stationary counterpart, and the accumulated innovations obey a
-functional central limit theorem.
+Two questions must be answered. First, in what precise probabilistic sense does a learned recurrent predictor produce innovations, and how rapidly does its state—and hence the distribution of those innovations—stabilize? This determines whether calibration based on a training segment remains valid during subsequent monitoring. Second, what false-alarm and detection-delay guarantees can be established for a CUSUM applied to the learned innovations, and do those guarantees remain valid as the observation dimension grows?
 
-At the second tier, the detector's guarantee is architecture-agnostic by
-design. Exact Bayes prediction residuals are martingale differences
-(Proposition~\ref{prop:predresid}); fitted residuals are useful to the
-extent that their conditional mean drift is small.  The contractive-RNN
-result supports this condition through a bridge bound
-(Proposition~\ref{prop:rnn-resid-bridge}), which separates three sources of
-error: transient hidden-state initialization, readout approximation to the
-Bayes predictor, and estimation error.  The CUSUM theory itself then assumes
-directly that the fitted residuals have bounded conditional drift and
-conditional sub-Gaussian tails.  Under those operating conditions it yields
-an in-control average-run-length lower bound
-(Theorem~\ref{thm:arl}) and an out-of-control detection-delay upper bound
-(Theorem~\ref{thm:delay}), which together give the
-exponential-false-alarm / logarithmic-delay trade-off
-(Corollary~\ref{cor:tradeoff}).  Thus the RNN stabilization theorem
-motivates and partially verifies the residual condition, while the CUSUM
-guarantee applies to any learned predictor satisfying that condition.
 
-The contributions organize around four connected claims. First, under
-operator-norm contractivity, recurrent hidden states generate stabilized
-martingale-difference innovations: the hidden state is uniformly
-$L^2$-bounded, decomposes into a predictable component plus an innovation,
-and the innovation converges geometrically to its stationary counterpart
-(Theorem~\ref{thm:mds}). The accumulated innovations then satisfy a
-martingale functional central limit theorem
-(Corollary~\ref{cor:fclt}). Second, a new bridge proposition translates this
-state-level stabilization into a residual-level approximation bound for
-recurrent predictors with Lipschitz readouts
-(Proposition~\ref{prop:rnn-resid-bridge}). Third, for fitted prediction
-residuals satisfying explicit conditional-drift and tail assumptions, the
-Innovation CUSUM has a sharp exponential in-control average-run-length lower
-bound and a corresponding out-of-control detection-delay upper bound
-(Theorems~\ref{thm:arl} and~\ref{thm:delay}); together they attain the
-minimax-optimal detection \emph{rate} of classical sequential analysis, and in
-the Gaussian mean-shift case the analytic threshold is first-order minimax
-optimal, with exact Lorden optimality holding for the Page CUSUM calibrated to
-the false-alarm constraint (Theorem~\ref{thm:optimality}). Fourth, we identify
-\emph{when} learning helps: under a nonlinear conditional mean, any fixed
-linear residualization carries an irreducible innovation defect, whereas a
-consistent learned predictor drives this defect to zero
-(Proposition~\ref{prop:whiteness}), improving the guaranteed in-control ARL
-through the drift margin (Remark~\ref{rem:whiteness-arl}).  The empirical
-studies then examine these mechanisms: learned innovations are closer to
-martingale differences under misspecification, calibration is more stable
-when the in-control window is short, and equal-ARL comparisons delimit when
-the learned detector is competitive with correctly specified parametric
-procedures.
+Our results are deliberately two-tier. First, for a basic RNN whose recurrent weight matrix satisfies an operator-norm contraction condition (Assumption~\ref{ass:spectral})—enforceable by spectral normalization \citep{miyato2018spectral}—the hidden state admits a Doob decomposition into a predictable component and a martingale-difference innovation. The innovation converges geometrically to its stationary counterpart, and its partial sums satisfy a functional central limit theorem.
 
-The contribution lies in this synthesis. The individual ingredients are
-classical --- the Doob decomposition of an adapted square-integrable
-process; the martingale-difference property of Bayes prediction residuals;
-the geometric forgetting of initial conditions under a contractive
-stochastic recursion, standard in iterated-random-function and mixing
-theory \citep{doukhan1994mixing} and used elsewhere for stable recurrent
-models \citep{miller2019stable}; the martingale functional central limit
-theorem \citep{hall1980martingale,billingsley1999convergence}; the
-$L^2$-orthogonal-projection characterization of the best linear predictor
-(Proposition~\ref{prop:whiteness}); and CUSUM theory dating to
-\citet{page1954continuous} and \citet{lorden1971procedures}, including the
-exponential-supermartingale argument used for its false-alarm guarantee.
-None of these building blocks is new on its own. What appears to be new is
-their combination:
-using contractive recurrent states to construct stabilized innovation
-processes, connecting these innovations to fitted prediction residuals,
-and deriving a nonparametric sequential-monitoring guarantee for the
-resulting approximate-MDS CUSUM under explicit residual-drift and tail
-conditions.
+Second, the detection theory is architecture-agnostic. Bayes prediction residuals are martingale differences (Proposition~\ref{prop:predresid}), while fitted residuals are controlled through their conditional mean drift. For contractive RNNs, Proposition~\ref{prop:rnn-resid-bridge} bounds this drift by separating initialization, approximation, and estimation errors. The CUSUM results then require only bounded conditional drift and conditional sub-Gaussian tails, yielding an in-control average-run-length lower bound (Theorem~\ref{thm:arl}), an out-of-control delay upper bound (Theorem~\ref{thm:delay}), and the resulting exponential-false-alarm/logarithmic-delay trade-off (Corollary~\ref{cor:tradeoff}). Thus, the RNN theory helps verify the residual conditions, while the CUSUM guarantees apply to any predictor satisfying them.
 
-This perspective is distinct from most existing theory for recurrent
-architectures, which emphasizes stability or expressivity
-\citep{miller2019stable,miyato2018spectral,gonon2020reservoir}, and from
-neural tangent kernel and information-bottleneck analyses, which primarily
-concern feedforward networks or fixed-time representations
-\citep{jacot2018neural,tishby2015deep,saxe2019information}. Structured
-state-space models such as Mamba
-\citep{gu2021efficiently,gu2023mamba} have likewise been studied mainly
-from the standpoint of efficient sequence modeling
-\citep{orvieto2023resurrecting}. Here the focus is different: the learned
-state is used to remove the serially predictable component of the stream,
-so that the remaining innovation process can be monitored with
-model-free sequential guarantees under explicit drift, tail, and
-post-change signal assumptions.
+The contributions comprise four connected results. First, under operator-norm contractivity, the recurrent hidden state is uniformly ($L^2$)-bounded and admits a Doob decomposition whose martingale-difference innovation converges geometrically to stationarity (Theorem~\ref{thm:mds}); its partial sums satisfy a functional central limit theorem (Corollary~\ref{cor:fclt}). Second, Proposition~\ref{prop:rnn-resid-bridge} transfers this state-level stabilization to a residual approximation bound for recurrent predictors with Lipschitz readouts. Third, under explicit conditional-drift and tail conditions, the Innovation CUSUM satisfies exponential in-control ARL and logarithmic detection-delay bounds (Theorems~\ref{thm:arl} and~\ref{thm:delay}). These attain the classical minimax detection rate; in the Gaussian mean-shift case, the procedure is first-order minimax optimal, and the Page CUSUM calibrated to the false-alarm constraint is exactly Lorden-optimal (Theorem~\ref{thm:optimality}). Fourth, with a nonlinear conditional mean, fixed linear residualization incurs an irreducible innovation defect, whereas a consistent learned predictor eliminates it and thereby improves the guaranteed ARL margin (Proposition~\ref{prop:whiteness} and Remark~\ref{rem:whiteness-arl}). Empirical studies examine these mechanisms under misspecification, short calibration windows, and equal-ARL comparisons with parametric detectors.
 
-The theoretical framework and main results appear in
-Sections~\ref{sec:theory}--\ref{sec:pathway}, followed by four empirical
-studies in Section~\ref{sec:empirical}. Eight additional studies,
-background definitions, and all formal proofs are given in the
-Supplementary Material. Table~\ref{tab:assumption-map} summarizes the
-assumptions and conclusions of the main results and makes explicit the
-two-tier structure of the paper: contractive-RNN innovation theory in
-Section~\ref{sec:theory} and architecture-agnostic detection theory in
-Section~\ref{sec:pathway}.
+The contribution lies in the synthesis. Its ingredients are classical: Doob decomposition; the martingale-difference property of Bayes prediction residuals; geometric forgetting under contractive stochastic recursions \citep{doukhan1994mixing,miller2019stable}; martingale functional central limit theory \citep{hall1980martingale,billingsley1999convergence}; the ($L^2$)-projection characterization of the best linear predictor (Proposition~\ref{prop:whiteness}); and classical CUSUM theory, including exponential-supermartingale false-alarm arguments \citep{page1954continuous,lorden1971procedures}. The novelty is their combination: using contractive recurrent states to construct stabilized innovations, transferring this stability to fitted prediction residuals, and establishing sequential CUSUM guarantees under explicit residual-drift and tail conditions without specifying a parametric model for the observed dynamics.
+
+This perspective differs from work on recurrent architectures that emphasizes stability, expressivity, or efficient sequence modeling \citep{miller2019stable,miyato2018spectral,gonon2020reservoir,gu2021efficiently,gu2023mamba,orvieto2023resurrecting}, as well as neural-tangent-kernel and information-bottleneck analyses of fixed-time representations \citep{jacot2018neural,tishby2015deep,saxe2019information}. Here, the learned state removes predictable serial structure, enabling sequential monitoring under explicit drift, tail, and post-change signal conditions without a parametric model for the dynamics.
+
+Sections~\ref{sec:theory}--\ref{sec:pathway} develop the theory, and Section~\ref{sec:empirical} presents four empirical studies. The Supplementary Material contains eight additional studies, background, and proofs. Table~\ref{tab:assumption-map} summarizes the paper’s two tiers: contractive-RNN innovation theory and architecture-agnostic detection guarantees.
 
 % =============================================================================
 \section{Methodology}
@@ -394,7 +250,7 @@ i.i.d. Hewitt--Savage zero-one law are collected in Section~\ref{app:background}
 
 \subsection{Martingale Decomposition of RNN Hidden States}
 \label{sec:rnn-decomp}
-
+\iffalse
 Throughout this subsection we work under Assumption~\ref{ass:spectral}
 ($\rho:=L_\phi\norm{W_h}_{\mathrm{op}}<1$).
 The existence and uniqueness of the stationary causal solution
@@ -423,6 +279,41 @@ would hold, because the pre-sample past influences $H_t^*$.
 The stationary causal solution is generally a \emph{random} process;
 it should not be identified with a deterministic mean-field fixed point
 or a tail projection.
+\fi
+
+
+{
+Throughout this subsection, we work under Assumption~\ref{ass:spectral}
+($\rho:=L_\phi\norm{W_h}*{\mathrm{op}}<1$).
+The existence and uniqueness of the stationary causal solution
+$(H_t^*)*{t\in\mathbb{Z}}$ satisfying
+$H_t^*=\phi(W_hH_{t-1}^*+W_xX_t+b_h)$,
+$H_t^*\in\sigma(X_t,X_{t-1},\ldots)$,
+and the geometric coupling bound
+$\norm{h_t-H_t^*}*{L^2}\leq\rho^t\norm{h_0-H_0^*}*{L^2}$
+are proved directly in Proposition~\ref{prop:stationary-causal}
+(Section~\ref{app:stationary-causal} of the Supplementary Material).
+Thus, the chain of results in this paper does not depend on any external
+or unpublished result.
+The companion paper \citet{chang2026backward} studies the complementary
+question of hidden-state convergence under the same contraction condition
+from a reverse-filtration perspective; none of its results are used here.
+We write $\Delta_0:=\norm{h_0-H_0^*}_{L^2}$,
+$D_t^*:=\E[H_t^*\given\F_{t-1}]$ (the stationary predictable component),
+and $M_t^*:=H_t^*-D_t^*$ (the stationary MDS innovation).
+Here, the two-sided filtration used in the setup is essential:
+$H_t^*$ is a fixed measurable functional of $(X_s)_{s\leq t}$ and is
+therefore $\F_t$-measurable, while $D_t^*$ is given by the same functional
+of the shifted path at each $t$ (conditioning additionally on the independent
+$\sigma(h_0)$ leaves it unchanged). Consequently,
+$(M_t^*)*{t\in\mathbb{Z}}$ is a strictly stationary, ergodic MDS
+\emph{adapted} to $(\F_t)$. Under the one-sided filtration
+$\sigma(X_1,\ldots,X*{t-1})$, neither exact stationarity nor adaptedness
+would hold because the pre-sample past influences $H_t^*$.
+The stationary causal solution is generally a \emph{random} process;
+it should not be identified with either a deterministic mean-field fixed
+point or a tail projection.
+}
 
 The Doob decomposition in part~(ii) of the following theorem is, on its
 own, elementary: subtracting its conditional expectation turns any
@@ -513,41 +404,30 @@ counterpart (iv), and the stationary innovation covariance $\Sigma_M^*$
   See Section~\ref{app:proofs} of the Supplementary Material.
 \end{proof}
 
-\begin{remark}%[What is new]
-  Parts~(i)--(iii) parallel the earlier Proposition~\ref{prop:predresid}
-  argument but now apply to the hidden state itself rather than the
-  prediction target.  \textbf{Parts~(iv) and~(v) are new.}
-  Part~(iv) shows that the transient MDS innovation approaches the
-  stationary innovation at the same geometric rate $\rho^t$ as the
-  hidden state itself, which justifies asymptotic calibration of
-  the Innovation CUSUM after a burn-in of order
-  $\log(\Delta_0/\varepsilon)/(-\log\rho)\approx\log(\Delta_0/\varepsilon)/(1-\rho)$
-  steps to reach tolerance $\varepsilon$.
-  Part~(v) provides the stationary innovation covariance $\Sigma_M^*$
-  needed for the functional central limit theorem (CLT) and for Mahalanobis
-  scoring in the multivariate CUSUM.
+\begin{remark}
+Parts~(i)--(iii) extend Proposition~\ref{prop:predresid} to the hidden
+state. \textbf{Parts~(iv) and~(v) are new:} Part~(iv) establishes
+convergence of the transient innovation at rate $\rho^t$, requiring
+burn-in
+$\log(\Delta_0/\varepsilon)/(-\log\rho)\approx
+\log(\Delta_0/\varepsilon)/(1-\rho)$,
+while Part~(v) gives $\Sigma_M^*$ for the functional CLT and
+Mahalanobis CUSUM scoring.
 \end{remark}
+
 
 \begin{remark}[Scope of the nondegeneracy condition]
 \label{rem:rank}
-  The nondegeneracy condition~\eqref{eq:nondeg} is the cleanest sufficient
-  condition for $\lambda_{\min}(\Sigma_M^*)>0$: it requires the innovation
-  $M_t^*$ to have non-zero variance in every direction.  Full row rank
-  $\mathrm{rank}(W_x)=p$ is a natural structural sufficient condition under
-  linear activation, but need not imply~\eqref{eq:nondeg} for saturating
-  nonlinearities ($\tanh$, sigmoid) when the conditional support of $X_t$ lies
-  where the activation is nearly flat.  In the common regime
-  $d_{\mathrm{in}}<p$ (e.g.\ scalar input, $p=32$ hidden units) $W_x$ cannot
-  have full row rank, so that linear sufficient condition is unavailable, and
-  under a linear or locally linearized activation $\Sigma_M^*$ is at most
-  rank-$d_{\mathrm{in}}$.  That bound is specific to the linear case: a
-  low-dimensional input transformed nonlinearly can yield rank larger than
-  $d_{\mathrm{in}}$ (a scalar $Z$ mapped through coordinates responding to $Z$
-  and to $Z^2$ already populates two directions).  Whether $\Sigma_M^*$ is
-  rank-deficient when $d_{\mathrm{in}}<p$ therefore depends on the activation
-  and cannot be read off from $\mathrm{rank}(W_x)$ alone; in practice one
-  should verify positive definiteness from a pilot run, and the functional CLT
-  (Corollary~\ref{cor:fclt}) assumes it rather than deriving it from $W_x$.
+Condition~\eqref{eq:nondeg} ensures
+$\lambda_{\min}(\Sigma_M^*)>0$ by requiring non-zero innovation variance
+in every direction.  For linear activations, full row rank
+$\mathrm{rank}(W_x)=p$ is sufficient, but it may fail for saturating
+nonlinearities on nearly flat regions.  When $d_{\mathrm{in}}<p$, full row
+rank is impossible and, under linear or locally linearized activations,
+$\mathrm{rank}(\Sigma_M^*)\leq d_{\mathrm{in}}$.  Nonlinear transformations
+can exceed this bound, so rank deficiency cannot be inferred from
+$\mathrm{rank}(W_x)$ alone.  In practice, positive definiteness should be
+checked from pilot data; Corollary~\ref{cor:fclt} assumes it.
 \end{remark}
 
 \begin{corollary}[Functional CLT for MDS innovations]
@@ -663,10 +543,10 @@ defect to zero.
       affine functions of the observed history and
       $m_t^{\mathrm{lin}}=\Pi_{L_t}X_{t+1}$ the best linear predictor.  By
       stationarity the linear-residual defect is the constant
-      \[
+      \(
         \eta_{\mathrm{lin}}
         =\mathrm{dist}_{L^2}(m_0,\,L_0)\;\ge 0,
-      \]
+      \)
       and $\eta_{\mathrm{lin}}>0$ whenever $m_0\notin L_0$, i.e.\ the process
       is nonlinear in mean.
     \item \textbf{(Consistent learning removes it.)}
@@ -682,18 +562,16 @@ defect to zero.
 
 \begin{remark}[Consequence for calibration and the ARL guarantee]
 \label{rem:whiteness-arl}
-  In the change-point theory of Section~\ref{sec:pathway} the reference value
-  must exceed the conditional drift, $k>\eta$, and the guarantee improves with
-  the margin $\kappa=k-\eta$ (Theorem~\ref{thm:arl}).  Under nonlinearity in
-  mean a fixed linear residualization retains the irreducible $L^2$ defect
-  $\eta_{\mathrm{lin}}>0$, whereas a consistent learned predictor drives it to
-  zero.  This is a statement about the \emph{$L^2$} defect: since the $\eta$ of
-  (B1) is an essential supremum, a smaller $L^2$ defect does not by itself
-  enlarge the guaranteed margin, and does so only under the additional uniform
-  control of Proposition~\ref{prop:hp-drift}.  Study~CUSUM-MISSPEC
-  (Supplementary Material) exhibits the $L^2$ gap, with the learned innovations
-  markedly whiter than linear-whitening residuals.
+The ARL guarantee requires $k>\eta$ and improves with
+$\kappa=k-\eta$ (Theorem~\ref{thm:arl}).  Under nonlinearity in mean,
+linear residualization leaves an irreducible $L^2$ defect
+$\eta_{\mathrm{lin}}>0$, whereas a consistent learned predictor removes it.
+Because (B1) uses an essential supremum, this $L^2$ improvement enlarges the
+guaranteed margin only with the uniform control of
+Proposition~\ref{prop:hp-drift}.  Study~CUSUM-MISSPEC confirms the gap,
+with learned innovations markedly whiter than linear residuals.
 \end{remark}
+
 
 Proposition~\ref{prop:whiteness} is qualitative: a consistent learned
 predictor removes the defect.  The next result makes the removal
@@ -796,7 +674,7 @@ The next proposition closes that gap, making explicit the price: control must be
   See Section~\ref{app:proofs} of the Supplementary Material.
 \end{proof}
 
-\begin{remark}[What (H3) costs]
+\begin{remark}%[What (H3) costs]
   (H1)--(H2) are structural, though (H1) restricts attention to bounded inputs,
   a sub-regime of the $L^2$ setting used elsewhere and distinct from the Gaussian
   innovations of Theorem~\ref{thm:optimality}(ii).  (H3) is the substantive
@@ -869,19 +747,20 @@ setting of \citet{dahlhaus1997fitting}.
 \label{sec:pathway}
 % =============================================================================
 
-We now give a rigorous in-control performance guarantee for the Innovation
-CUSUM, the change-point detector that applies a Page CUSUM to learned
-prediction innovations.  This is the second tier of the theory: exact Bayes
-residuals form an MDS, fitted residuals are approximately MDS when their
-conditional drift is small, and this residual-level property drives the
-alarm-rate bound through a sub-Gaussian exponential supermartingale
-argument.  No architecture-specific contraction assumption enters the
-CUSUM theorem; the guarantee applies to any predictor whose residuals
-satisfy the conditional drift and tail conditions below.
-Throughout this section, $(\F_t)$ denotes the observable (one-sided)
-filtration generated by the monitored data and any training information to
-which the fitted residuals $\hat e_t$ are adapted; the two-sided
-convention of Section~\ref{sec:theory} is not used here.
+We now establish a rigorous in-control performance guarantee for the Innovation
+CUSUM, which applies a Page CUSUM to learned prediction innovations.  This is
+the second tier of the theory: exact Bayes residuals form an MDS; fitted
+residuals are approximately MDS when their conditional drift is small; and
+this residual-level property yields the alarm-rate bound through a
+sub-Gaussian exponential-supermartingale argument.  No architecture-specific
+contraction assumption enters the CUSUM theorem; the guarantee applies to any
+predictor whose residuals satisfy the conditional drift and tail conditions
+below.
+%
+Throughout this section, $(\F_t)$ denotes the observable one-sided filtration
+generated by the monitored data and any training information, relative to
+which the fitted residuals $\hat e_t$ are adapted.  The two-sided filtration
+of Section~\ref{sec:theory} is not used here.
 
 \subsection{Setup and Assumptions}
 
@@ -963,45 +842,42 @@ the classical exponential-ARL / logarithmic-delay trade-off
   with mean $e^{\theta^\ast h}$.  No union bound is used.
 \end{proof}
 
+
+
 \begin{remark}[Sharpness]
-  The ARL grows exponentially in $h$ at the rate $2\kappa/\sigma^2$, where
-  $\kappa=k-\eta$ is the net margin between the reference value and the
-  in-control conditional residual drift; the bound degrades gracefully as
-  $\eta$ increases, becoming vacuous only when $\eta\to k$.  The exponent is
-  best possible \emph{uniformly over the class} defined by
-  Assumption~\ref{ass:pathway}: the Gaussian mean-shift increment attains it,
-  so no exponent exceeding $2\kappa/\sigma^2$ is valid for every law satisfying
-  (B1)--(B2), and there it matches the exact exponential rate of the classical
-  i.i.d.\ CUSUM \citep{siegmund1985sequential,lorden1971procedures}.  For a
-  particular non-Gaussian increment law the exact Lundberg root may be larger,
-  so the bound is sharp for the class rather than for every member of it.  In
-  contrast to an elementary Chernoff-plus-union-bound estimate, the
-  pre-exponential constant is unity.  The threshold formula $h\geq(\sigma^2/2\kappa)\ln L$ enables
-  principled calibration from $\eta$ and $\sigma^2$ alone, without
-  distributional knowledge.
+The ARL grows exponentially in $h$ with rate $2\kappa/\sigma^2$, where
+$\kappa=k-\eta$ is the margin between the reference value and the
+in-control conditional drift.  The bound weakens as $\eta$ increases and
+becomes vacuous as $\eta\to k$.  This exponent is optimal uniformly over
+the class in Assumption~\ref{ass:pathway}: Gaussian increments with mean
+$-\kappa$ and variance $\sigma^2$ attain it, matching the exact exponential
+rate of the classical i.i.d.\ CUSUM
+\citep{siegmund1985sequential,lorden1971procedures}.  Some non-Gaussian laws
+may have a larger Lundberg root, so the bound is class-sharp rather than
+pointwise sharp.  Its unit prefactor also improves on a
+Chernoff-plus-union-bound estimate.  Thus,
+$h\geq(\sigma^2/2\kappa)\ln L$ guarantees the target ARL using only
+$\eta$ and $\sigma^2$.
 \end{remark}
+
 
 \begin{remark}[Calibration in practice]
 \label{rem:calibration}
-  The operating constants of Assumption~\ref{ass:pathway} are estimated on a
-  held-out in-control segment, disjoint from both the training data and the
-  monitored stream.  The theorem requires an upper bound on the
-  \emph{conditional} residual drift $\E[\hat e_t\given\F_{t-1}]$, not merely a
-  small unconditional mean; in practice this is assessed by conservative
-  diagnostics---the calibration residual mean, autocorrelation tests, and, when
-  available, residual-on-past regressions or the nonlinear predictability checks
-  of Section~\ref{sec:mds}.  These give an empirical proxy for $\eta$; they do
-  \emph{not} constitute a theorem-valid estimator of the essential supremum in
-  Assumption~\ref{ass:pathway}(B1).  The sub-Gaussian proxy $\sigma$ is the
-  calibration standard deviation of $\hat e_t$ (or $\sigma=B$ when
-  $\hat e_t\in[-B,B]$, as in~(B2)); $k$ is set with a comfortable margin
-  $\kappa=k-\eta>0$, and $h$ follows from Theorem~\ref{thm:arl} for the target
-  ARL~$L$.  Because \eqref{eq:arl-lb} depends on $\eta$ and $\sigma$ only
-  through upper bounds, over-estimating either is conservative: it lowers the
-  guaranteed ARL rather than invalidating the bound.
-  Section~\ref{sec:empirical} reports the sensitivity of ARL$_0$ and delay to
-  $(k,h)$, separating theoretical from finite-sample diagnostic calibration.
+The constants in Assumption~\ref{ass:pathway} are calibrated on a held-out
+in-control segment, separate from the training and monitored data.  The
+theorem requires a bound on the \emph{conditional} drift
+$\E[\hat e_t\given\F_{t-1}]$, not merely a small unconditional mean.
+Calibration means, autocorrelation tests, residual-on-past regressions, and
+the nonlinear predictability checks of Section~\ref{sec:mds} provide
+diagnostics for $\eta$, but not a theorem-valid estimate of the essential
+supremum in~(B1).  Likewise, the sub-Gaussian proxy $\sigma$ must be bounded
+conservatively; when $\hat e_t\in[-B,B]$, one may take $\sigma=B$ as
+in~(B2).  Choose $k$ so that $\kappa=k-\eta>0$, and set $h$ from
+Theorem~\ref{thm:arl} for the target ARL~$L$.  Upper bounds on $\eta$ and
+$\sigma$ are conservative.  Section~\ref{sec:empirical} reports the
+sensitivity of ARL$_0$ and delay to $(k,h)$.
 \end{remark}
+
 
 \begin{corollary}[Two-sided Innovation CUSUM]
 \label{cor:twosided}
@@ -1108,133 +984,120 @@ constraint class are
 where $\E_\nu$ (resp.\ $\E_\infty$) denotes the law with change at $\nu$
 (resp.\ no change).
 
+
 \begin{theorem}[Asymptotic optimality of the Innovation CUSUM]
 \label{thm:optimality}
-  Set $h=h_\gamma=(\sigma^2/2\kappa)\log\gamma$, so that
-  $\tau_{h_\gamma}\in\mathcal C_\gamma$ by Theorem~\ref{thm:arl}.
-  \begin{enumerate}[label=(\roman*), itemsep=3pt]
-    \item \textbf{(Order optimality.)}  Under Assumption~\ref{ass:pathway}
-      and (O1)--(O2),
-      $\mathcal J(\tau_{h_\gamma})\leq(\sigma^2/2\kappa\mu)\log\gamma+B/\mu=O(\log\gamma)$,
-      so the delay scales logarithmically in $\gamma$, with \emph{detection
-      efficiency} $2\kappa\mu/\sigma^2$.  If in addition the change admits a
-      Kullback--Leibler information number, i.e.\ the conditional
-      log-likelihood ratios satisfy
-      $n^{-1}\sum_{t=\nu}^{\nu+n-1}\log\{dP_\nu(\cdot\given\F_{t-1})/
-      dP_\infty(\cdot\given\F_{t-1})\}\to I\in(0,\infty)$
-      under the regularity of \citet{lorden1971procedures}, then this matches
-      \emph{in order} the universal lower bound
-      $\inf_{\tau\in\mathcal C_\gamma}\mathcal J(\tau)\geq(\log\gamma)/I\,(1-o(1))$,
-      so the detector is order-optimal; first-order optimality additionally
-      requires the efficiency to equal $I$, which is the case of part~(ii).
-      Assumption~\ref{ass:pathway} and (O1)--(O2) alone constrain residual
-      moments, not likelihood ratios, and so do not by themselves define $I$.
-    \item \textbf{(Gaussian innovations: efficiency attains $I$, and exact
-      optimality under exact calibration.)}
-      Suppose that, conditionally on $\F_{t-1}$, the innovation $\hat e_t$ is
-      Gaussian with variance $\sigma^2$ and mean $\eta$ in control and
-      $\eta+\delta$ after the change ($\delta>0$), and that the reference is
-      the midpoint $k=\eta+\delta/2$ (so $\kappa=\mu=\delta/2$).  Then the
-      detection efficiency equals the information number,
-      $2\kappa\mu/\sigma^2=\delta^2/(2\sigma^2)=I$, and the Innovation CUSUM
-      coincides with the Page likelihood-ratio CUSUM for the change; hence
-      $\mathcal J(\tau_{h_\gamma})\sim(\log\gamma)/I$, i.e.\ $\tau_{h_\gamma}$
-      is \emph{first-order} asymptotically minimax optimal.  Exact Lorden
-      optimality \citep{moustakides1986optimal} holds for the Page CUSUM whose
-      threshold is calibrated so that its in-control ARL equals $\gamma$
-      \emph{exactly}; the analytic threshold $h_\gamma$ guarantees only
-      $\E_\infty[\tau_{h_\gamma}]\geq\gamma$ and is in general conservative, so
-      exact optimality is not claimed for $h_\gamma$ itself.
-  \end{enumerate}
+Set $h=h_\gamma=(\sigma^2/2\kappa)\log\gamma$, so that
+$\tau_{h_\gamma}\in\mathcal C_\gamma$ by Theorem~\ref{thm:arl}.
+\begin{enumerate}[label=(\roman*), itemsep=3pt]
+\item \textbf{(Order optimality.)}  Under Assumption~\ref{ass:pathway}
+and (O1)--(O2),
+$\mathcal J(\tau_{h_\gamma})\leq(\sigma^2/2\kappa\mu)\log\gamma+B/\mu
+=O(\log\gamma)$.
+If, in addition, the conditional log-likelihood ratios satisfy the
+conditions of the Lorden lower bound \citep{lorden1971procedures} with information number
+$I\in(0,\infty)$, then
+$\inf_{\tau\in\mathcal C_\gamma}\mathcal J(\tau)
+\geq(\log\gamma)/I,(1-o(1))$.
+Hence $\tau_{h_\gamma}$ is order-optimal.  These bounds imply
+first-order optimality when $2\kappa\mu/\sigma^2=I$.
+Assumption~\ref{ass:pathway} and (O1)--(O2) alone do not define $I$.
+
+
+\item \textbf{(Gaussian innovations.)}
+  Suppose that the conditional laws of $\hat e_t$ given $\F_{t-1}$ are
+  Gaussian with variance $\sigma^2$ and means $\eta$ before the change
+  and $\eta+\delta$ after it, where $\delta>0$, and set
+  $k=\eta+\delta/2$.  Then $\kappa=\mu=\delta/2$ and
+  $2\kappa\mu/\sigma^2=\delta^2/(2\sigma^2)=I$.
+  Since the conditional log-likelihood-ratio increment is
+  $(\delta/\sigma^2)(\hat e_t-k)$, the Innovation CUSUM is a rescaled
+  Page likelihood-ratio CUSUM.  Therefore
+  $\mathcal J(\tau_{h_\gamma})\sim(\log\gamma)/I$, so
+  $\tau_{h_\gamma}$ is first-order asymptotically minimax optimal.
+  Exact Lorden optimality \citep{moustakides1986optimal} holds when the
+  Page CUSUM threshold is calibrated so that
+  $\E_\infty[\tau]=\gamma$ exactly.  Since $h_\gamma$ guarantees only
+  $\E_\infty[\tau_{h_\gamma}]\geq\gamma$, exact optimality is not claimed
+  for this analytic threshold.
+
+
+\end{enumerate}
 \end{theorem}
+
 
 \begin{proof}
   See Section~\ref{app:proofs} of the Supplementary Material.
 \end{proof}
 
 \begin{remark}[Interpretation]
-  Part~(i) compresses the operating characteristic into a single scalar, the
-  detection efficiency $2\kappa\mu/\sigma^2$: the product of the in-control
-  margin $\kappa=k-\eta$ and the post-change margin $\mu$, scaled by the
-  innovation variance.  Part~(ii) shows this efficiency is not merely of the
-  optimal order but attains the information number $I$ exactly when the change
-  acts through a Gaussian shift of the innovation mean --- the setting in
-  which the innovation is the efficient score.  The midpoint reference
-  $k=\eta+\delta/2$ that the classical CUSUM design prescribes is precisely
-  the choice maximizing $\kappa\mu$ subject to $\kappa+\mu=\delta$.
+Part~(i) summarizes performance through the detection efficiency
+$2\kappa\mu/\sigma^2$, where $\kappa=k-\eta$ and $\mu$ are the in-control
+and post-change margins.  Under a Gaussian innovation mean shift of size
+$\delta$, $\kappa+\mu=\delta$, and the midpoint choice
+$k=\eta+\delta/2$ maximizes $\kappa\mu$.  It yields
+$2\kappa\mu/\sigma^2=\delta^2/(2\sigma^2)=I$, the Gaussian information
+number, so the innovation CUSUM attains the optimal first-order rate.
 \end{remark}
 
 \subsection{Dimension Stability}
 
+
 \begin{corollary}[Dimension-stable ARL]
 \label{cor:dim}
-  Let $\hat{e}_t\in\R^d$ be the multivariate LSTM innovation and define
-  the aggregated Mahalanobis score
-  \[
-    \mathcal{Z}_t
-    :=\frac{1}{d}(\hat{e}_t-\mu_0)^\top\Sigma_0^{-1}(\hat{e}_t-\mu_0)-1,
-  \]
-  where $\mu_0=\E[\hat{e}_t]$ and $\Sigma_0=\Var(\hat{e}_t)$.
-  Suppose Assumption~\ref{ass:pathway} holds for the innovation vector
-  with $\eta_d=O(1)$ in the aggregate sense
-  $\norm{\E[\hat e_t\given\F_{t-1}]}\leq\eta_d$ a.s.  This is a
-  high-dimensional residual-drift assumption on the full vector, not merely
-  a coordinatewise accuracy condition.  Take a fixed reference value
-  $k_d\equiv k>0$, write $u_t:=\hat{e}_t-\mu_0$ and
-  $b_t:=\E[u_t\given\F_{t-1}]$ for its conditional mean (so
-  $\norm{b_t}_2\leq2\eta_d$ a.s.\ by the drift assumption above), and
-  assume that the \emph{conditionally centered} deviation satisfies
-  \[
-    \E\bigl[(u_t-b_t)(u_t-b_t)^\top\given\F_{t-1}\bigr]\preceq\Sigma_0
-    \quad\text{a.s.}
-  \]
-  (conditional homoskedasticity of the centered innovation).  This bounds
-  only the conditional \emph{variance} of $\hat e_t$, not the squared drift
-  $b_tb_t^\top$, and is therefore strictly weaker than assuming
-  $\E[u_tu_t^\top\given\F_{t-1}]\preceq\Sigma_0$ directly; the latter would
-  force $\E[\mathcal Z_t\given\F_{t-1}]\leq0$ with no residual term, which
-  is not the regime intended here.
-  Assume further that the in-control innovation covariance is uniformly
-  non-degenerate: $\lambda_{\min}(\Sigma_0)\geq c_0>0$ for all $d$,
-  so that $\|\Sigma_0^{-1}\|_{\mathrm{op}}=O(1)$ as $d\to\infty$.
-  Assume also that the scalar score $\mathcal{Z}_t$ satisfies
-  Assumption~\ref{ass:pathway}(B2) with sub-Gaussianity parameter
-  $\sigma_{Z,d}=O(1)$ as $d\to\infty$; this holds, for example, when
-  the innovations $\hat{e}_t$ are uniformly bounded in $d$.
-  Then $\eta_d':=4\|\Sigma_0^{-1}\|_{\mathrm{op}}\eta_d^2/d=O(d^{-1})\to 0$,
-  the net drift margin $\kappa_d=k_d-\eta_d'\to k>0$ as $d\to\infty$,
-  and for all sufficiently large $d$ the ARL lower bound \eqref{eq:arl-lb}
-  holds with $\kappa_d\geq k/2>0$.
+  Let $\hat e_t\in\R^d$ be the multivariate innovation, $\mu_0=\E[\hat e_t]$,
+  $\Sigma_0=\Var(\hat e_t)$, and let
+  $\mathcal Z_t:=d^{-1}(\hat e_t-\mu_0)^\top\Sigma_0^{-1}(\hat e_t-\mu_0)-1$
+  be the aggregated Mahalanobis score.  Write $u_t:=\hat e_t-\mu_0$ and
+  $b_t:=\E[u_t\given\F_{t-1}]$, and assume, uniformly in $d$:
+  \begin{enumerate}[label=(D\arabic*), itemsep=2pt]
+    \item $\norm{\E[\hat e_t\given\F_{t-1}]}\leq\eta_d=O(1)$ a.s.;
+    \item $\E[(u_t-b_t)(u_t-b_t)^\top\given\F_{t-1}]\preceq\Sigma_0$ a.s.;
+    \item $\lambda_{\min}(\Sigma_0)\geq c_0>0$, so
+      $\norm{\Sigma_0^{-1}}_{\mathrm{op}}=O(1)$;
+    \item $\mathcal Z_t$ satisfies Assumption~\ref{ass:pathway}(B2) with
+      $\sigma_{Z,d}=O(1)$ (e.g.\ if $\hat e_t$ is uniformly bounded in $d$).
+  \end{enumerate}
+  Then $\eta_d':=4\norm{\Sigma_0^{-1}}_{\mathrm{op}}\eta_d^2/d=O(d^{-1})\to0$, so
+  for a fixed reference value $k$ the net margin $\kappa_d=k-\eta_d'\to k>0$ and,
+  for all sufficiently large $d$, the ARL bound~\eqref{eq:arl-lb} holds with
+  $\kappa_d\geq k/2$.
+\end{corollary}
 
-  By contrast, for a raw vector autoregression (VAR(1)) process
-  $X_t = \Phi X_{t-1}+\varepsilon_t$ with coefficient matrix
-  $\Phi\in\R^{d\times d}$, $\norm{\Phi}_{\mathrm{op}}
-  =\rho_{\mathrm{op}}>0$, $\varepsilon_t\iid(0,I_d)$, $\mu_0=0$,
-  stationary covariance $\Sigma_X:=\Var(X_t)$, and
-  $\Sigma_0=I_d$ (identity standardization), the aggregated
-  Mahalanobis score satisfies
+\begin{proof}
+  See Section~\ref{app:proofs} of the Supplementary Material.
+\end{proof}
+
+\begin{remark}[Reading (D1)--(D2)]
+  (D1) constrains the \emph{whole} innovation vector, not each coordinate
+  separately.  (D2) bounds only the conditional \emph{variance} of the centred
+  innovation, not the squared drift $b_tb_t^\top$; it is therefore strictly
+  weaker than $\E[u_tu_t^\top\given\F_{t-1}]\preceq\Sigma_0$, which would force
+  $\E[\mathcal Z_t\given\F_{t-1}]\leq0$ and remove the residual term this result
+  is about.
+\end{remark}
+
+\begin{corollary}[Raw residualization need not be dimension-stable]
+\label{cor:dim-raw}
+  Let $X_t=\Phi X_{t-1}+\varepsilon_t$ be a VAR(1) with
+  $\varepsilon_t\iid(0,I_d)$, $\norm{\Phi}_{\mathrm{op}}=\rho_{\mathrm{op}}>0$
+  and stationary covariance $\Sigma_X$, and form the score from the raw
+  observations ($\mu_0=0$, $\Sigma_0=I_d$).  Then
   \begin{equation}
-    \E[\mathcal{Z}_t^{\mathrm{raw}}\given\F_{t-1}]
-    =\frac{1}{d}\norm{\Phi X_{t-1}}^2
-    =\frac{1}{d}\,\mathrm{tr}\!\bigl(\Phi X_{t-1}X_{t-1}^\top\Phi^\top\bigr),
+    \E[\mathcal Z_t^{\mathrm{raw}}\given\F_{t-1}]
+      =\tfrac1d\norm{\Phi X_{t-1}}^2,
     \label{eq:raw-bias}
   \end{equation}
-  (the noise-variance term $d^{-1}\mathrm{tr}(I_d)-1=0$ cancels exactly
-  when $\Sigma_0=I_d$), and this conditional bias need not vanish as $d\to\infty$:
-  for the symmetric case $\Phi = \rho_{\mathrm{op}}I_d$, by the law of large numbers
-  applied to the i.i.d.\ stationary components of $\Phi X_{t-1}$,
-  $d^{-1}\|\Phi X_{t-1}\|^2 \to \rho_{\mathrm{op}}^2/(1-\rho_{\mathrm{op}}^2)>0$ a.s.;
-  for general $\Phi$ the bias $d^{-1}\mathrm{tr}(\Phi\Sigma_X\Phi^\top)$ is strictly positive
-  for each fixed $d$ whenever $\Phi\neq 0$ and $\Sigma_X\succ 0$, but
-  need not remain bounded away from zero as $d\to\infty$ (e.g.\ for
-  $\Phi=\mathrm{diag}(\rho_{\mathrm{op}},0,\ldots,0)$, the bias
-  $d^{-1}\mathrm{tr}(\Phi\Sigma_X\Phi^\top)\to 0$).
-  Consequently the net drift margin $\kappa_d^{\mathrm{raw}}=k-\eta_d^{\mathrm{raw}}$
-  cannot be made positive by a fixed reference value $k$ unless $k$ is
-  recalibrated to exceed the serial-dependence bias $\eta_d^{\mathrm{raw}}$,
-  which itself depends on $\Phi$ and the stationary distribution of $X_{t-1}$
-  in a way that raw CUSUM calibration does not capture.
+  the noise term $d^{-1}\mathrm{tr}(I_d)-1$ cancelling exactly.  This bias need
+  not vanish as $d\to\infty$: for $\Phi=\rho_{\mathrm{op}}I_d$ it tends a.s.\ to
+  $\rho_{\mathrm{op}}^2/(1-\rho_{\mathrm{op}}^2)>0$.  Hence no fixed $k$
+  guarantees a positive margin unless it is recalibrated to exceed a bias
+  depending on $\Phi$ and the stationary law of $X_{t-1}$---information that raw
+  CUSUM calibration does not use.  (For particular $\Phi$ the bias does vanish,
+  e.g.\ $\Phi=\mathrm{diag}(\rho_{\mathrm{op}},0,\ldots,0)$; the point is that it
+  need not.)
 \end{corollary}
+
 
 \begin{proof}
   See Section~\ref{app:proofs} of the Supplementary Material.
@@ -1257,29 +1120,27 @@ where $\E_\nu$ (resp.\ $\E_\infty$) denotes the law with change at $\nu$
   which holds for $d\geq d_0$ where $d_0$ depends on $\eta_d$ and $k$).
 \end{remark}
 
+
+\begin{remark}[Connection to Study~CUSUM-DIM]
+Corollary~\ref{cor:dim} explains the dimension-scaling pattern in
+Study~CUSUM-DIM (Section~\ref{sec:cusum-dim}): at $d=10$, the raw and
+whitened CUSUM ARL$*0$ falls to 47 and 42, whereas the Innovation CUSUM
+rises to 365.  Equation~\eqref{eq:raw-bias} shows that the normalized
+serial-dependence bias $\eta_d^{\mathrm{raw}}$ can remain nonzero as
+$d\to\infty$, so a fixed $k$ need not yield a positive drift margin without
+recalibration using $\Phi$ and $\Sigma_X$.  This is a calibration issue,
+not an impossibility: a raw CUSUM remains valid if $k$ exceeds the bias.
+By contrast, the Innovation CUSUM guarantee holds for all sufficiently
+large $d$, once
+$\eta_d'=4\|\Sigma_0^{-1}\|_{\mathrm{op}}\eta_d^2/d<k$.
+\end{remark}
+
 % =============================================================================
 \section{Empirical Studies and Discussion}
 \label{sec:empirical}
-
-This section presents four empirical studies, one for each step of the
-theory.  A reminder on scope: the contractive-RNN theory of
-Section~\ref{sec:theory} supplies the innovation/stabilization prototype,
-whereas the detector evaluated below is LSTM-based and rests on the
-approximate Bayes-residual MDS condition of
-Assumption~\ref{ass:pathway}, not on an LSTM contraction theorem.  The
-studies therefore probe that condition directly --- through
-residual-whiteness diagnostics --- before turning to detection
-performance.  Study~MDS examines the MDS property (Theorem~\ref{thm:mds})
-in controlled stationary settings.  Study~CUSUM-CP then compares a CUSUM built
-on LSTM innovations with classical detectors at a known change-point and fixed
-threshold, reporting false alarms and detections separately and checking the
-in-control run length against Theorem~\ref{thm:arl}; the matched-calibration
-version of this comparison is Study~CUSUM-EQARL.
-Study~CUSUM-DIM examines the dimension-stability of the Innovation CUSUM
-(Corollary~\ref{cor:dim}) across $d \in \{1,2,5,10\}$, finding results
-consistent with the theoretical prediction.
-Study~ETF applies the full pipeline to a real multivariate dataset ---
-US equity sector returns around the 2020 COVID crash.
+{\color{red}
+This section presents four studies aligned with the theory.  Section~\ref{sec:theory} provides the contractive-RNN innovation prototype, whereas the LSTM detector relies on the approximate Bayes-residual MDS condition in Assumption~\ref{ass:pathway}, not on LSTM contraction.  The studies first assess this condition through residual-whiteness diagnostics and then evaluate detection.  Study~MDS tests the MDS property (Theorem~\ref{thm:mds}); Study~CUSUM-CP compares LSTM-innovation and classical CUSUM detectors at a fixed threshold, with matched-ARL calibration in Study~CUSUM-EQARL; Study~CUSUM-DIM examines dimension stability (Corollary~\ref{cor:dim}) for $d \in {1,2,5,10}$; and Study~ETF applies the full pipeline to US equity sector returns around the 2020 COVID crash.
+}
 
 Eight supporting studies are deferred to the Empirical Supplement
 (Section~\ref{app:supp-empirical} of the Supplementary Material).
@@ -1287,24 +1148,23 @@ Study~MDS-VAR extends the MDS diagnostic to multivariate VAR(1) processes;
 Study~KAL benchmarks the LSTM against the Kalman filter on clean and noisy
 state-space models; Study~NILE applies the three-way CUSUM comparison to
 the Nile River annual discharge series \citep{cobb1978problem}; and
-Study~PELT contrasts the Innovation CUSUM with the PELT offline detector
-across the same dimensions as Study~CUSUM-DIM.
-Study~CUSUM-EQARL revisits the dimension-scaling comparison under a matched
-false-alarm level and a matched estimation budget, showing that the
-fixed-threshold advantage seen in Study~CUSUM-DIM is a finite-sample
-calibration effect rather than a structural one; Study~CUSUM-MISSPEC then
-exhibits the regime --- a nonlinear, misspecified process --- in which the
-learned innovations are genuinely whiter and detection is faster than linear
-whitening, as Proposition~\ref{prop:whiteness} predicts.
-Study~LS-Diag examines locally stationary AR data and finds that a
-stationary-trained LSTM forget gate systematically mis-adapts to smooth
-non-stationarity, motivating an explicit non-stationarity correction;
-Study~J-Surr benchmarks four data-driven surrogates for the
-predictive-decay profile $J_t$ (defined in Section~\ref{sec:processes}),
-of which only a Kullback--Leibler importance estimation procedure
-(KLIEP)-corrected estimator \citep{sugiyama2012density} achieves normalized
-mean squared error (NMSE) below one under smooth variation, while all four
-deteriorate under abrupt change.
+Study~PELT compares the Innovation CUSUM with the offline PELT detector
+across the dimensions of Study~CUSUM-DIM.
+Study~CUSUM-EQARL repeats the dimension-scaling comparison under matched
+false-alarm levels and estimation budgets, showing that the fixed-threshold
+advantage in Study~CUSUM-DIM is a finite-sample calibration effect rather
+than a structural one.  Study~CUSUM-MISSPEC considers a nonlinear,
+misspecified process in which learned innovations are genuinely whiter and
+detection is faster than with linear whitening, as
+Proposition~\ref{prop:whiteness} predicts.
+Study~LS-Diag finds that a stationary-trained LSTM forget gate systematically
+mis-adapts to smooth non-stationarity, motivating an explicit correction.
+Study~J-Surr benchmarks four data-driven surrogates for the predictive-decay
+profile $J_t$ (defined in Section~\ref{sec:processes}); only the
+Kullback--Leibler importance estimation procedure (KLIEP)-corrected estimator
+\citep{sugiyama2012density} achieves normalized mean squared error (NMSE)
+below one under smooth variation, while all four deteriorate under abrupt
+change.
 
 All experiments use small-to-moderate sample sizes deliberately, since this
 paper focuses on theoretical diagnostics rather than application performance.
@@ -1324,7 +1184,7 @@ $\varepsilon_t \iid \mathcal{N}(0,1)$, with $\phi \in \{0.3, 0.7, 0.95\}$.
 For the initialization transient starting at $h_0 = 0$,
 the transient predictive-decay profile is
 $J_t = |\phi|^t \cdot \sigma/\sqrt{1-\phi^2}$ (geometric decay).
-
+%
 The second is a two-state hidden Markov model (HMM) with states $s\in\{0,1\}$,
 transition matrix
 $P=\bigl[\begin{smallmatrix}0.9&0.1\\0.1&0.9\end{smallmatrix}\bigr]$,
