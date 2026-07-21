@@ -4,9 +4,10 @@
 %  Cover letter -- Bernoulli submission
 % =============================================================================
 \documentclass[11pt]{letter}
-\usepackage[a4paper,top=2.0cm,bottom=2.0cm,left=2.5cm,right=2.5cm]{geometry}
+\usepackage[a4paper,top=1.6cm,bottom=1.6cm,left=2.5cm,right=2.5cm]{geometry}
 \usepackage{microtype}
 \usepackage[T1]{fontenc}
+\setlength{\parskip}{0.4\baselineskip}
 
 %\signature{Yuan-chin Ivan Chang}
 %\address{Yuan-chin Ivan Chang\\
@@ -42,10 +43,11 @@ exponential in-control average-run-length lower bound --- at the Lundberg
 rate that coincides with the classical i.i.d.\ CUSUM exponent, proved by a
 renewal argument rather than a union bound --- together with a logarithmic
 detection-delay upper bound.  The two combine into the exponential-alarm /
-logarithmic-delay trade-off, which we show is \emph{minimax optimal} in
-Lorden's sense, and exactly so under a Gaussian innovation shift; the
-guarantee is model-free with respect to the data-generating dynamics though
-not assumption-free.  Two further propositions identify when learning is
+logarithmic-delay trade-off, which we show is order-optimal in Lorden's
+minimax sense --- and first-order minimax optimal under a Gaussian innovation
+shift, becoming exactly optimal once the threshold is calibrated to the
+false-alarm constraint; the guarantee is model-free with respect to the
+data-generating dynamics though not assumption-free.  Two further propositions identify when learning is
 statistically useful: under a nonlinear conditional mean, fixed linear
 residualization carries an irreducible innovation defect that a consistent
 learned predictor removes, at a rate that transfers to the monitoring
@@ -69,8 +71,7 @@ Networks: A Quasi-Reverse-Martingale Theory''} (arXiv:2606.08934), develops a
 complementary \emph{reverse}-filtration theory for the convergence and stability
 of the hidden state itself. The present paper works in the \emph{forward}
 filtration, with the innovations; the two manuscripts are self-contained and
-neither relies on the other's results. I would be glad to provide the companion
-to the editors or referees on request.
+neither relies on the other's results.
 
 The manuscript is original, has not been published previously, and is not under
 consideration for publication elsewhere. All proofs, simulation details, and

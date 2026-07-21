@@ -284,13 +284,13 @@ or a tail projection.
 
 {
 Throughout this subsection, we work under Assumption~\ref{ass:spectral}
-($\rho:=L_\phi\norm{W_h}*{\mathrm{op}}<1$).
+($\rho:=L_\phi\norm{W_h}_{\mathrm{op}}<1$).
 The existence and uniqueness of the stationary causal solution
-$(H_t^*)*{t\in\mathbb{Z}}$ satisfying
+$(H_t^*)_{t\in\mathbb{Z}}$ satisfying
 $H_t^*=\phi(W_hH_{t-1}^*+W_xX_t+b_h)$,
 $H_t^*\in\sigma(X_t,X_{t-1},\ldots)$,
 and the geometric coupling bound
-$\norm{h_t-H_t^*}*{L^2}\leq\rho^t\norm{h_0-H_0^*}*{L^2}$
+$\norm{h_t-H_t^*}_{L^2}\leq\rho^t\norm{h_0-H_0^*}_{L^2}$
 are proved directly in Proposition~\ref{prop:stationary-causal}
 (Section~\ref{app:stationary-causal} of the Supplementary Material).
 Thus, the chain of results in this paper does not depend on any external
@@ -306,9 +306,9 @@ $H_t^*$ is a fixed measurable functional of $(X_s)_{s\leq t}$ and is
 therefore $\F_t$-measurable, while $D_t^*$ is given by the same functional
 of the shifted path at each $t$ (conditioning additionally on the independent
 $\sigma(h_0)$ leaves it unchanged). Consequently,
-$(M_t^*)*{t\in\mathbb{Z}}$ is a strictly stationary, ergodic MDS
+$(M_t^*)_{t\in\mathbb{Z}}$ is a strictly stationary, ergodic MDS
 \emph{adapted} to $(\F_t)$. Under the one-sided filtration
-$\sigma(X_1,\ldots,X*{t-1})$, neither exact stationarity nor adaptedness
+$\sigma(X_1,\ldots,X_{t-1})$, neither exact stationarity nor adaptedness
 would hold because the pre-sample past influences $H_t^*$.
 The stationary causal solution is generally a \emph{random} process;
 it should not be identified with either a deterministic mean-field fixed
@@ -998,7 +998,7 @@ If, in addition, the conditional log-likelihood ratios satisfy the
 conditions of the Lorden lower bound \citep{lorden1971procedures} with information number
 $I\in(0,\infty)$, then
 $\inf_{\tau\in\mathcal C_\gamma}\mathcal J(\tau)
-\geq(\log\gamma)/I,(1-o(1))$.
+\geq(\log\gamma)/I\,(1-o(1))$.
 Hence $\tau_{h_\gamma}$ is order-optimal.  These bounds imply
 first-order optimality when $2\kappa\mu/\sigma^2=I$.
 Assumption~\ref{ass:pathway} and (O1)--(O2) alone do not define $I$.
@@ -1123,58 +1123,45 @@ number, so the innovation CUSUM attains the optimal first-order rate.
   which holds for $d\geq d_0$ where $d_0$ depends on $\eta_d$ and $k$).
 \end{remark}
 
-
-\begin{remark}[Connection to Study~CUSUM-DIM]
-Corollary~\ref{cor:dim} explains the dimension-scaling pattern in
-Study~CUSUM-DIM (Section~\ref{sec:cusum-dim}): at $d=10$, the raw and
-whitened CUSUM ARL$*0$ falls to 47 and 42, whereas the Innovation CUSUM
-rises to 365.  Equation~\eqref{eq:raw-bias} shows that the normalized
-serial-dependence bias $\eta_d^{\mathrm{raw}}$ can remain nonzero as
-$d\to\infty$, so a fixed $k$ need not yield a positive drift margin without
-recalibration using $\Phi$ and $\Sigma_X$.  This is a calibration issue,
-not an impossibility: a raw CUSUM remains valid if $k$ exceeds the bias.
-By contrast, the Innovation CUSUM guarantee holds for all sufficiently
-large $d$, once
-$\eta_d'=4\|\Sigma_0^{-1}\|_{\mathrm{op}}\eta_d^2/d<k$.
-\end{remark}
-
 % =============================================================================
 \section{Empirical Studies and Discussion}
 \label{sec:empirical}
-{\color{red}
-This section presents four studies aligned with the theory.  Section~\ref{sec:theory} provides the contractive-RNN innovation prototype, whereas the LSTM detector relies on the approximate Bayes-residual MDS condition in Assumption~\ref{ass:pathway}, not on LSTM contraction.  The studies first assess this condition through residual-whiteness diagnostics and then evaluate detection.  Study~MDS tests the MDS property (Theorem~\ref{thm:mds}); Study~CUSUM-CP compares LSTM-innovation and classical CUSUM detectors at a fixed threshold, with matched-ARL calibration in Study~CUSUM-EQARL; Study~CUSUM-DIM examines dimension stability (Corollary~\ref{cor:dim}) for $d \in {1,2,5,10}$; and Study~ETF applies the full pipeline to US equity sector returns around the 2020 COVID crash.
-}
+This section presents four studies aligned with the theory.  Section~\ref{sec:theory} provides the contractive-RNN innovation prototype, whereas the LSTM detector relies on the approximate Bayes-residual MDS condition in Assumption~\ref{ass:pathway}, not on LSTM contraction.  The studies first assess this condition through residual-whiteness diagnostics and then evaluate detection.  Study~MDS tests the MDS property (Theorem~\ref{thm:mds}); Study~CUSUM-CP compares LSTM-innovation and classical CUSUM detectors at a fixed threshold, with matched-ARL calibration in Study~CUSUM-EQARL; Study~CUSUM-DIM examines dimension stability (Corollary~\ref{cor:dim}) for $d \in \{1,2,5,10\}$; and Study~ETF applies the full pipeline to US equity sector returns around the 2020 COVID crash.
 
-Eight supporting studies are deferred to the Empirical Supplement
+Eight supporting studies are reported in the Empirical Supplement
 (Section~\ref{app:supp-empirical} of the Supplementary Material).
 Study~MDS-VAR extends the MDS diagnostic to multivariate VAR(1) processes;
 Study~KAL benchmarks the LSTM against the Kalman filter on clean and noisy
 state-space models; Study~NILE applies the three-way CUSUM comparison to
 the Nile River annual discharge series \citep{cobb1978problem}; and
 Study~PELT compares the Innovation CUSUM with the offline PELT detector
-across the dimensions of Study~CUSUM-DIM.
+across the dimensional settings examined in Study~CUSUM-DIM.
+%
 Study~CUSUM-EQARL repeats the dimension-scaling comparison under matched
 false-alarm levels and estimation budgets, showing that the fixed-threshold
-advantage in Study~CUSUM-DIM is a finite-sample calibration effect rather
-than a structural one.  Study~CUSUM-MISSPEC considers a nonlinear,
-misspecified process in which learned innovations are genuinely whiter and
-detection is faster than with linear whitening, as
-Proposition~\ref{prop:whiteness} predicts.
-Study~LS-Diag finds that a stationary-trained LSTM forget gate systematically
-mis-adapts to smooth non-stationarity, motivating an explicit correction.
-Study~J-Surr benchmarks four data-driven surrogates for the predictive-decay
-profile $J_t$ (defined in Section~\ref{sec:processes}); only the
-Kullback--Leibler importance estimation procedure (KLIEP)-corrected estimator
-\citep{sugiyama2012density} achieves normalized mean squared error (NMSE)
-below one under smooth variation, while all four deteriorate under abrupt
-change.
+advantage observed in Study~CUSUM-DIM is a finite-sample calibration effect
+rather than a structural one. Study~CUSUM-MISSPEC considers a nonlinear,
+misspecified process in which the learned innovations are genuinely whiter
+than those obtained through linear whitening and lead to faster detection,
+as predicted by Proposition~\ref{prop:whiteness}.
+%
+Study~LS-Diag finds that an LSTM forget gate trained under stationarity
+systematically adapts poorly to smooth nonstationarity, motivating an
+explicit correction. Study~J-Surr benchmarks four data-driven surrogates
+for the predictive-decay profile $J_t$ (defined in
+Section~\ref{sec:processes}); only the estimator corrected using the
+Kullback--Leibler importance estimation procedure (KLIEP)
+\citep{sugiyama2012density} achieves normalized mean-squared error (NMSE)
+below one under smooth variation, whereas all four deteriorate under
+abrupt change.
 
-All experiments use small-to-moderate sample sizes deliberately, since this
-paper focuses on theoretical diagnostics rather than application performance.
-All code is in \texttt{code/} (Python~3.9, PyTorch~2.2, and R~4.1),
-reproducible via \texttt{python run\_all.py}.
-Studies~MDS and~CUSUM-CP use 1000--2000 independent test sequences per
-configuration; Study~CUSUM-DIM uses 1000 test and 2000 in-control sequences.
+
+All code is available in \texttt{code/} and can be reproduced using
+Python~3.9, PyTorch~2.2, and R~4.1 by running
+\texttt{python run\_all.py}. Studies~MDS and~CUSUM-CP use
+1,000--2,000 independent test sequences per configuration, whereas
+Study~CUSUM-DIM uses 1,000 test sequences and 2,000 in-control sequences.
+
 
 \subsection{Processes, Benchmarks, and Real Data}
 \label{sec:processes}
@@ -1264,7 +1251,6 @@ This empirically examines the prediction of Theorem~\ref{thm:arl}: if the LSTM r
 a martingale difference sequence in-control, the ARL lower bound should be
 empirically visible.
 
-%\paragraph{Setup.}
 For abrupt change-point AR, we generate 2000 sequences with a single abrupt change in the AR coefficient
 from $\phi_{\mathrm{before}} = 0.30$ to $\phi_{\mathrm{after}} = 0.85$ at
 $\tau^* = 100$ ($T = 200$).
@@ -1291,7 +1277,6 @@ versus the nominal i.i.d.\ value of 285 at $h=5$.
 On sequences of length 200, this means M1 fires before $\tau^*$ in 60\% of
 cases (Table~\ref{tab:cusum-cp}).
 
-%\paragraph{Results.}
 Table~\ref{tab:cusum-cp} shows the three-way comparison at $h = 5$,
 reporting the two error types separately.
 The distinction matters here because the raw detector's apparent
@@ -1305,7 +1290,9 @@ holding the lowest false-positive rate ($12.3\%$ versus $22.4\%$ and
 $60.3\%$).  Misses (false negatives) are negligible for all three
 ($\leq 0.4\%$).
 The $\mathrm{ARL}_0$ of M3 ($\approx 436$) matches that of M2
-($\approx 440$) and both exceed the i.i.d.\ nominal (285), indicating that in-control LSTM residuals are slightly under-dispersed relative to the i.i.d.\ calibration assumption, consistent with the theoretical ARL lower bound of Theorem~\ref{thm:arl} holding with slack.
+($\approx 440$) and both exceed the i.i.d.\ nominal (285), indicating that in-control LSTM 
+residuals are slightly under-dispersed relative to the i.i.d.\ calibration assumption, consistent 
+with the theoretical ARL lower bound of Theorem~\ref{thm:arl} holding with slack.
 
 Detection delay must be read with care, because the tabulated mean averages
 $(\text{alarm}-\tau^*)$ over \emph{all} alarms, false positives included.
@@ -1690,109 +1677,58 @@ Config & Method & Alarm $t$ & Delay & ARL$_0$ \\
 \subsection{Summary and Interpretation}
 \label{sec:discussion}
 
-Taken together, the twelve studies --- four here, eight in the Supplementary
-Material --- give a finite-sample picture
-of how the hidden-state innovation, the predictive-decay profile $J_t$, and
-the Innovation CUSUM behave across synthetic and real settings ranging from univariate AR
-to non-Gaussian high-dimensional equity returns.
-The synthetic studies draw on many
-independent replications and support statistical comparison; Study~ETF and
-Study~NILE (Section~\ref{app:supp-nile} of the Supplementary Material), by
-contrast, each examine a single real change-point event and are illustrative
-case studies --- evidence that the pipeline runs end-to-end on real data, not
-that the method has a typical real-world advantage, which would require many
-more real change events than either series provides.
+Taken together, the twelve studies---four in the main text and eight in the Supplementary Material---characterize the finite-sample 
+behavior of the hidden-state innovation, the predictive-decay profile $J_t$, and the Innovation CUSUM across synthetic and real settings, 
+from univariate autoregressions to non-Gaussian, high-dimensional equity returns. The synthetic studies use many independent replications, 
+enabling statistical comparisons. By contrast, Study~ETF and Study~NILE (Section~\ref{app:supp-nile}) 
+each analyze a single real change-point event and therefore serve 
+as end-to-end demonstrations rather than evidence of a typical real-world advantage.
 
-The dimensional scaling documented at fixed $h$ in Study~CUSUM-DIM is
-striking --- raw and whitened ARL$_0$ collapse as $d$ grows while the
-Innovation CUSUM's rises --- but it must be read with care.  As Study
-CUSUM-EQARL (Section~\ref{app:supp-eqarl} of the Supplementary Material)
-shows, at a matched false-alarm level and a matched estimation budget the
-three detectors are essentially equivalent on these VAR data: the fixed-$h$
-collapse reflects the classical detectors operating at a far less
-conservative point and estimating high-dimensional nuisance parameters from
-a short in-control window, not a structural deficiency.  Corollary
-\ref{cor:dim}'s serial-dependence bias is real, but once the reference level
-is calibrated and the nuisance parameters are well estimated it does not, in
-this regime, manifest as a dimension problem.
-The advantage of learning the predictor that \emph{does} survive a fully
-fair comparison is twofold: under nonlinearity in the conditional mean, a
-fixed linear residualization carries an irreducible innovation defect while
-the learned predictor does not (Proposition~\ref{prop:whiteness}, borne out
-by the whiteness ordering of Study~CUSUM-MISSPEC); and in the practically
-common short-window regime, the learned predictor sidesteps the
-ill-conditioned per-sequence estimation that degrades the classical scores.
-The in-control guarantee is, moreover, sharp: the exponent
-$2(k-\eta)/\sigma^2$ of Theorem~\ref{thm:arl} is the Lundberg coefficient and
-coincides with the exact exponential rate of the classical i.i.d.\ CUSUM
-\citep[Ch.~3]{siegmund1985sequential}, obtained here by a renewal argument
-that leaves no looseness in the exponent.
 
-Study~KAL (Section~\ref{app:supp-kal} of the Supplementary Material)
-explains why high persistence is structurally difficult: the
-analytical decay profile $J_t$ decreases slowly, so hidden-state proxies
-must integrate information over a long history; the LSTM outperforms the
-EM-Kalman estimator at moderate persistence but the Kalman recovers its
-advantage when $\phi \approx 0.95$.  Study~J-Surr (Section~\ref{app:supp-jsurr} of the Supplementary Material) shows that KLIEP-type corrections achieve NMSE $< 1$ under
-smooth non-stationarity but deteriorate under abrupt change, delimiting
-where density-ratio reweighting can substitute for retraining.
+The dimensional scaling observed at fixed $h$ in Study~CUSUM-DIM is striking: raw and whitened ARL$_0$ collapse as $d$ increases, whereas the Innovation CUSUM's ARL$_0$ rises. This result, however, must be interpreted with care. As Study~CUSUM-EQARL (Section~\ref{app:supp-eqarl} of the Supplementary Material) shows, under matched false-alarm levels and estimation budgets, the three detectors are essentially equivalent on these VAR data. The fixed-$h$ collapse arises because the classical detectors operate at a much less conservative point and estimate high-dimensional nuisance parameters from a short in-control window; it does not indicate a structural deficiency. The serial-dependence bias in Corollary~\ref{cor:dim} is real, but once the reference level is calibrated and the nuisance parameters are well estimated, it does not manifest as a dimensional disadvantage in this regime.
+%
+The advantage of learning the predictor that survives a fully fair comparison is twofold. First, when the conditional mean is nonlinear, fixed linear residualization retains an irreducible innovation defect, whereas the learned predictor does not; this is predicted by Proposition~\ref{prop:whiteness} and confirmed by the whiteness ordering in Study~CUSUM-MISSPEC. Second, in the practically common short-window regime, the learned predictor avoids the ill-conditioned per-sequence estimation that degrades the classical scores.
+%
+The in-control guarantee is also sharp. The exponent $2(k-\eta)/\sigma^2$ in Theorem~\ref{thm:arl} is the Lundberg coefficient and matches the exact exponential rate of the classical i.i.d.\ CUSUM \citep[Ch.~3]{siegmund1985sequential}. Here, that rate is obtained through a renewal argument with no looseness in the exponent.
+
+
+Study~KAL (Section~\ref{app:supp-kal} of the Supplementary Material) shows why high persistence is intrinsically difficult: the analytic decay profile $J_t$ decreases slowly, requiring hidden-state proxies to integrate information over a long history. The LSTM outperforms the EM-Kalman estimator at moderate persistence, but the Kalman estimator regains its advantage when $\phi\approx0.95$. Study~J-Surr (Section~\ref{app:supp-jsurr} of the Supplementary Material) shows that KLIEP-type corrections achieve NMSE below one under smooth nonstationarity but deteriorate under abrupt changes, thereby delineating when density-ratio reweighting can substitute for retraining.
 
 % =============================================================================
 \section{Conclusion}
 \label{sec:conclusion}
+Two practical gaps motivated this work. First, although recurrent networks are widely used for sequential prediction, existing results on their stability and expressivity do not provide the narrower characterization needed here: a martingale-innovation account of the recurrent state that supports calibration of downstream inference under explicit residual conditions, without requiring a complete account of what the hidden state encodes. Second, classical change-point detectors are typically calibrated for independent observations or fully specified parametric models, so their false-alarm guarantees can fail under unknown serial dependence, especially as the observation dimension grows.
 
-Two practical gaps motivated this work.
-First, recurrent networks are routinely used for sequential prediction, yet
-prior work on their stability and expressivity supplies no
-martingale-innovation account of the recurrent state usable for calibrating
-downstream inference under explicit residual conditions --- rather than a full
-account of what the hidden state encodes in general.
-Second, classical change-point detectors are calibrated for independent or
-fully specified parametric input, so their false-alarm guarantees break down
-under unknown serial dependence, the more so as the observation dimension grows.
+To address the first gap, Theorem~\ref{thm:mds} establishes the Doob decomposition
+$h_t=D_t+M_t$, together with an explicit geometric $L^2$ innovation bound and
+stationary covariance. Corollary~\ref{cor:fclt} establishes a functional central
+limit theorem for the accumulated innovations.
+%
+To address the second gap, Theorems~\ref{thm:arl} and~\ref{thm:delay} provide a
+sharp in-control ARL lower bound at the Lundberg rate and a matching
+detection-delay upper bound. Together, they yield the
+exponential-false-alarm/logarithmic-delay trade-off in
+Corollary~\ref{cor:tradeoff} for a detector that imposes no parametric model on
+the observation dynamics. Theorem~\ref{thm:optimality} shows that this trade-off
+is order-optimal under Lorden's minimax criterion and first-order minimax
+optimal under a Gaussian innovation shift; it is exact once the threshold is
+calibrated to the false-alarm constraint.
+%
+Propositions~\ref{prop:rnn-resid-bridge} and~\ref{prop:whiteness} link state
+stabilization to residual drift and characterize when a learned predictor
+achieves a larger guaranteed drift margin---and hence a larger guaranteed ARL
+exponent---than a fixed linear filter. Corollary~\ref{cor:dim} extends the
+analysis to the multivariate score. Empirical studies of synthetic
+autoregressive and vector-autoregressive processes, a nonlinear misspecified
+process, the Nile discharge series, and US equity-sector returns around the
+2020 COVID crash illustrate these mechanisms.
 
-To address the first gap, Theorem~\ref{thm:mds} establishes the Doob
-decomposition $h_t=D_t+M_t$ with an explicit geometric $L^2$ innovation bound
-and stationary covariance, and Corollary~\ref{cor:fclt} the functional central
-limit theorem for accumulated innovations.  To address the second,
-Theorems~\ref{thm:arl} and~\ref{thm:delay} give a sharp Lundberg-rate in-control
-ARL lower bound and a matching detection-delay upper bound, combining
-(Corollary~\ref{cor:tradeoff}) into the exponential-false-alarm /
-logarithmic-delay trade-off for a detector with no parametric model for the
-observation dynamics; Theorem~\ref{thm:optimality} shows this trade-off is
-order-optimal in Lorden's minimax framework, and first-order minimax optimal
-under a Gaussian innovation shift---exactly so once the threshold is calibrated
-to the false-alarm constraint.  Propositions~\ref{prop:rnn-resid-bridge} and~\ref{prop:whiteness} link
-state stabilization to residual drift and identify when a learned predictor
-attains a larger guaranteed drift margin --- and hence a larger guaranteed ARL
-exponent --- than a fixed linear filter, and Corollary~\ref{cor:dim} treats the
-multivariate score.  Empirical studies --- synthetic autoregressive and
-vector-autoregressive processes, a nonlinear misspecified process, the Nile
-discharge series, and US equity sector returns around the 2020 COVID crash ---
-illustrate these mechanisms.
 
-What appears to be new is the \emph{combination} of these ingredients: to our
-knowledge, no prior work joins recurrent-state innovation theory with
-sequential CUSUM calibration to yield a model-free monitoring guarantee for a
-detector built on a learned predictor.
+What appears to be new is the \emph{combination} of these ingredients: to our knowledge, no prior work combines recurrent-state innovation theory with sequential CUSUM calibration to provide model-free monitoring guarantees for a detector built on a learned predictor.
 
-Several questions remain open.  The dimension-scaling advantage at fixed
-threshold is, under a fully fair comparison, a finite-sample calibration effect
-rather than a structural one (Study~CUSUM-EQARL); characterizing when
-short-window nuisance estimation makes the learned score preferable is left
-open, as is a fully non-stationary theory beyond the locally stationary
-approximation of Corollary~\ref{cor:ls}.  The in-control exponent is already
-sharp (Theorem~\ref{thm:arl}); the remaining slack is in the delay-bound
-constant, which the overshoot distribution of the reflected random walk could
-sharpen, and relaxing the sub-Gaussianity and conditional-homoskedasticity
-conditions of Corollary~\ref{cor:dim} to heavy-tailed or heteroskedastic
-innovations is a natural next step with direct relevance to finance.
+Several questions remain open. The apparent dimension-scaling advantage at a fixed threshold is, under a fully matched comparison, a finite-sample calibration effect rather than a structural one (Study~CUSUM-EQARL). Characterizing when short-window nuisance estimation favors the learned score therefore remains open, as does developing a fully nonstationary theory beyond the locally stationary approximation of Corollary~\ref{cor:ls}. The in-control exponent is already sharp (Theorem~\ref{thm:arl}); the remaining slack lies in the constant of the delay bound, which could potentially be sharpened using the overshoot distribution of the reflected random walk. Another natural extension is to relax the sub-Gaussianity and conditional-homoskedasticity assumptions of Corollary~\ref{cor:dim} to accommodate heavy-tailed or heteroskedastic innovations, with direct relevance to finance.
 
-More broadly, what a learned sequential state encodes in probabilistic terms is
-not specific to RNNs: it arises for transformer attention heads, diffusion
-time-series latents, and language-model context representations.  A martingale
-characterization extending to those state representations would place inference
-and monitoring on such models on the same rigorous footing.
+More broadly, the question of what a learned sequential state encodes probabilistically extends beyond RNNs to transformer attention states, diffusion time-series latents, and language-model context representations. Extending the martingale characterization to such representations could place inference and monitoring for these models on the same rigorous footing.
 
 % =============================================================================
 
