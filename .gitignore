@@ -34,3 +34,7 @@ P1_main_xrefs.tex
 P1_supp_xrefs.tex
 P1_references_final_checked.bib
 P1_paper_final_double_checked_US*
+
+# Derived submission bundles (regenerated from the working files on demand)
+P1_bernoulli_submission_*/
+P1_bernoulli_submission_*.zip
